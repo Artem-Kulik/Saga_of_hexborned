@@ -1,6 +1,6 @@
 [gd_scene format=3 uid="uid://coy1ijtk34uup"]
 
-[ext_resource type="Script" uid="uid://bieomjl58jtgb" path="res://battle_scene.gd" id="1_3vhyp"]
+[ext_resource type="Script" uid="uid://buahsjnk7qca3" path="res://scripts/battle/battle_scene.gd" id="1_3vhyp"]
 [ext_resource type="Texture2D" uid="uid://blsthrdyyqviy" path="res://Основа/background_floor_stone.jpg" id="1_fw8re"]
 [ext_resource type="PackedScene" uid="uid://rv7s3v87xlkn" path="res://ward_slot.tscn" id="2_r5l0u"]
 [ext_resource type="Script" uid="uid://cciret7wp72cy" path="res://Основа/visual/Skill_list/skill_panel.gd" id="3_5joda"]
@@ -44,7 +44,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-rotation = 0.00081779715
+rotation = 0.00023063412
 texture = ExtResource("1_fw8re")
 stretch_mode = 1
 
