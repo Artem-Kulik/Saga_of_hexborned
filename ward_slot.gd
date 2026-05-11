@@ -50,6 +50,10 @@ var visual
 var input_controller
 var skill_controller
 
+var active_turn_tween: Tween
+var base_ward_modulate: Color
+var base_ward_scale: Vector2
+
 
 func _ready() -> void:
 	current_hp = clamp(start_hp, 0, max_hp)
@@ -63,6 +67,9 @@ func _ready() -> void:
 
 	_setup_mouse_filters()
 	_create_systems()
+
+	base_ward_modulate = ward_visual.modulate
+	base_ward_scale = ward_visual.scale
 
 
 func _process(_delta: float) -> void:
@@ -218,8 +225,7 @@ func die() -> void:
 	current_hp = 0
 	mouse_filter = Control.MOUSE_FILTER_IGNORE
 
-	if visual:
-		visual.set_active_turn(false)
+	set_active_turn(false)
 
 	if highlight:
 		highlight.visible = false
@@ -272,8 +278,42 @@ func dissolve_death() -> void:
 
 
 func set_active_turn(active: bool) -> void:
+	if active_turn_tween:
+		active_turn_tween.kill()
+		active_turn_tween = null
+
 	if is_dead:
+		if highlight:
+			highlight.visible = false
 		return
 
-	if visual:
-		visual.set_active_turn(active)
+	if active:
+		if highlight:
+			highlight.visible = true
+			highlight.modulate = Color(1.0, 0.85, 0.35, 0.45)
+
+		ward_visual.modulate = Color(1.25, 1.25, 1.25, 1.0)
+
+		active_turn_tween = create_tween()
+		active_turn_tween.set_loops()
+
+		active_turn_tween.tween_property(
+			ward_visual,
+			"scale",
+			base_ward_scale * 1.045,
+			0.45
+		).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
+
+		active_turn_tween.tween_property(
+			ward_visual,
+			"scale",
+			base_ward_scale,
+			0.45
+		).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
+
+	else:
+		if highlight:
+			highlight.visible = false
+
+		ward_visual.modulate = base_ward_modulate
+		ward_visual.scale = base_ward_scale

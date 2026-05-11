@@ -2,13 +2,24 @@
 
 [ext_resource type="Shader" uid="uid://bq4ums7tmq24a" path="res://new_shader.gdshader" id="1_eey8g"]
 [ext_resource type="Script" uid="uid://hmyp5e5bijo6" path="res://ward_slot.gd" id="1_ruxoh"]
+[ext_resource type="Texture2D" uid="uid://1okf1xw3xgj1" path="res://Основа/animation/death/death_0.png" id="2_dwh46"]
 [ext_resource type="Texture2D" uid="uid://d1oqk5ocx1cpf" path="res://Основа/char/Вогонь/Майстер Оічі/Майстер Оічі Скіли.png" id="2_iawpq"]
 [ext_resource type="Shader" uid="uid://dn6eey8nl3iyl" path="res://ward_slot.gdshader" id="2_jnv6q"]
 [ext_resource type="Texture2D" uid="uid://ccxk5y5s2fhff" path="res://Основа/visual/element_cards/card_fire.png" id="2_nprlj"]
 [ext_resource type="Texture2D" uid="uid://b53nwl1614kbs" path="res://Основа/Frame_1.png" id="3_fwbun"]
+[ext_resource type="Texture2D" uid="uid://b0pswsbc5bk7u" path="res://Основа/animation/death/death_1.png" id="3_im77c"]
 [ext_resource type="Texture2D" uid="uid://hiyyruhmbnet" path="res://Основа/portrait_mask_oval.png" id="3_j5l4v"]
+[ext_resource type="Texture2D" uid="uid://c0na1t1vhl70d" path="res://Основа/animation/death/death_2.png" id="4_6bynp"]
+[ext_resource type="Texture2D" uid="uid://ykkdcq6r4x7i" path="res://Основа/animation/death/death_3.png" id="5_c5aok"]
+[ext_resource type="Texture2D" uid="uid://b1e7ar1v3ipfq" path="res://Основа/animation/death/death_4.png" id="6_tddvk"]
 [ext_resource type="Texture2D" uid="uid://cn0c7lgws2l18" path="res://Основа/visual/status/горіння.png" id="7_t87r0"]
+<<<<<<< HEAD
 [ext_resource type="PackedScene" uid="uid://bqa8dc6msvca0" path="res://circle_hp_bar.tscn" id="8_ea0tg"]
+=======
+[ext_resource type="Texture2D" uid="uid://dro6jw54ufppa" path="res://Основа/animation/death/death_5.png" id="7_y6ipq"]
+[ext_resource type="Texture2D" uid="uid://b0gsup6se3cjl" path="res://Основа/animation/death/death_6.png" id="8_8wsb0"]
+[ext_resource type="PackedScene" uid="uid://cpcbc07o7o12j" path="res://circle_hp_bar.tscn" id="8_ea0tg"]
+>>>>>>> e5f76f2acd3b02d175abd068d7b23f90a84dbfc0
 [ext_resource type="Texture2D" uid="uid://dv8u1vpuawkcr" path="res://Основа/visual/element_cards/status_card_frame.png" id="8_eet5o"]
 [ext_resource type="PackedScene" uid="uid://3urukl8qraml" path="res://skill_button.tscn" id="13_ahwtq"]
 
@@ -33,6 +44,7 @@ offset_right = 616.0
 offset_bottom = 580.0
 script = ExtResource("1_ruxoh")
 oval_width = 460.0
+death_frames = Array[Texture2D]([ExtResource("2_dwh46"), ExtResource("3_im77c"), ExtResource("4_6bynp"), ExtResource("5_c5aok"), ExtResource("6_tddvk"), ExtResource("7_y6ipq"), ExtResource("8_8wsb0")])
 
 [node name="Card_element" type="TextureRect" parent="." unique_id=962493792]
 layout_mode = 0
@@ -88,6 +100,13 @@ offset_bottom = 637.0
 mouse_filter = 2
 texture = ExtResource("3_fwbun")
 expand_mode = 1
+
+[node name="CrackOverlay" type="TextureRect" parent="WardVisual" unique_id=1031794344]
+layout_mode = 0
+offset_left = 27.586205
+offset_top = 67.81609
+offset_right = 388.8362
+offset_bottom = 559.77014
 
 [node name="status_frame" type="TextureRect" parent="." unique_id=1035749900]
 layout_mode = 0
