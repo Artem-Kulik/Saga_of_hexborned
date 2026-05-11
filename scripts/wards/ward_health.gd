@@ -7,21 +7,18 @@ var max_hp: int = 100
 var current_hp: int = 100
 var is_dead: bool = false
 
-var hp_current = null
-var hp_delay = null
-var hp_tween: Tween
+var hp_bar = null
 
 
-func setup(max_hp_value: int, hp_current_ref, hp_delay_ref) -> void:
-	max_hp = max_hp_value
+func setup(max_hp_value: int, hp_bar_ref) -> void:
+	max_hp = max(max_hp_value, 1)
 	current_hp = max_hp
 	is_dead = false
 
-	hp_current = hp_current_ref
-	hp_delay = hp_delay_ref
+	hp_bar = hp_bar_ref
 
-	_setup_hp_bars()
-	_update_hp_bar(false)
+	if hp_bar and hp_bar.has_method("setup_hp"):
+		hp_bar.setup_hp(max_hp, current_hp)
 
 
 func take_damage(amount: int) -> void:
@@ -29,9 +26,11 @@ func take_damage(amount: int) -> void:
 		return
 
 	current_hp -= amount
-	current_hp = max(current_hp, 0)
+	current_hp = clamp(current_hp, 0, max_hp)
 
-	_update_hp_bar(true)
+	if hp_bar and hp_bar.has_method("set_hp"):
+		hp_bar.set_hp(current_hp, true)
+
 	hp_changed.emit(current_hp, max_hp)
 
 	if current_hp <= 0:
@@ -44,33 +43,3 @@ func _die() -> void:
 
 	is_dead = true
 	died.emit()
-
-
-func _setup_hp_bars() -> void:
-	if hp_current:
-		hp_current.min_value = 0
-		hp_current.max_value = 100
-		hp_current.value = 100
-
-	if hp_delay:
-		hp_delay.min_value = 0
-		hp_delay.max_value = 100
-		hp_delay.value = 100
-
-
-func _update_hp_bar(animated: bool = true) -> void:
-	var hp_percent: float = float(current_hp) / float(max_hp)
-	var hp_value: float = hp_percent * 100.0
-
-	if hp_current:
-		hp_current.value = hp_value
-
-	if hp_delay:
-		if hp_tween:
-			hp_tween.kill()
-
-		if animated:
-			hp_tween = create_tween()
-			hp_tween.tween_property(hp_delay, "value", hp_value, 0.4)
-		else:
-			hp_delay.value = hp_value

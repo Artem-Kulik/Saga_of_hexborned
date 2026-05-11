@@ -29,8 +29,7 @@ signal ward_drag_started(ward)
 @onready var ward_visual: Control = $WardVisual
 @onready var highlight: Control = $WardVisual/Highlight
 
-@onready var hp_current = get_node_or_null("HPAnim/HP_current")
-@onready var hp_delay = get_node_or_null("HPAnim/HP_delay")
+@onready var hp_bar = get_node_or_null("Circle_hp_bar")
 
 @onready var skill_buttons = get_node_or_null("WardSkillButtons")
 @onready var skill_q = get_node_or_null("WardSkillButtons/SkillButton_Q")
@@ -106,7 +105,7 @@ func _setup_mouse_filters() -> void:
 func _create_systems() -> void:
 	health = WardHealthScript.new()
 	add_child(health)
-	health.setup(max_hp, hp_current, hp_delay)
+	health.setup(max_hp, hp_bar)
 	health.hp_changed.connect(_on_hp_changed)
 	health.died.connect(_on_died)
 

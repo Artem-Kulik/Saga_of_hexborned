@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://vynlcjhxy0hy"
-path="res://.godot/imported/Шопей.png-caba41b418a55f27e6c5c3c00f6d810e.ctex"
+uid="uid://bjh3oh3tgud1g"
+path="res://.godot/imported/liah_p.png-cdabb984b7848d910f87f4c347e8e1f1.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://Основа/char/Повітря/Шопей/Шопей.png"
-dest_files=["res://.godot/imported/Шопей.png-caba41b418a55f27e6c5c3c00f6d810e.ctex"]
+source_file="res://Основа/char/Вода/Лія/liah_p.png"
+dest_files=["res://.godot/imported/liah_p.png-cdabb984b7848d910f87f4c347e8e1f1.ctex"]
 
 [params]
 
