@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://vynlcjhxy0hy"
-path="res://.godot/imported/Шопей.png-caba41b418a55f27e6c5c3c00f6d810e.ctex"
+uid="uid://b1e7ar1v3ipfq"
+path="res://.godot/imported/death_4.png-8363a3d6f47c10eaad88f9a7b9586c4e.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://Основа/char/Повітря/Шопей/Шопей.png"
-dest_files=["res://.godot/imported/Шопей.png-caba41b418a55f27e6c5c3c00f6d810e.ctex"]
+source_file="res://Основа/animation/death/death_4.png"
+dest_files=["res://.godot/imported/death_4.png-8363a3d6f47c10eaad88f9a7b9586c4e.ctex"]
 
 [params]
 

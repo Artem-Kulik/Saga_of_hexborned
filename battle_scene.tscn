@@ -27,7 +27,6 @@ layout_mode = 3
 anchors_preset = 0
 offset_right = 1920.0
 offset_bottom = 1080.0
-rotation = 4.2976913e-05
 script = ExtResource("1_3vhyp")
 metadata/_edit_vertical_guides_ = [-750.0]
 
@@ -350,11 +349,11 @@ text = "Один раз на хід, коли отримує шкоду, отр�
 [node name="ConfirmOrderButton" type="Button" parent="." unique_id=2104501787]
 custom_minimum_size = Vector2(200, 50)
 layout_mode = 0
-offset_left = 850.0
-offset_top = 525.0
-offset_right = 1070.0
-offset_bottom = 575.0
-rotation = 6.2872643
+offset_left = 1318.35
+offset_top = 1000.0
+offset_right = 1538.35
+offset_bottom = 1050.0
+rotation = 6.2871995
 text = "ГОТОВО"
 
 [node name="BattleLog" type="Control" parent="." unique_id=1823406821]
@@ -362,7 +361,6 @@ anchors_preset = 0
 offset_left = 1519.0
 offset_right = 1919.0
 offset_bottom = 1080.0
-rotation = -0.0020644574
 
 [node name="BattleLogBackGround" type="ColorRect" parent="BattleLog" unique_id=1755233944]
 layout_mode = 0
@@ -387,31 +385,26 @@ offset_left = 18.0
 offset_top = 125.0
 offset_right = 376.0
 offset_bottom = 1014.0
-theme_override_constants/separation = 10
+theme_override_constants/separation = 89
 
 [node name="AtackerLog" type="VBoxContainer" parent="BattleLog/BattleLog" unique_id=1482968069]
 layout_mode = 2
-size_flags_horizontal = 3
 alignment = 1
 
 [node name="SkillNameLog" type="VBoxContainer" parent="BattleLog/BattleLog" unique_id=1068381873]
 layout_mode = 2
-size_flags_horizontal = 3
 alignment = 1
 
 [node name="DamageLog" type="VBoxContainer" parent="BattleLog/BattleLog" unique_id=686148449]
 layout_mode = 2
-size_flags_horizontal = 3
 alignment = 1
 
 [node name="StatusLog" type="VBoxContainer" parent="BattleLog/BattleLog" unique_id=2024385558]
 layout_mode = 2
-size_flags_horizontal = 3
 alignment = 1
 
 [node name="TargetLog" type="VBoxContainer" parent="BattleLog/BattleLog" unique_id=2088586277]
 layout_mode = 2
-size_flags_horizontal = 3
 alignment = 1
 
 [node name="Label" type="Label" parent="BattleLog" unique_id=1134136132]

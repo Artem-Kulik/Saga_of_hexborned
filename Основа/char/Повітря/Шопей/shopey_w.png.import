@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://vynlcjhxy0hy"
-path="res://.godot/imported/Шопей.png-caba41b418a55f27e6c5c3c00f6d810e.ctex"
+uid="uid://cgaf3wtydsqtk"
+path="res://.godot/imported/shopey_w.png-94d49cf07acffdb13d203ab579c47af2.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://Основа/char/Повітря/Шопей/Шопей.png"
-dest_files=["res://.godot/imported/Шопей.png-caba41b418a55f27e6c5c3c00f6d810e.ctex"]
+source_file="res://Основа/char/Повітря/Шопей/shopey_w.png"
+dest_files=["res://.godot/imported/shopey_w.png-94d49cf07acffdb13d203ab579c47af2.ctex"]
 
 [params]
 
