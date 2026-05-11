@@ -5,7 +5,7 @@
 [ext_resource type="Shader" uid="uid://bq4ums7tmq24a" path="res://new_shader.gdshader" id="3_qgxld"]
 [ext_resource type="Texture2D" uid="uid://hiyyruhmbnet" path="res://Основа/portrait_mask_oval.png" id="4_22p8v"]
 [ext_resource type="Texture2D" uid="uid://bh5c0efo67o47" path="res://Основа/char/Вогонь/Майстер Оічі/E.png" id="5_5b0rb"]
-[ext_resource type="Texture2D" uid="uid://dqv2ctd0bxntm" path="res://Основа/visual/Skill_list/Skill_frame.png" id="6_jwkt4"]
+[ext_resource type="Texture2D" uid="uid://q1n24kyl2rkp" path="res://Основа/visual/Skill_list/Skill_frame_pas.png" id="6_u4o8d"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_u4o8d"]
 shader = ExtResource("2_u4o8d")
@@ -41,22 +41,21 @@ color = Color(0.2509804, 1, 0, 0.8862745)
 [node name="Icon" type="TextureRect" parent="." unique_id=1709806895]
 material = SubResource("ShaderMaterial_oke10")
 layout_mode = 0
-offset_left = -10.15
-offset_top = -13.235
-offset_right = 49.85
-offset_bottom = 52.765
+offset_left = -11.72
+offset_top = -8.355
+offset_right = 51.465
+offset_bottom = 49.95
 mouse_filter = 2
 texture = ExtResource("5_5b0rb")
 expand_mode = 1
 
-[node name="Frame" type="TextureRect" parent="." unique_id=1759105154]
+[node name="Frame_skill" type="TextureRect" parent="." unique_id=2126626786]
 layout_mode = 0
-offset_left = -9.815
-offset_top = -6.255
-offset_right = 50.251003
-offset_bottom = 48.745
-mouse_filter = 2
-texture = ExtResource("6_jwkt4")
+offset_left = -16.0
+offset_top = -3.0
+offset_right = 56.209137
+offset_bottom = 54.0
+texture = ExtResource("6_u4o8d")
 expand_mode = 1
 
 [node name="Key" type="Label" parent="." unique_id=855121665]
