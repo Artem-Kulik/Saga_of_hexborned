@@ -30,12 +30,13 @@ func setup_hp(new_max_hp: int, start_hp: int = -1) -> void:
 	else:
 		current_hp = clamp(start_hp, 0, max_hp)
 
+	_setup_bar(delay_bar)
+	_setup_bar(current_bar)
+
 	if delay_bar:
-		delay_bar.max_value = max_hp
 		delay_bar.value = current_hp
 
 	if current_bar:
-		current_bar.max_value = max_hp
 		current_bar.value = current_hp
 
 

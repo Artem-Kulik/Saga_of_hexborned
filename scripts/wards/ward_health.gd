@@ -4,15 +4,15 @@ signal hp_changed(current_hp: int, max_hp: int)
 signal died
 
 var max_hp: int = 100
-var current_hp: int = 100
+var current_hp: int = 80
 var is_dead: bool = false
 
 var hp_bar = null
 
 
-func setup(max_hp_value: int, hp_bar_ref) -> void:
+func setup(max_hp_value: int, start_hp_value: int, hp_bar_ref) -> void:
 	max_hp = max(max_hp_value, 1)
-	current_hp = max_hp
+	current_hp = clamp(start_hp_value, 0, max_hp)
 	is_dead = false
 
 	hp_bar = hp_bar_ref
