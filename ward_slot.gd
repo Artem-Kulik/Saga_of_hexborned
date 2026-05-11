@@ -26,8 +26,14 @@ signal ward_drag_started(ward)
 @export var active_scale: Vector2 = Vector2(1.04, 1.04)
 @export var scale_speed: float = 0.06
 
+@export var death_frames: Array[Texture2D] = []
+@export var death_shake_strength: float = 6.0
+@export var death_frame_speed: float = 0.12
+@export var death_dissolve_time: float = 0.35
+
 @onready var ward_visual: Control = $WardVisual
 @onready var highlight: Control = $WardVisual/Highlight
+@onready var crack_overlay: TextureRect = get_node_or_null("WardVisual/CrackOverlay")
 
 @onready var hp_current = get_node_or_null("HPAnim/HP_current")
 @onready var hp_delay = get_node_or_null("HPAnim/HP_delay")
@@ -36,11 +42,6 @@ signal ward_drag_started(ward)
 @onready var skill_q = get_node_or_null("WardSkillButtons/SkillButton_Q")
 @onready var skill_w = get_node_or_null("WardSkillButtons/SkillButton_W")
 @onready var skill_e = get_node_or_null("WardSkillButtons/SkillButton_E")
-
-@export var death_frames: Array[Texture2D] = []
-@onready var crack_overlay: TextureRect = $WardVisual/CrackOverlay
-@export var death_shake_strength: float = 6.0
-@export var death_frame_speed: float = 0.12
 
 var current_hp: int
 var is_dead: bool = false
@@ -55,8 +56,28 @@ func _ready() -> void:
 	current_hp = max_hp
 	is_dead = false
 
-	_setup_mouse_filters()
-	_create_systems()
+	if highlight:
+		highlight.visible = false
+
+	if crack_overlay:
+		crack_overlay.visible = false
+
+	normal_scale = ward_visual.scale
+	ward_visual.pivot_offset = ward_visual.size / 2.0
+
+	mouse_filter = Control.MOUSE_FILTER_STOP
+	ward_visual.mouse_filter = Control.MOUSE_FILTER_IGNORE
+
+	for child in ward_visual.get_children():
+		if child is Control:
+			child.mouse_filter = Control.MOUSE_FILTER_IGNORE
+
+	_connect_skill_buttons()
+	_setup_hp_bars()
+	_update_hp_bar(false)
+
+	if team == "enemy" and skill_buttons:
+		skill_buttons.visible = false
 
 
 func _process(_delta: float) -> void:
@@ -70,7 +91,54 @@ func _gui_input(event: InputEvent) -> void:
 	if is_dead:
 		return
 
-	input_controller.handle_gui_input(event)
+	if event is InputEventMouseMotion:
+		if _is_mouse_over_skills():
+			if hovering_oval:
+				hovering_oval = false
+				_on_oval_mouse_exited()
+			return
+
+		var inside_oval: bool = _is_inside_oval(event.position)
+
+		if inside_oval and !hovering_oval:
+			hovering_oval = true
+			_on_oval_mouse_entered()
+		elif !inside_oval and hovering_oval:
+			hovering_oval = false
+			_on_oval_mouse_exited()
+
+	elif event is InputEventMouseButton:
+		if event.button_index == MOUSE_BUTTON_LEFT and event.pressed:
+			ward_clicked.emit(self)
+			ward_drag_started.emit(self)
+
+
+func _connect_skill_buttons() -> void:
+	if skill_q and skill_q.has_signal("skill_pressed"):
+		skill_q.connect("skill_pressed", _on_skill_pressed)
+
+	if skill_w and skill_w.has_signal("skill_pressed"):
+		skill_w.connect("skill_pressed", _on_skill_pressed)
+
+	if skill_e and skill_e.has_signal("skill_pressed"):
+		skill_e.connect("skill_pressed", _on_skill_pressed)
+
+
+func _on_input_ward_clicked() -> void:
+	ward_clicked.emit(self)
+
+
+func _setup_hp_bars() -> void:
+	if hp_current:
+		hp_current.min_value = 0
+		hp_current.max_value = 100
+		hp_current.value = 100
+
+	if hp_delay:
+		hp_delay.min_value = 0
+		hp_delay.max_value = 100
+		hp_delay.value = 100
+
 
 
 func _notification(what: int) -> void:
@@ -166,17 +234,37 @@ func _on_input_ward_clicked() -> void:
 func _on_input_ward_drag_started() -> void:
 	ward_drag_started.emit(self)
 
+	if highlight:
+		highlight.visible = true
 
-func _on_hover_entered() -> void:
-	visual.set_hovered(true)
+	_apply_visual_scale()
 
 	var skill_panel = get_tree().get_first_node_in_group("skill_panel")
 	if skill_panel and skill_panel.has_method("show_panel"):
 		skill_panel.show_panel()
 
 
-func _on_hover_exited() -> void:
-	visual.set_hovered(false)
+func _on_oval_mouse_exited() -> void:
+	if highlight:
+		highlight.visible = false
+
+	_apply_visual_scale()
+
+
+func _apply_visual_scale() -> void:
+	var target_scale: Vector2 = normal_scale
+
+	if is_active_turn:
+		target_scale = normal_scale * active_scale
+	elif hovering_oval:
+		target_scale = normal_scale * hover_scale
+
+	_animate_scale(target_scale)
+
+
+func _animate_scale(target_scale: Vector2) -> void:
+	if tween:
+		tween.kill()
 
 
 func _on_skill_selected(skill_key: String) -> void:
@@ -204,41 +292,59 @@ func die() -> void:
 
 	is_dead = true
 	current_hp = 0
-
-	await play_anim_death()
-	ward_visual.dissolve_death()
-	
-
-	#visual.play_death_visual()
-
-
+	hovering_oval = false
+	is_active_turn = false
 	mouse_filter = Control.MOUSE_FILTER_IGNORE
 
+	if highlight:
+		highlight.visible = false
+
+	if skill_buttons:
+		skill_buttons.visible = false
+
+	await play_anim_death()
+	await dissolve_death()
+
 	print(name, " помер")
+
 
 func play_anim_death() -> void:
 	if crack_overlay == null:
 		return
 
+	if death_frames.is_empty():
+		return
+
 	crack_overlay.visible = true
 
-	var start_pos: Vector2 = $WardVisual.position
+	var start_pos: Vector2 = ward_visual.position
 
 	for frame in death_frames:
 		crack_overlay.texture = frame
 
-		$WardVisual.position = start_pos + Vector2(
+		ward_visual.position = start_pos + Vector2(
 			randf_range(-death_shake_strength, death_shake_strength),
 			randf_range(-death_shake_strength, death_shake_strength)
 		)
 
 		await get_tree().create_timer(death_frame_speed).timeout
 
-	$WardVisual.position = start_pos
+	ward_visual.position = start_pos
 
-	for child in $WardVisual.get_children():
-		if child != crack_overlay:
+	for child in ward_visual.get_children():
+		if child != crack_overlay and child is CanvasItem:
 			child.visible = false
+
+
+func dissolve_death() -> void:
+	if ward_visual == null:
+		return
+
+	var dissolve_tween := create_tween()
+	dissolve_tween.tween_property(ward_visual, "modulate:a", 0.0, death_dissolve_time)
+
+	await dissolve_tween.finished
+
 
 func set_active_turn(active: bool) -> void:
 	if is_dead:
