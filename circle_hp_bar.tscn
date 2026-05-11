@@ -1,0 +1,35 @@
+[gd_scene format=3 uid="uid://cpcbc07o7o12j"]
+
+[ext_resource type="Script" uid="uid://c8hvuwu07b4wk" path="res://circle_hp_bar.gd" id="1_njy18"]
+[ext_resource type="Texture2D" uid="uid://ctown7cra427v" path="res://Основа/visual/HPBar/delay_circle.png" id="2_lxvlp"]
+[ext_resource type="Texture2D" uid="uid://kxde7k84c8sq" path="res://Основа/visual/HPBar/current_circle.png" id="3_xgtgh"]
+
+[node name="Circle_hp_bar" type="Control" unique_id=670661717]
+layout_mode = 3
+anchor_right = 0.20500001
+anchor_bottom = 0.558
+offset_right = 0.39996338
+offset_bottom = -100.640015
+mouse_filter = 2
+script = ExtResource("1_njy18")
+
+[node name="Delay" type="TextureProgressBar" parent="." unique_id=1704804339]
+visible = false
+layout_mode = 0
+offset_right = 600.0
+offset_bottom = 600.0
+scale = Vector2(1, 1.15)
+mouse_filter = 2
+value = 100.0
+fill_mode = 4
+texture_progress = ExtResource("2_lxvlp")
+
+[node name="Current" type="TextureProgressBar" parent="." unique_id=1224482672]
+layout_mode = 0
+offset_right = 600.0
+offset_bottom = 600.0
+scale = Vector2(0.675, 0.9)
+mouse_filter = 2
+value = 100.0
+fill_mode = 4
+texture_progress = ExtResource("3_xgtgh")

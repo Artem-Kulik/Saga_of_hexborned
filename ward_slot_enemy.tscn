@@ -2,16 +2,14 @@
 
 [ext_resource type="Script" uid="uid://hmyp5e5bijo6" path="res://ward_slot.gd" id="1_3437y"]
 [ext_resource type="Shader" uid="uid://dn6eey8nl3iyl" path="res://ward_slot.gdshader" id="2_aqxxb"]
+[ext_resource type="Texture2D" uid="uid://ccxk5y5s2fhff" path="res://Основа/visual/element_cards/card_fire.png" id="2_p3601"]
 [ext_resource type="Texture2D" uid="uid://hiyyruhmbnet" path="res://Основа/portrait_mask_oval.png" id="3_p3601"]
 [ext_resource type="Shader" uid="uid://bq4ums7tmq24a" path="res://new_shader.gdshader" id="4_p8tk1"]
 [ext_resource type="Texture2D" uid="uid://d1oqk5ocx1cpf" path="res://Основа/char/Вогонь/Майстер Оічі/Майстер Оічі Скіли.png" id="5_ta4al"]
 [ext_resource type="Texture2D" uid="uid://b53nwl1614kbs" path="res://Основа/Frame_1.png" id="6_1hm6i"]
 [ext_resource type="Texture2D" uid="uid://cn0c7lgws2l18" path="res://Основа/visual/status/горіння.png" id="7_wjgmy"]
-[ext_resource type="Script" uid="uid://cwt6ckm7he3wd" path="res://Основа/visual/HPBar/hp_anim.gd" id="8_6y6oh"]
-[ext_resource type="Texture2D" uid="uid://drjmk8r6efd4p" path="res://Основа/visual/HPBar/HP0 gray.png" id="9_jsfmg"]
-[ext_resource type="Texture2D" uid="uid://kifeu21xldmd" path="res://Основа/visual/HPBar/HP red.png" id="10_pu4rq"]
-[ext_resource type="Texture2D" uid="uid://bq68b6j87mkxn" path="res://Основа/visual/HPBar/HP Green.png" id="11_qqi5i"]
-[ext_resource type="Texture2D" uid="uid://dvtb5oqolye3c" path="res://Основа/visual/HPBar/hp_frame.png" id="12_io57c"]
+[ext_resource type="Texture2D" uid="uid://dv8u1vpuawkcr" path="res://Основа/visual/element_cards/status_card_frame.png" id="8_p8tk1"]
+[ext_resource type="PackedScene" uid="uid://cpcbc07o7o12j" path="res://circle_hp_bar.tscn" id="11_nlxfe"]
 [ext_resource type="PackedScene" uid="uid://3urukl8qraml" path="res://skill_button.tscn" id="13_aqxxb"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_e1i0d"]
@@ -35,12 +33,19 @@ offset_bottom = 40.0
 script = ExtResource("1_3437y")
 oval_offset = Vector2(0, 30)
 
+[node name="card_element" type="TextureRect" parent="." unique_id=1013460604]
+layout_mode = 0
+offset_right = 683.0
+offset_bottom = 1008.0
+texture = ExtResource("2_p3601")
+expand_mode = 1
+
 [node name="WardVisual" type="Control" parent="." unique_id=487168567]
 anchors_preset = 0
-offset_left = 35.585
-offset_top = 80.0
-offset_right = 75.58512
-offset_bottom = 120.0
+offset_left = 89.3
+offset_top = 428.06
+offset_right = 129.30017
+offset_bottom = 468.06006
 scale = Vector2(0.8, 0.8)
 
 [node name="Highlight" type="TextureRect" parent="WardVisual" unique_id=437878517]
@@ -63,6 +68,14 @@ mouse_filter = 2
 texture = ExtResource("5_ta4al")
 expand_mode = 1
 
+[node name="Circle_hp_bar" parent="WardVisual" unique_id=670661717 instance=ExtResource("11_nlxfe")]
+layout_mode = 1
+offset_left = 49.917
+offset_top = 84.174
+offset_right = 441.88736
+offset_bottom = 602.73267
+scale = Vector2(0.79, 0.86)
+
 [node name="Frame" type="TextureRect" parent="WardVisual" unique_id=697249831]
 layout_mode = 0
 offset_right = 420.0
@@ -71,77 +84,100 @@ mouse_filter = 2
 texture = ExtResource("6_1hm6i")
 expand_mode = 1
 
-[node name="StatusContainer" type="HBoxContainer" parent="." unique_id=1001151675]
+[node name="Status_frame" type="TextureRect" parent="." unique_id=1569687526]
 layout_mode = 0
-offset_left = 20.0
-offset_top = -15.0
-offset_right = 400.0
-offset_bottom = 25.0
+offset_left = 165.335
+offset_top = 185.0
+offset_right = 529.3351
+offset_bottom = 412.0
+texture = ExtResource("8_p8tk1")
+expand_mode = 1
+
+[node name="StatusContainer" type="GridContainer" parent="." unique_id=1057245313]
+layout_mode = 0
+offset_left = 210.205
+offset_top = 227.685
+offset_right = 478.20502
+offset_bottom = 372.68494
+columns = 4
 
 [node name="status_burn" type="TextureRect" parent="StatusContainer" unique_id=812267857]
-custom_minimum_size = Vector2(48, 28)
+custom_minimum_size = Vector2(58, 38)
 layout_mode = 2
 texture = ExtResource("7_wjgmy")
 expand_mode = 1
 stretch_mode = 5
 
-[node name="status_stunned" type="TextureRect" parent="StatusContainer" unique_id=587806979]
-custom_minimum_size = Vector2(48, 28)
+[node name="status_burn2" type="TextureRect" parent="StatusContainer" unique_id=921254430]
+custom_minimum_size = Vector2(58, 38)
 layout_mode = 2
 texture = ExtResource("7_wjgmy")
 expand_mode = 1
 stretch_mode = 5
 
-[node name="HPAnim" type="Control" parent="." unique_id=1231230647]
-anchors_preset = 0
-offset_top = -530.0
-offset_right = 40.0
-offset_bottom = -490.0
-script = ExtResource("8_6y6oh")
-
-[node name="HP_background" type="TextureRect" parent="HPAnim" unique_id=183722365]
-layout_mode = 0
-offset_left = 20.0
-offset_top = 560.0
-offset_right = 400.0
-offset_bottom = 590.0
-texture = ExtResource("9_jsfmg")
+[node name="status_burn3" type="TextureRect" parent="StatusContainer" unique_id=1010197477]
+custom_minimum_size = Vector2(58, 38)
+layout_mode = 2
+texture = ExtResource("7_wjgmy")
 expand_mode = 1
+stretch_mode = 5
 
-[node name="HP_delay" type="TextureProgressBar" parent="HPAnim" unique_id=1604469127]
-layout_mode = 0
-offset_left = 20.0
-offset_top = 560.0
-offset_right = 400.0
-offset_bottom = 590.0
-value = 65.0
-texture_progress = ExtResource("10_pu4rq")
-
-[node name="HP_current" type="TextureProgressBar" parent="HPAnim" unique_id=2139706394]
-layout_mode = 0
-offset_left = 20.0
-offset_top = 560.0
-offset_right = 400.0
-offset_bottom = 590.0
-value = 65.0
-texture_progress = ExtResource("11_qqi5i")
-
-[node name="HP_frame" type="TextureRect" parent="HPAnim" unique_id=241366816]
-layout_mode = 0
-offset_left = 4.0
-offset_top = 559.0
-offset_right = 403.0
-offset_bottom = 591.0
-texture = ExtResource("12_io57c")
+[node name="status_burn4" type="TextureRect" parent="StatusContainer" unique_id=548839456]
+custom_minimum_size = Vector2(58, 38)
+layout_mode = 2
+texture = ExtResource("7_wjgmy")
 expand_mode = 1
+stretch_mode = 5
+
+[node name="status_burn5" type="TextureRect" parent="StatusContainer" unique_id=1243186222]
+custom_minimum_size = Vector2(58, 38)
+layout_mode = 2
+texture = ExtResource("7_wjgmy")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="status_burn6" type="TextureRect" parent="StatusContainer" unique_id=1937517130]
+custom_minimum_size = Vector2(58, 38)
+layout_mode = 2
+texture = ExtResource("7_wjgmy")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="status_burn7" type="TextureRect" parent="StatusContainer" unique_id=1676270066]
+custom_minimum_size = Vector2(58, 38)
+layout_mode = 2
+texture = ExtResource("7_wjgmy")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="status_burn8" type="TextureRect" parent="StatusContainer" unique_id=2092148663]
+custom_minimum_size = Vector2(58, 38)
+layout_mode = 2
+texture = ExtResource("7_wjgmy")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="status_burn9" type="TextureRect" parent="StatusContainer" unique_id=1660879435]
+custom_minimum_size = Vector2(58, 38)
+layout_mode = 2
+texture = ExtResource("7_wjgmy")
+expand_mode = 1
+stretch_mode = 5
 
 [node name="WardSkillButtons" type="Control" parent="." unique_id=1188095056]
 anchors_preset = 0
-offset_left = 499.605
-offset_top = -189.55
-offset_right = 552.0729
-offset_bottom = 258.76172
+offset_left = 540.93
+offset_top = 132.7
+offset_right = 593.398
+offset_bottom = 581.01215
 scale = Vector2(1.925, 1.925)
+
+[node name="SkillButton_E" parent="WardSkillButtons" unique_id=2023416599 instance=ExtResource("13_aqxxb")]
+layout_mode = 1
+offset_left = -44.3704
+offset_top = 185.0179
+offset_right = -6.1388702
+offset_bottom = 213.10553
 
 [node name="SkillButton_W" parent="WardSkillButtons" unique_id=1275455547 instance=ExtResource("13_aqxxb")]
 layout_mode = 1
@@ -150,14 +186,6 @@ offset_top = 260.51788
 offset_right = -6.0966396
 offset_bottom = 288.6771
 skill_key = "W"
-
-[node name="SkillButton_E" parent="WardSkillButtons" unique_id=2023416599 instance=ExtResource("13_aqxxb")]
-layout_mode = 1
-offset_left = -44.370403
-offset_top = 185.01793
-offset_right = -6.138872
-offset_bottom = 213.10556
-skill_key = "E"
 
 [node name="SkillButton_Q" parent="WardSkillButtons" unique_id=994800476 instance=ExtResource("13_aqxxb")]
 layout_mode = 0
@@ -170,6 +198,7 @@ offset_left = -45.0
 offset_top = 328.312
 offset_right = -6.558445
 offset_bottom = 372.98737
+skill_key = "E"
 
 [connection signal="mouse_entered" from="." to="." method="_on_mouse_entered"]
 [connection signal="mouse_exited" from="." to="." method="_on_mouse_exited"]

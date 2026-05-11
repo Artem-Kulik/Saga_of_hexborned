@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://dvtb5oqolye3c"
-path="res://.godot/imported/hp_frame.png-951de74c38d025a17837860c599a9a4c.ctex"
+uid="uid://vngklobv78sc"
+path="res://.godot/imported/card_earth.png-dbf5987d927b6a0c3eb7f98bc6af9b7a.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://Основа/visual/HPBar/hp_frame.png"
-dest_files=["res://.godot/imported/hp_frame.png-951de74c38d025a17837860c599a9a4c.ctex"]
+source_file="res://Основа/visual/element_cards/card_earth.png"
+dest_files=["res://.godot/imported/card_earth.png-dbf5987d927b6a0c3eb7f98bc6af9b7a.ctex"]
 
 [params]
 

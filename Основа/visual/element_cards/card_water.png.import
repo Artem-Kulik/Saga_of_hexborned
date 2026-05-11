@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://kifeu21xldmd"
-path="res://.godot/imported/HP red.png-13528576d847de3e73ca7b1ab8281c9a.ctex"
+uid="uid://dyw46ofgmp6a2"
+path="res://.godot/imported/card_water.png-696a7ad904401600edd7e382d4fe418a.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://Основа/visual/HPBar/HP red.png"
-dest_files=["res://.godot/imported/HP red.png-13528576d847de3e73ca7b1ab8281c9a.ctex"]
+source_file="res://Основа/visual/element_cards/card_water.png"
+dest_files=["res://.godot/imported/card_water.png-696a7ad904401600edd7e382d4fe418a.ctex"]
 
 [params]
 
