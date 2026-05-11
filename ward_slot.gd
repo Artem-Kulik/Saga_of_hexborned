@@ -155,10 +155,10 @@ func _is_inside_oval(local_mouse_pos: Vector2) -> bool:
 
 
 func _is_mouse_over_skills() -> bool:
-	if ward_skill_buttons == null:
+	if skill_buttons == null:
 		return false
 
-	return _is_mouse_over_control_children(ward_skill_buttons)
+	return _is_mouse_over_control_children(skill_buttons)
 
 
 func _is_mouse_over_control_children(node: Node) -> bool:
