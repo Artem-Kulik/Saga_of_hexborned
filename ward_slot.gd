@@ -2,6 +2,7 @@ extends Control
 
 signal ward_clicked(ward)
 signal skill_clicked(ward, skill_key: String)
+signal ward_drag_started(ward)
 
 @export var team: String = "ally"
 @export var ward_index: int = 0
@@ -94,8 +95,8 @@ func _gui_input(event: InputEvent) -> void:
 
 	elif event is InputEventMouseButton:
 		if event.button_index == MOUSE_BUTTON_LEFT and event.pressed:
-			if _is_inside_oval(event.position):
-				ward_clicked.emit(self)
+			ward_clicked.emit(self)
+			ward_drag_started.emit(self)
 
 
 func _connect_skill_buttons() -> void:

@@ -1,5 +1,8 @@
 extends Control
 
+@onready var ally_container = $arena/BackGround/"Wards Ally"
+@onready var confirm_order_button = get_node_or_null("ConfirmOrderButton")
+
 @onready var ally_wards = [
 	$arena/BackGround/"Wards Ally"/WardSlot,
 	$arena/BackGround/"Wards Ally"/WardSlot2,
@@ -25,19 +28,44 @@ var waiting_for_target: bool = false
 
 var battle_finished: bool = false
 
+var reorder_phase: bool = false
+var dragging_ward = null
+var dragged_from_index: int = -1
+var drag_mouse_offset: Vector2 = Vector2.ZERO
+
 
 func _ready() -> void:
+	randomize()
+
 	for ward in ally_wards:
 		ward.connect("ward_clicked", _on_ward_clicked)
 		ward.connect("skill_clicked", _on_skill_clicked)
+		ward.connect("ward_drag_started", _start_drag_ward)
 
 	for ward in enemy_wards:
 		ward.connect("ward_clicked", _on_ward_clicked)
 
-	_start_turn()
+	if confirm_order_button:
+		confirm_order_button.visible = false
+		confirm_order_button.pressed.connect(_on_confirm_order_pressed)
+
+	_roll_first_turn()
+
+
+func _process(_delta: float) -> void:
+	if dragging_ward == null:
+		return
+
+	dragging_ward.global_position = get_global_mouse_position() - drag_mouse_offset
 
 
 func _input(event: InputEvent) -> void:
+	if dragging_ward != null:
+		if event is InputEventMouseButton:
+			if event.button_index == MOUSE_BUTTON_LEFT and not event.pressed:
+				_drop_dragged_ward()
+				return
+
 	if battle_finished:
 		return
 
@@ -45,6 +73,53 @@ func _input(event: InputEvent) -> void:
 		if event.pressed and not event.echo:
 			if event.keycode == KEY_Z:
 				_surrender()
+
+
+func _roll_first_turn() -> void:
+	if randi() % 2 == 0:
+		current_team = "ally"
+	else:
+		current_team = "enemy"
+
+	print("Першим ходить: ", current_team)
+
+	if current_team == "enemy":
+		_start_reorder_phase()
+	else:
+		_start_battle()
+
+
+func _start_reorder_phase() -> void:
+	reorder_phase = true
+
+	if confirm_order_button:
+		confirm_order_button.visible = true
+
+	print("Ти ходиш другим. Можеш переставити Вардів і натиснути Готово.")
+
+
+func _on_confirm_order_pressed() -> void:
+	if not reorder_phase:
+		return
+
+	if dragging_ward != null:
+		_drop_dragged_ward()
+
+	reorder_phase = false
+
+	if confirm_order_button:
+		confirm_order_button.visible = false
+
+	_start_battle()
+
+
+func _start_battle() -> void:
+	reorder_phase = false
+	ally_turn_index = 0
+	enemy_turn_index = 0
+
+	print("Бій почався")
+	_start_turn()
 
 
 func _start_turn() -> void:
@@ -114,6 +189,9 @@ func _get_next_alive_ward(wards: Array, is_ally: bool):
 
 
 func _on_skill_clicked(ward, skill_key: String) -> void:
+	if reorder_phase:
+		return
+
 	if battle_finished:
 		return
 
@@ -133,6 +211,9 @@ func _on_skill_clicked(ward, skill_key: String) -> void:
 
 
 func _on_ward_clicked(ward) -> void:
+	if reorder_phase:
+		return
+
 	if battle_finished:
 		return
 
@@ -149,6 +230,106 @@ func _on_ward_clicked(ward) -> void:
 
 	_attack(selected_attacker, ward)
 	_next_turn()
+
+
+func _start_drag_ward(ward) -> void:
+	if not reorder_phase:
+		return
+
+	if ward.team != "ally":
+		return
+
+	if dragging_ward != null:
+		return
+
+	dragging_ward = ward
+	dragged_from_index = ally_wards.find(ward)
+
+	if dragged_from_index == -1:
+		dragging_ward = null
+		return
+
+	drag_mouse_offset = get_global_mouse_position() - ward.global_position
+	ward.z_index = 100
+
+	print("Рухаємо Варда: ", ward.name)
+
+
+func _drop_dragged_ward() -> void:
+	if dragging_ward == null:
+		return
+
+	var nearest_index: int = _get_nearest_ally_slot_index(get_global_mouse_position())
+
+	if nearest_index == -1:
+		nearest_index = dragged_from_index
+
+	dragging_ward.z_index = 0
+
+	if nearest_index != dragged_from_index:
+		_swap_ally_wards(dragged_from_index, nearest_index)
+
+	await get_tree().process_frame
+
+	_refresh_ally_wards_order()
+
+	print("Новий порядок Вардів:")
+	for ward in ally_wards:
+		print(ward.name)
+
+	dragging_ward = null
+	dragged_from_index = -1
+	drag_mouse_offset = Vector2.ZERO
+
+
+func _swap_ally_wards(index_a: int, index_b: int) -> void:
+	if index_a < 0 or index_b < 0:
+		return
+
+	if index_a >= ally_wards.size() or index_b >= ally_wards.size():
+		return
+
+	var new_order = ally_wards.duplicate()
+
+	var temp = new_order[index_a]
+	new_order[index_a] = new_order[index_b]
+	new_order[index_b] = temp
+
+	for i in range(new_order.size()):
+		ally_container.move_child(new_order[i], i)
+
+	ally_wards = new_order
+
+
+func _get_nearest_ally_slot_index(mouse_global_pos: Vector2) -> int:
+	var nearest_index: int = -1
+	var nearest_distance: float = INF
+
+	for i in range(ally_wards.size()):
+		var ward = ally_wards[i]
+
+		if ward == dragging_ward:
+			continue
+
+		var ward_center: Vector2 = ward.global_position + ward.size / 2.0
+		var distance: float = mouse_global_pos.distance_to(ward_center)
+
+		if distance < nearest_distance:
+			nearest_distance = distance
+			nearest_index = i
+
+	if nearest_index == -1:
+		return dragged_from_index
+
+	return nearest_index
+
+
+func _refresh_ally_wards_order() -> void:
+	ally_wards.clear()
+
+	for child in ally_container.get_children():
+		if child.has_method("take_damage"):
+			ally_wards.append(child)
 
 
 func _enemy_attack(enemy_ward) -> void:
@@ -169,7 +350,6 @@ func _enemy_attack(enemy_ward) -> void:
 
 func _attack(attacker, target) -> void:
 	print(attacker.name, " атакує ", target.name)
-
 	target.take_damage(attacker.skill_damage)
 
 
