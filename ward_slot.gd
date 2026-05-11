@@ -1,5 +1,10 @@
 extends Control
 
+const WardHealthScript = preload("res://scripts/wards/ward_health.gd")
+const WardVisualScript = preload("res://scripts/wards/ward_visual.gd")
+const WardInputScript = preload("res://scripts/wards/ward_input.gd")
+const WardSkillControllerScript = preload("res://scripts/wards/ward_skill_controller.gd")
+
 signal ward_clicked(ward)
 signal skill_clicked(ward, skill_key: String)
 signal ward_drag_started(ward)
@@ -39,22 +44,62 @@ signal ward_drag_started(ward)
 
 var current_hp: int
 var is_dead: bool = false
-var is_active_turn: bool = false
 
-var hovering_oval: bool = false
-var normal_scale: Vector2 = Vector2.ONE
-var tween: Tween
-var hp_tween: Tween
+var health
+var visual
+var input_controller
+var skill_controller
 
 
 func _ready() -> void:
 	current_hp = max_hp
+	is_dead = false
 
-	highlight.visible = false
+	_setup_mouse_filters()
+	_create_systems()
 
-	normal_scale = ward_visual.scale
-	ward_visual.pivot_offset = ward_visual.size / 2.0
 
+func _process(_delta: float) -> void:
+	if is_dead:
+		return
+
+	input_controller.process_hover()
+
+
+func _gui_input(event: InputEvent) -> void:
+	if is_dead:
+		return
+
+	input_controller.handle_gui_input(event)
+
+
+func _notification(what: int) -> void:
+	if what == NOTIFICATION_MOUSE_EXIT:
+		input_controller.handle_mouse_exit()
+
+
+func _draw() -> void:
+	if not debug_draw_oval:
+		return
+
+	var points: PackedVector2Array = PackedVector2Array()
+
+	var center: Vector2 = size / 2.0 + oval_offset
+	var rx: float = oval_width / 2.0
+	var ry: float = oval_height / 2.0
+	var steps: int = 96
+
+	for i in range(steps + 1):
+		var t: float = (float(i) / float(steps)) * TAU
+		var x: float = center.x + cos(t) * rx
+		var y: float = center.y + sin(t) * ry
+
+		points.append(Vector2(x, y))
+
+	draw_polyline(points, debug_oval_color, debug_oval_width)
+
+
+func _setup_mouse_filters() -> void:
 	mouse_filter = Control.MOUSE_FILTER_STOP
 	ward_visual.mouse_filter = Control.MOUSE_FILTER_IGNORE
 
@@ -62,178 +107,79 @@ func _ready() -> void:
 		if child is Control:
 			child.mouse_filter = Control.MOUSE_FILTER_IGNORE
 
-	_connect_skill_buttons()
-	_setup_hp_bars()
-	_update_hp_bar(false)
 
-	if team == "enemy" and skill_buttons:
-		skill_buttons.visible = false
+func _create_systems() -> void:
+	health = WardHealthScript.new()
+	add_child(health)
+	health.setup(max_hp, hp_current, hp_delay)
+	health.hp_changed.connect(_on_hp_changed)
+	health.died.connect(_on_died)
 
+	visual = WardVisualScript.new()
+	add_child(visual)
+	visual.setup(
+		ward_visual,
+		highlight,
+		hover_scale,
+		active_scale,
+		scale_speed
+	)
 
-func _process(_delta: float) -> void:
-	if is_dead:
-		return
+	input_controller = WardInputScript.new()
+	add_child(input_controller)
+	input_controller.setup(
+		self,
+		skill_buttons,
+		oval_width,
+		oval_height,
+		oval_offset
+	)
+	input_controller.ward_clicked.connect(_on_input_ward_clicked)
+	input_controller.ward_drag_started.connect(_on_input_ward_drag_started)
+	input_controller.hover_entered.connect(_on_hover_entered)
+	input_controller.hover_exited.connect(_on_hover_exited)
 
-	if hovering_oval:
-		var local_mouse_pos: Vector2 = get_local_mouse_position()
-
-		if !_is_inside_oval(local_mouse_pos):
-			hovering_oval = false
-			_on_oval_mouse_exited()
-
-
-func _gui_input(event: InputEvent) -> void:
-	if is_dead:
-		return
-
-	if event is InputEventMouseMotion:
-		if _is_mouse_over_skills():
-			if hovering_oval:
-				hovering_oval = false
-				_on_oval_mouse_exited()
-			return
-
-		var inside_oval: bool = _is_inside_oval(event.position)
-
-		if inside_oval and !hovering_oval:
-			hovering_oval = true
-			_on_oval_mouse_entered()
-		elif !inside_oval and hovering_oval:
-			hovering_oval = false
-			_on_oval_mouse_exited()
-
-	elif event is InputEventMouseButton:
-		if event.button_index == MOUSE_BUTTON_LEFT and event.pressed:
-			ward_clicked.emit(self)
-			ward_drag_started.emit(self)
+	skill_controller = WardSkillControllerScript.new()
+	add_child(skill_controller)
+	skill_controller.setup(
+		team,
+		skill_buttons,
+		skill_q,
+		skill_w,
+		skill_e
+	)
+	skill_controller.skill_selected.connect(_on_skill_selected)
 
 
+func _on_hp_changed(new_current_hp: int, _max_hp: int) -> void:
+	current_hp = new_current_hp
 
-func _connect_skill_buttons() -> void:
-	if skill_q and skill_q.has_signal("skill_pressed"):
-		skill_q.connect("skill_pressed", _on_skill_pressed)
 
-	if skill_w and skill_w.has_signal("skill_pressed"):
-		skill_w.connect("skill_pressed", _on_skill_pressed)
-
-	if skill_e and skill_e.has_signal("skill_pressed"):
-		skill_e.connect("skill_pressed", _on_skill_pressed)
+func _on_died() -> void:
+	die()
 
 
 func _on_input_ward_clicked() -> void:
 	ward_clicked.emit(self)
 
 
-
-func _setup_hp_bars() -> void:
-	if hp_current:
-		hp_current.min_value = 0
-		hp_current.max_value = 100
-		hp_current.value = 100
-
-	if hp_delay:
-		hp_delay.min_value = 0
-		hp_delay.max_value = 100
-		hp_delay.value = 100
+func _on_input_ward_drag_started() -> void:
+	ward_drag_started.emit(self)
 
 
-func _update_hp_bar(animated: bool = true) -> void:
-	var hp_percent: float = float(current_hp) / float(max_hp)
-	var hp_value: float = hp_percent * 100.0
-
-	if hp_current:
-		hp_current.value = hp_value
-
-	if hp_delay:
-		if hp_tween:
-			hp_tween.kill()
-
-		if animated:
-			hp_tween = create_tween()
-			hp_tween.tween_property(hp_delay, "value", hp_value, 0.4)
-		else:
-			hp_delay.value = hp_value
-
-
-func _is_inside_oval(local_mouse_pos: Vector2) -> bool:
-	var center: Vector2 = size / 2.0 + oval_offset
-	var p: Vector2 = local_mouse_pos - center
-
-	var rx: float = oval_width / 2.0
-	var ry: float = oval_height / 2.0
-
-	return ((p.x * p.x) / (rx * rx) + (p.y * p.y) / (ry * ry)) <= 1.0
-
-
-func _is_mouse_over_skills() -> bool:
-	if skill_buttons == null:
-		return false
-
-	return _is_mouse_over_control_children(skill_buttons)
-
-
-func _is_mouse_over_control_children(node: Node) -> bool:
-	if node == null:
-		return false
-
-	var mouse_global: Vector2 = get_global_mouse_position()
-
-	for child in node.get_children():
-		if child is Control:
-			if child.get_global_rect().has_point(mouse_global):
-				return true
-
-		if _is_mouse_over_control_children(child):
-			return true
-
-	return false
-
-
-func _notification(what: int) -> void:
-	if what == NOTIFICATION_MOUSE_EXIT and hovering_oval:
-		hovering_oval = false
-		_on_oval_mouse_exited()
-
-
-func _on_oval_mouse_entered() -> void:
-	if is_dead:
-		return
-
-	highlight.visible = true
-	_apply_visual_scale()
+func _on_hover_entered() -> void:
+	visual.set_hovered(true)
 
 	var skill_panel = get_tree().get_first_node_in_group("skill_panel")
 	if skill_panel and skill_panel.has_method("show_panel"):
 		skill_panel.show_panel()
 
 
-func _on_oval_mouse_exited() -> void:
-	highlight.visible = false
-	_apply_visual_scale()
+func _on_hover_exited() -> void:
+	visual.set_hovered(false)
 
 
-func _apply_visual_scale() -> void:
-	var target_scale: Vector2 = normal_scale
-
-	if is_active_turn:
-		target_scale = normal_scale * active_scale
-	elif hovering_oval:
-		target_scale = normal_scale * hover_scale
-
-	_animate_scale(target_scale)
-
-
-func _animate_scale(target_scale: Vector2) -> void:
-	if tween:
-		tween.kill()
-
-	tween = create_tween()
-	tween.set_trans(Tween.TRANS_CUBIC)
-	tween.set_ease(Tween.EASE_OUT)
-	tween.tween_property(ward_visual, "scale", target_scale, scale_speed)
-
-
-func _on_skill_pressed(skill_key: String) -> void:
+func _on_skill_selected(skill_key: String) -> void:
 	if is_dead:
 		return
 
@@ -247,18 +193,15 @@ func take_damage(amount: int) -> void:
 	if is_dead:
 		return
 
-	current_hp -= amount
-	current_hp = max(current_hp, 0)
-
-	_update_hp_bar(true)
+	health.take_damage(amount)
 
 	print(name, " отримав ", amount, " шкоди. HP: ", current_hp)
 
-	if current_hp <= 0:
-		die()
-
 
 func die() -> void:
+	if is_dead:
+		return
+
 	is_dead = true
 	current_hp = 0
 
@@ -269,12 +212,10 @@ func die() -> void:
 	#visual.play_death_visual()
 
 
-	highlight.visible = false
-	ward_visual.modulate = Color(0.25, 0.25, 0.25, 0.55)
 	mouse_filter = Control.MOUSE_FILTER_IGNORE
 
-	if skill_buttons:
-		skill_buttons.visible = false
+	if skill_controller:
+		skill_controller.hide_buttons()
 
 	print(name, " помер")
 
@@ -304,8 +245,6 @@ func play_anim_death() -> void:
 
 func set_active_turn(active: bool) -> void:
 	if is_dead:
-		is_active_turn = false
 		return
 
-	is_active_turn = active
-	_apply_visual_scale()
+	visual.set_active_turn(active)
