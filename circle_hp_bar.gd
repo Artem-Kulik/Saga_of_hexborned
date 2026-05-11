@@ -1,79 +1,60 @@
 extends Control
 
-@onready var delay_bar: TextureProgressBar = get_node_or_null("Delay")
-@onready var current_bar: TextureProgressBar = get_node_or_null("Current")
+@onready var delay_bar: TextureProgressBar = $Delay
+@onready var current_bar: TextureProgressBar = $Current
 
 var max_hp: int = 100
 var current_hp: int = 100
 
+var current_tween: Tween
 var delay_tween: Tween
 
 
 func _ready() -> void:
-	if delay_bar == null:
-		delay_bar = get_node_or_null("Delay2")
-
-	if current_bar == null:
-		current_bar = get_node_or_null("Current2")
-
 	mouse_filter = Control.MOUSE_FILTER_IGNORE
 
-	_setup_bar(delay_bar)
-	_setup_bar(current_bar)
+	delay_bar.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	current_bar.mouse_filter = Control.MOUSE_FILTER_IGNORE
 
 
-func setup_hp(new_max_hp: int, start_hp: int = -1) -> void:
+func setup_hp(new_max_hp: int, start_hp: int) -> void:
 	max_hp = max(new_max_hp, 1)
+	current_hp = clamp(start_hp, 0, max_hp)
 
-	if start_hp == -1:
-		current_hp = max_hp
-	else:
-		current_hp = clamp(start_hp, 0, max_hp)
+	delay_bar.min_value = 0
+	delay_bar.max_value = max_hp
+	delay_bar.value = current_hp
 
-	_setup_bar(delay_bar)
-	_setup_bar(current_bar)
-
-	if delay_bar:
-		delay_bar.value = current_hp
-
-	if current_bar:
-		current_bar.value = current_hp
+	current_bar.min_value = 0
+	current_bar.max_value = max_hp
+	current_bar.value = current_hp
 
 
 func set_hp(new_hp: int, animated: bool = true) -> void:
-	current_hp = clamp(new_hp, 0, max_hp)
+	var target_hp: int = clamp(new_hp, 0, max_hp)
 
-	if current_bar:
-		current_bar.value = current_hp
+	if current_tween:
+		current_tween.kill()
 
 	if delay_tween:
 		delay_tween.kill()
 
-	if delay_bar == null:
+	if not animated:
+		current_hp = target_hp
+		current_bar.value = target_hp
+		delay_bar.value = target_hp
 		return
 
-	if not animated:
-		delay_bar.value = current_hp
-		return
+	current_tween = create_tween()
+	current_tween.set_trans(Tween.TRANS_CUBIC)
+	current_tween.set_ease(Tween.EASE_OUT)
+	current_tween.tween_property(current_bar, "value", target_hp, 0.22)
 
 	await get_tree().create_timer(0.18).timeout
 
 	delay_tween = create_tween()
 	delay_tween.set_trans(Tween.TRANS_CUBIC)
 	delay_tween.set_ease(Tween.EASE_OUT)
-	delay_tween.tween_property(delay_bar, "value", current_hp, 0.45)
+	delay_tween.tween_property(delay_bar, "value", target_hp, 0.5)
 
-
-func _setup_bar(bar: TextureProgressBar) -> void:
-	if bar == null:
-		return
-
-	bar.mouse_filter = Control.MOUSE_FILTER_IGNORE
-
-	bar.min_value = 0
-	bar.max_value = max_hp
-	bar.value = current_hp
-
-	bar.fill_mode = TextureProgressBar.FILL_COUNTER_CLOCKWISE
-	bar.radial_initial_angle = -90.0
-	bar.radial_fill_degrees = 360.0
+	current_hp = target_hp

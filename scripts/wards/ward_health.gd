@@ -20,16 +20,41 @@ func setup(max_hp_value: int, start_hp_value: int, hp_bar_ref) -> void:
 	if hp_bar and hp_bar.has_method("setup_hp"):
 		hp_bar.setup_hp(max_hp, current_hp)
 
+	hp_changed.emit(current_hp, max_hp)
+
 
 func take_damage(amount: int) -> void:
 	if is_dead:
 		return
 
-	current_hp -= amount
-	current_hp = clamp(current_hp, 0, max_hp)
+	current_hp = clamp(current_hp - amount, 0, max_hp)
 
 	if hp_bar and hp_bar.has_method("set_hp"):
 		hp_bar.set_hp(current_hp, true)
+
+	hp_changed.emit(current_hp, max_hp)
+
+	if current_hp <= 0:
+		_die()
+
+
+func heal(amount: int) -> void:
+	if is_dead:
+		return
+
+	current_hp = clamp(current_hp + amount, 0, max_hp)
+
+	if hp_bar and hp_bar.has_method("set_hp"):
+		hp_bar.set_hp(current_hp, true)
+
+	hp_changed.emit(current_hp, max_hp)
+
+
+func set_hp(value: int) -> void:
+	current_hp = clamp(value, 0, max_hp)
+
+	if hp_bar and hp_bar.has_method("set_hp"):
+		hp_bar.set_hp(current_hp, false)
 
 	hp_changed.emit(current_hp, max_hp)
 
@@ -42,4 +67,8 @@ func _die() -> void:
 		return
 
 	is_dead = true
+
+	if hp_bar and hp_bar.has_method("set_hp"):
+		hp_bar.set_hp(0, true)
+
 	died.emit()

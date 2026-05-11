@@ -8,7 +8,7 @@
 [ext_resource type="Texture2D" uid="uid://b53nwl1614kbs" path="res://Основа/Frame_1.png" id="3_fwbun"]
 [ext_resource type="Texture2D" uid="uid://hiyyruhmbnet" path="res://Основа/portrait_mask_oval.png" id="3_j5l4v"]
 [ext_resource type="Texture2D" uid="uid://cn0c7lgws2l18" path="res://Основа/visual/status/горіння.png" id="7_t87r0"]
-[ext_resource type="PackedScene" path="res://circle_hp_bar.tscn" id="8_ea0tg"]
+[ext_resource type="PackedScene" uid="uid://bqa8dc6msvca0" path="res://circle_hp_bar.tscn" id="8_ea0tg"]
 [ext_resource type="Texture2D" uid="uid://dv8u1vpuawkcr" path="res://Основа/visual/element_cards/status_card_frame.png" id="8_eet5o"]
 [ext_resource type="PackedScene" uid="uid://3urukl8qraml" path="res://skill_button.tscn" id="13_ahwtq"]
 
@@ -80,10 +80,6 @@ offset_top = 84.411
 offset_right = 447.344
 offset_bottom = 587.80194
 scale = Vector2(0.79, 0.86)
-
-[node name="Delay2" type="Node" parent="WardVisual/Circle_hp_bar" unique_id=76228132]
-
-[node name="Current2" type="Node" parent="WardVisual/Circle_hp_bar" unique_id=1270699634]
 
 [node name="Frame" type="TextureRect" parent="WardVisual" unique_id=697249831]
 layout_mode = 0

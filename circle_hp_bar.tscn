@@ -1,4 +1,4 @@
-[gd_scene format=3 uid="uid://cpcbc07o7o12j"]
+[gd_scene format=3 uid="uid://bqa8dc6msvca0"]
 
 [ext_resource type="Script" uid="uid://c8hvuwu07b4wk" path="res://circle_hp_bar.gd" id="1_njy18"]
 [ext_resource type="Texture2D" uid="uid://ctown7cra427v" path="res://Основа/visual/HPBar/delay_circle.png" id="2_lxvlp"]

@@ -36,8 +36,7 @@ signal ward_drag_started(ward)
 @onready var highlight: Control = $WardVisual/Highlight
 @onready var crack_overlay: TextureRect = get_node_or_null("WardVisual/CrackOverlay")
 
-@onready var hp_bar = get_node_or_null("Circle_hp_bar")
-
+@onready var hp_bar = get_node_or_null("WardVisual/Circle_hp_bar")
 @onready var skill_buttons = get_node_or_null("WardSkillButtons")
 @onready var skill_q = get_node_or_null("WardSkillButtons/SkillButton_Q")
 @onready var skill_w = get_node_or_null("WardSkillButtons/SkillButton_W")
