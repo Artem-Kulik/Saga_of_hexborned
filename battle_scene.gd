@@ -187,7 +187,7 @@ func _get_next_alive_ward(wards: Array, is_ally: bool):
 
 	return null
 
-
+#посилання на вард вард слот 1-2або 3  КУВЕЕЕ 
 func _on_skill_clicked(ward, skill_key: String) -> void:
 	if reorder_phase:
 		return
@@ -347,7 +347,7 @@ func _enemy_attack(enemy_ward) -> void:
 	_attack(enemy_ward, target)
 	_next_turn()
 
-
+#атакер. Таргет виконує тейк демедж
 func _attack(attacker, target) -> void:
 	print(attacker.name, " атакує ", target.name)
 	target.take_damage(attacker.skill_damage)
@@ -408,7 +408,7 @@ func _surrender() -> void:
 
 	_finish_battle("ПОРАЗКА")
 
-
+#фініш батл
 func _finish_battle(result_text: String) -> void:
 	if battle_finished:
 		return

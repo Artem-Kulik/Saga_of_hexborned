@@ -16,7 +16,6 @@
 [ext_resource type="Texture2D" uid="uid://cq68ibjgv6v2y" path="res://Основа/visual/sigils/sigil_fire.png" id="11_f7bhn"]
 [ext_resource type="Shader" uid="uid://bq4ums7tmq24a" path="res://new_shader.gdshader" id="12_wy2mt"]
 [ext_resource type="Texture2D" uid="uid://hiyyruhmbnet" path="res://Основа/portrait_mask_oval.png" id="13_3vhyp"]
-[ext_resource type="Texture2D" uid="uid://bfji65fvo0scu" path="res://Основа/visual/Skill_list/рамка BattleLog.png" id="17_67y2d"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_67y2d"]
 shader = ExtResource("12_wy2mt")
@@ -356,65 +355,3 @@ offset_right = 1720.0
 offset_bottom = 1050.0
 rotation = 6.2871995
 text = "ГОТОВО"
-
-[node name="BattleLog" type="Control" parent="." unique_id=1823406821]
-anchors_preset = 0
-offset_left = 1519.0
-offset_right = 1919.0
-offset_bottom = 1080.0
-
-[node name="BattleLogBackGround" type="ColorRect" parent="BattleLog" unique_id=1755233944]
-layout_mode = 0
-offset_left = 1.105
-offset_top = 5.0
-offset_right = 401.10526
-offset_bottom = 1085.0
-color = Color(0.3764706, 0.29803923, 0.015686275, 0.8980392)
-
-[node name="TextureRect" type="TextureRect" parent="BattleLog" unique_id=2074741592]
-layout_mode = 0
-offset_left = -86.855
-offset_top = -53.0
-offset_right = 400.145
-offset_bottom = 1087.0
-texture = ExtResource("17_67y2d")
-expand_mode = 1
-
-[node name="BattleLog" type="HBoxContainer" parent="BattleLog" unique_id=401159850]
-layout_mode = 0
-offset_left = 18.0
-offset_top = 125.0
-offset_right = 376.0
-offset_bottom = 1014.0
-theme_override_constants/separation = 89
-
-[node name="AtackerLog" type="VBoxContainer" parent="BattleLog/BattleLog" unique_id=1482968069]
-layout_mode = 2
-alignment = 1
-
-[node name="SkillNameLog" type="VBoxContainer" parent="BattleLog/BattleLog" unique_id=1068381873]
-layout_mode = 2
-alignment = 1
-
-[node name="DamageLog" type="VBoxContainer" parent="BattleLog/BattleLog" unique_id=686148449]
-layout_mode = 2
-alignment = 1
-
-[node name="StatusLog" type="VBoxContainer" parent="BattleLog/BattleLog" unique_id=2024385558]
-layout_mode = 2
-alignment = 1
-
-[node name="TargetLog" type="VBoxContainer" parent="BattleLog/BattleLog" unique_id=2088586277]
-layout_mode = 2
-alignment = 1
-
-[node name="Label" type="Label" parent="BattleLog" unique_id=1134136132]
-layout_mode = 0
-offset_left = 65.000015
-offset_top = 63.0
-offset_right = 345.0
-offset_bottom = 104.0
-theme_override_colors/font_color = Color(0.09366939, 0.09366938, 0.09366938, 1)
-theme_override_fonts/font = ExtResource("7_wy2mt")
-theme_override_font_sizes/font_size = 39
-text = "Battle Log"
