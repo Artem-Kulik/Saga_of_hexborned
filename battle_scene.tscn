@@ -73,6 +73,7 @@ layout_mode = 2
 
 [node name="WardSlot3" parent="arena/BackGround/Wards Ally" unique_id=609565983 instance=ExtResource("2_r5l0u")]
 layout_mode = 2
+oval_width = 350.0
 
 [node name="Wards Enemy" type="HBoxContainer" parent="arena/BackGround" unique_id=1637008145]
 layout_mode = 1

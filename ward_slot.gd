@@ -37,7 +37,7 @@ var is_dead: bool = false
 var is_active_turn: bool = false
 
 var hovering_oval: bool = false
-var normal_scale: Vector2
+var normal_scale: Vector2 = Vector2.ONE
 var tween: Tween
 var hp_tween: Tween
 
@@ -82,13 +82,17 @@ func _gui_input(event: InputEvent) -> void:
 		return
 
 	if event is InputEventMouseMotion:
-		var mouse_event: InputEventMouseMotion = event
-		var inside_oval: bool = _is_inside_oval(mouse_event.position)
+		if _is_mouse_over_skills():
+			if hovering_oval:
+				hovering_oval = false
+				_on_oval_mouse_exited()
+			return
+
+		var inside_oval: bool = _is_inside_oval(event.position)
 
 		if inside_oval and !hovering_oval:
 			hovering_oval = true
 			_on_oval_mouse_entered()
-
 		elif !inside_oval and hovering_oval:
 			hovering_oval = false
 			_on_oval_mouse_exited()
@@ -147,37 +151,37 @@ func _is_inside_oval(local_mouse_pos: Vector2) -> bool:
 	var rx: float = oval_width / 2.0
 	var ry: float = oval_height / 2.0
 
-	return (
-		(p.x * p.x) / (rx * rx) +
-		(p.y * p.y) / (ry * ry)
-	) <= 1.0
+	return ((p.x * p.x) / (rx * rx) + (p.y * p.y) / (ry * ry)) <= 1.0
+
+
+func _is_mouse_over_skills() -> bool:
+	if ward_skill_buttons == null:
+		return false
+
+	return _is_mouse_over_control_children(ward_skill_buttons)
+
+
+func _is_mouse_over_control_children(node: Node) -> bool:
+	if node == null:
+		return false
+
+	var mouse_global: Vector2 = get_global_mouse_position()
+
+	for child in node.get_children():
+		if child is Control:
+			if child.get_global_rect().has_point(mouse_global):
+				return true
+
+		if _is_mouse_over_control_children(child):
+			return true
+
+	return false
 
 
 func _notification(what: int) -> void:
 	if what == NOTIFICATION_MOUSE_EXIT and hovering_oval:
 		hovering_oval = false
 		_on_oval_mouse_exited()
-
-
-func _draw() -> void:
-	if !debug_draw_oval:
-		return
-
-	var points: PackedVector2Array = PackedVector2Array()
-
-	var center: Vector2 = size / 2.0 + oval_offset
-	var rx: float = oval_width / 2.0
-	var ry: float = oval_height / 2.0
-	var steps: int = 96
-
-	for i in range(steps + 1):
-		var t: float = (float(i) / float(steps)) * TAU
-		var x: float = center.x + cos(t) * rx
-		var y: float = center.y + sin(t) * ry
-
-		points.append(Vector2(x, y))
-
-	draw_polyline(points, debug_oval_color, debug_oval_width)
 
 
 func _on_oval_mouse_entered() -> void:

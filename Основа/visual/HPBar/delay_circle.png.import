@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://dvtb5oqolye3c"
-path="res://.godot/imported/hp_frame.png-951de74c38d025a17837860c599a9a4c.ctex"
+uid="uid://ctown7cra427v"
+path="res://.godot/imported/delay_circle.png-c8f9a1fb9db408c4892d2efbf5032862.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://Основа/visual/HPBar/hp_frame.png"
-dest_files=["res://.godot/imported/hp_frame.png-951de74c38d025a17837860c599a9a4c.ctex"]
+source_file="res://Основа/visual/HPBar/delay_circle.png"
+dest_files=["res://.godot/imported/delay_circle.png-c8f9a1fb9db408c4892d2efbf5032862.ctex"]
 
 [params]
 

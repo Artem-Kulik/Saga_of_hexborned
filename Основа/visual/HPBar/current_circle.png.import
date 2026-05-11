@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://bq68b6j87mkxn"
-path="res://.godot/imported/HP Green.png-edc3f9746919fa0c505657bc4eea21b7.ctex"
+uid="uid://kxde7k84c8sq"
+path="res://.godot/imported/current_circle.png-443a00cf750c8d270b211308a9d44140.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://Основа/visual/HPBar/HP Green.png"
-dest_files=["res://.godot/imported/HP Green.png-edc3f9746919fa0c505657bc4eea21b7.ctex"]
+source_file="res://Основа/visual/HPBar/current_circle.png"
+dest_files=["res://.godot/imported/current_circle.png-443a00cf750c8d270b211308a9d44140.ctex"]
 
 [params]
 
