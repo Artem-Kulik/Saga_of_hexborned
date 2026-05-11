@@ -53,10 +53,7 @@ func _update_visibility() -> void:
 	if skill_buttons == null:
 		return
 
-	if team == "enemy":
-		skill_buttons.visible = false
-	else:
-		skill_buttons.visible = true
+	skill_buttons.visible = true
 
 
 func _on_skill_pressed(skill_key: String) -> void:

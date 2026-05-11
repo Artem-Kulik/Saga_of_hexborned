@@ -36,7 +36,8 @@ func start_reorder_phase() -> void:
 	if confirm_order_button:
 		confirm_order_button.visible = true
 
-	_log("Ти ходиш другим. Можеш переставити Вардів і натиснути Готово.")
+	if battle_log:
+		battle_log.add_entry("Ти ходиш другим. Перестав Вардів і натисни Готово.")
 
 
 func stop_reorder_phase() -> void:
@@ -88,8 +89,6 @@ func start_drag_ward(ward) -> void:
 	drag_mouse_offset = get_viewport().get_mouse_position() - ward.global_position
 	ward.z_index = 100
 
-	_log("Рухаємо Варда: " + ward.name)
-
 
 func drop_dragged_ward() -> void:
 	if dragging_ward == null:
@@ -108,10 +107,6 @@ func drop_dragged_ward() -> void:
 	await get_tree().process_frame
 
 	_refresh_ally_wards_order()
-
-	_log("Новий порядок Вардів:")
-	for ward in ally_wards:
-		_log(ward.name)
 
 	dragging_ward = null
 	dragged_from_index = -1
@@ -178,10 +173,3 @@ func _on_confirm_order_pressed() -> void:
 
 	stop_reorder_phase()
 	reorder_confirmed.emit()
-
-
-func _log(text: String) -> void:
-	if battle_log:
-		battle_log.add_entry(text)
-	else:
-		print(text)

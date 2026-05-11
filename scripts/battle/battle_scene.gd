@@ -19,7 +19,7 @@ const BattleReorderManagerScript = preload("res://scripts/battle/battle_reorder_
 	$arena/BackGround/"Wards Enemy"/WardSlot_enemy2,
 	$arena/BackGround/"Wards Enemy"/WardSlot_enemy3
 ]
-
+var turn_number: int = 0
 var turn_manager
 var battle_log
 var battle_resolver
@@ -61,6 +61,7 @@ func _input(event: InputEvent) -> void:
 func _create_battle_systems() -> void:
 	battle_log = BattleLogScript.new()
 	add_child(battle_log)
+	battle_log.setup_ui(get_node_or_null("BattleLog"))
 
 	turn_manager = TurnManagerScript.new()
 	add_child(turn_manager)
@@ -107,6 +108,7 @@ func _on_reorder_confirmed() -> void:
 
 
 func _start_battle() -> void:
+	turn_number = 0
 	battle_started = true
 	turn_manager.reset_turn_indices()
 
@@ -125,7 +127,9 @@ func _start_turn() -> void:
 	if battle_resolver.is_team_dead(enemy_wards):
 		_finish_battle("ПЕРЕМОГА")
 		return
-
+	
+	turn_number += 1
+	battle_log.start_turn(turn_number)
 	selected_attacker = null
 	selected_skill = ""
 	waiting_for_target = false
@@ -193,8 +197,7 @@ func _on_ward_clicked(ward) -> void:
 	if ward.is_dead:
 		battle_log.add_entry("Ціль вже мертва")
 		return
-
-	battle_resolver.attack(selected_attacker, ward)
+	battle_resolver.attack(selected_attacker, ward, selected_skill)
 	_next_turn()
 
 
@@ -216,8 +219,9 @@ func _enemy_attack(enemy_ward) -> void:
 		return
 
 	var target = alive_targets.pick_random()
+	var random_skill: String = ["Q", "W", "E"].pick_random()
 
-	battle_resolver.attack(enemy_ward, target)
+	battle_resolver.attack(enemy_ward, target, random_skill)
 	_next_turn()
 
 

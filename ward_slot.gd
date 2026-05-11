@@ -204,9 +204,6 @@ func die() -> void:
 
 	mouse_filter = Control.MOUSE_FILTER_IGNORE
 
-	if skill_controller:
-		skill_controller.hide_buttons()
-
 	print(name, " помер")
 
 
