@@ -12,6 +12,7 @@
 [ext_resource type="Texture2D" uid="uid://kifeu21xldmd" path="res://Основа/visual/HPBar/HP red.png" id="10_pu4rq"]
 [ext_resource type="Texture2D" uid="uid://bq68b6j87mkxn" path="res://Основа/visual/HPBar/HP Green.png" id="11_qqi5i"]
 [ext_resource type="Texture2D" uid="uid://dvtb5oqolye3c" path="res://Основа/visual/HPBar/hp_frame.png" id="12_io57c"]
+[ext_resource type="PackedScene" uid="uid://3urukl8qraml" path="res://skill_button.tscn" id="13_aqxxb"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_e1i0d"]
 shader = ExtResource("2_aqxxb")
@@ -32,8 +33,17 @@ anchors_preset = 0
 offset_right = 40.0
 offset_bottom = 40.0
 script = ExtResource("1_3437y")
+oval_offset = Vector2(0, 30)
 
-[node name="Highlight" type="TextureRect" parent="." unique_id=437878517]
+[node name="WardVisual" type="Control" parent="." unique_id=487168567]
+anchors_preset = 0
+offset_left = 35.585
+offset_top = 80.0
+offset_right = 75.58512
+offset_bottom = 120.0
+scale = Vector2(0.8, 0.8)
+
+[node name="Highlight" type="TextureRect" parent="WardVisual" unique_id=437878517]
 material = SubResource("ShaderMaterial_e1i0d")
 layout_mode = 0
 offset_left = -31.0
@@ -43,7 +53,7 @@ offset_bottom = 604.0
 mouse_filter = 2
 texture = SubResource("CanvasTexture_jq0fr")
 
-[node name="Portrait" type="TextureRect" parent="." unique_id=864329980]
+[node name="Portrait" type="TextureRect" parent="WardVisual" unique_id=864329980]
 material = SubResource("ShaderMaterial_qbcgw")
 layout_mode = 0
 offset_top = 8.0
@@ -53,7 +63,7 @@ mouse_filter = 2
 texture = ExtResource("5_ta4al")
 expand_mode = 1
 
-[node name="Frame" type="TextureRect" parent="." unique_id=697249831]
+[node name="Frame" type="TextureRect" parent="WardVisual" unique_id=697249831]
 layout_mode = 0
 offset_right = 420.0
 offset_bottom = 637.0
@@ -124,6 +134,42 @@ offset_right = 403.0
 offset_bottom = 591.0
 texture = ExtResource("12_io57c")
 expand_mode = 1
+
+[node name="WardSkillButtons" type="Control" parent="." unique_id=1188095056]
+anchors_preset = 0
+offset_left = 499.605
+offset_top = -189.55
+offset_right = 552.0729
+offset_bottom = 258.76172
+scale = Vector2(1.925, 1.925)
+
+[node name="SkillButton_W" parent="WardSkillButtons" unique_id=1275455547 instance=ExtResource("13_aqxxb")]
+layout_mode = 1
+offset_left = -44.370403
+offset_top = 260.51788
+offset_right = -6.0966396
+offset_bottom = 288.6771
+skill_key = "W"
+
+[node name="SkillButton_E" parent="WardSkillButtons" unique_id=2023416599 instance=ExtResource("13_aqxxb")]
+layout_mode = 1
+offset_left = -44.370403
+offset_top = 185.01793
+offset_right = -6.138872
+offset_bottom = 213.10556
+skill_key = "E"
+
+[node name="SkillButton_Q" parent="WardSkillButtons" unique_id=994800476 instance=ExtResource("13_aqxxb")]
+layout_mode = 0
+anchors_preset = 0
+anchor_left = 0.0
+anchor_top = 0.0
+anchor_right = 0.0
+anchor_bottom = 0.0
+offset_left = -45.0
+offset_top = 328.312
+offset_right = -6.558445
+offset_bottom = 372.98737
 
 [connection signal="mouse_entered" from="." to="." method="_on_mouse_entered"]
 [connection signal="mouse_exited" from="." to="." method="_on_mouse_exited"]

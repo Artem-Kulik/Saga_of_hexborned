@@ -24,6 +24,7 @@ layout_mode = 3
 anchors_preset = 0
 offset_right = 1920.0
 offset_bottom = 1080.0
+metadata/_edit_vertical_guides_ = [-750.0]
 
 [node name="arena" type="Control" parent="." unique_id=1597212150]
 layout_mode = 1
@@ -50,14 +51,14 @@ anchor_left = 0.5
 anchor_top = 1.0
 anchor_right = 0.5
 anchor_bottom = 1.0
-offset_left = -427.5
+offset_left = -410.0
 offset_top = -400.0
-offset_right = 1012.5
+offset_right = 1350.0022
 offset_bottom = 180.00049
 grow_horizontal = 2
 grow_vertical = 0
 scale = Vector2(0.6, 0.6)
-theme_override_constants/separation = 90
+theme_override_constants/separation = 250
 alignment = 1
 
 [node name="WardSlot" parent="arena/BackGround/Wards Ally" unique_id=350173843 instance=ExtResource("2_r5l0u")]
@@ -74,13 +75,13 @@ layout_mode = 1
 anchors_preset = 5
 anchor_left = 0.5
 anchor_right = 0.5
-offset_left = -427.5
+offset_left = -399.0
 offset_top = 6.0
-offset_right = 1012.5
+offset_right = 1361.0005
 offset_bottom = 586.0
 grow_horizontal = 2
 scale = Vector2(0.6, 0.6)
-theme_override_constants/separation = 90
+theme_override_constants/separation = 250
 alignment = 1
 
 [node name="WardSlot_enemy" parent="arena/BackGround/Wards Enemy" unique_id=636371787 instance=ExtResource("3_x76d4")]
