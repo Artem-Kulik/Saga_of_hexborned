@@ -347,12 +347,11 @@ text = "Один раз на хід, коли отримує шкоду, отр�
 "
 
 [node name="ConfirmOrderButton" type="Button" parent="." unique_id=2104501787]
-visible = false
 custom_minimum_size = Vector2(200, 50)
 layout_mode = 0
-offset_left = 1500.0
+offset_left = 1318.35
 offset_top = 1000.0
-offset_right = 1720.0
+offset_right = 1538.35
 offset_bottom = 1050.0
 rotation = 6.2871995
 text = "ГОТОВО"

@@ -37,6 +37,11 @@ signal ward_drag_started(ward)
 @onready var skill_w = get_node_or_null("WardSkillButtons/SkillButton_W")
 @onready var skill_e = get_node_or_null("WardSkillButtons/SkillButton_E")
 
+@export var death_frames: Array[Texture2D] = []
+@onready var crack_overlay: TextureRect = $WardVisual/CrackOverlay
+@export var death_shake_strength: float = 6.0
+@export var death_frame_speed: float = 0.12
+
 var current_hp: int
 var is_dead: bool = false
 
@@ -200,7 +205,12 @@ func die() -> void:
 	is_dead = true
 	current_hp = 0
 
-	visual.play_death_visual()
+	await play_anim_death()
+	ward_visual.dissolve_death()
+	
+
+	#visual.play_death_visual()
+
 
 	mouse_filter = Control.MOUSE_FILTER_IGNORE
 
@@ -209,6 +219,29 @@ func die() -> void:
 
 	print(name, " помер")
 
+func play_anim_death() -> void:
+	if crack_overlay == null:
+		return
+
+	crack_overlay.visible = true
+
+	var start_pos: Vector2 = $WardVisual.position
+
+	for frame in death_frames:
+		crack_overlay.texture = frame
+
+		$WardVisual.position = start_pos + Vector2(
+			randf_range(-death_shake_strength, death_shake_strength),
+			randf_range(-death_shake_strength, death_shake_strength)
+		)
+
+		await get_tree().create_timer(death_frame_speed).timeout
+
+	$WardVisual.position = start_pos
+
+	for child in $WardVisual.get_children():
+		if child != crack_overlay:
+			child.visible = false
 
 func set_active_turn(active: bool) -> void:
 	if is_dead:
