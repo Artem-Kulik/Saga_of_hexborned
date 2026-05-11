@@ -1,5 +1,6 @@
 [gd_scene format=3 uid="uid://coy1ijtk34uup"]
 
+[ext_resource type="Script" uid="uid://bieomjl58jtgb" path="res://battle_scene.gd" id="1_3vhyp"]
 [ext_resource type="Texture2D" uid="uid://blsthrdyyqviy" path="res://Основа/background_floor_stone.jpg" id="1_fw8re"]
 [ext_resource type="PackedScene" uid="uid://rv7s3v87xlkn" path="res://ward_slot.tscn" id="2_r5l0u"]
 [ext_resource type="Script" uid="uid://cciret7wp72cy" path="res://Основа/visual/Skill_list/skill_panel.gd" id="3_5joda"]
@@ -25,6 +26,7 @@ layout_mode = 3
 anchors_preset = 0
 offset_right = 1920.0
 offset_bottom = 1080.0
+script = ExtResource("1_3vhyp")
 metadata/_edit_vertical_guides_ = [-750.0]
 
 [node name="arena" type="Control" parent="." unique_id=1597212150]
@@ -42,6 +44,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+rotation = 0.00081779715
 texture = ExtResource("1_fw8re")
 stretch_mode = 1
 
@@ -88,12 +91,15 @@ alignment = 1
 
 [node name="WardSlot_enemy" parent="arena/BackGround/Wards Enemy" unique_id=636371787 instance=ExtResource("3_x76d4")]
 layout_mode = 2
+team = "enemy"
 
 [node name="WardSlot_enemy2" parent="arena/BackGround/Wards Enemy" unique_id=1517570582 instance=ExtResource("3_x76d4")]
 layout_mode = 2
+team = "enemy"
 
 [node name="WardSlot_enemy3" parent="arena/BackGround/Wards Enemy" unique_id=2006271501 instance=ExtResource("3_x76d4")]
 layout_mode = 2
+team = "enemy"
 
 [node name="SkillPanel" type="Control" parent="." unique_id=350120708 groups=["skill_panel"]]
 anchors_preset = 0
@@ -338,3 +344,14 @@ offset_right = 376.0
 offset_bottom = 283.225
 text = "Один раз на хід, коли отримує шкоду, отримує стак \"РАЖ\". Кожен стак ражу збільшує шкоду ВИПАДУ на 15(вогняна) шкоди. Після нанесення шкоди, стаки спадають. 
 "
+
+[node name="ConfirmOrderButton" type="Button" parent="." unique_id=2104501787]
+visible = false
+custom_minimum_size = Vector2(200, 50)
+layout_mode = 0
+offset_left = 1500.0
+offset_top = 1000.0
+offset_right = 1720.0
+offset_bottom = 1050.0
+rotation = 6.2871995
+text = "ГОТОВО"
