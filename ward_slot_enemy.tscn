@@ -8,12 +8,8 @@
 [ext_resource type="Texture2D" uid="uid://d1oqk5ocx1cpf" path="res://Основа/char/Вогонь/Майстер Оічі/Майстер Оічі Скіли.png" id="5_ta4al"]
 [ext_resource type="Texture2D" uid="uid://b53nwl1614kbs" path="res://Основа/Frame_1.png" id="6_1hm6i"]
 [ext_resource type="Texture2D" uid="uid://cn0c7lgws2l18" path="res://Основа/visual/status/горіння.png" id="7_wjgmy"]
-[ext_resource type="Script" uid="uid://cwt6ckm7he3wd" path="res://Основа/visual/HPBar/hp_anim.gd" id="8_6y6oh"]
 [ext_resource type="Texture2D" uid="uid://dv8u1vpuawkcr" path="res://Основа/visual/element_cards/status_card_frame.png" id="8_p8tk1"]
-[ext_resource type="Texture2D" uid="uid://drjmk8r6efd4p" path="res://Основа/visual/HPBar/HP0 gray.png" id="9_jsfmg"]
-[ext_resource type="Texture2D" uid="uid://kifeu21xldmd" path="res://Основа/visual/HPBar/HP red.png" id="10_pu4rq"]
-[ext_resource type="Texture2D" uid="uid://bq68b6j87mkxn" path="res://Основа/visual/HPBar/HP Green.png" id="11_qqi5i"]
-[ext_resource type="Texture2D" uid="uid://dvtb5oqolye3c" path="res://Основа/visual/HPBar/hp_frame.png" id="12_io57c"]
+[ext_resource type="PackedScene" uid="uid://cpcbc07o7o12j" path="res://circle_hp_bar.tscn" id="11_nlxfe"]
 [ext_resource type="PackedScene" uid="uid://3urukl8qraml" path="res://skill_button.tscn" id="13_aqxxb"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_e1i0d"]
@@ -71,6 +67,14 @@ offset_bottom = 588.0
 mouse_filter = 2
 texture = ExtResource("5_ta4al")
 expand_mode = 1
+
+[node name="Circle_hp_bar" parent="WardVisual" unique_id=670661717 instance=ExtResource("11_nlxfe")]
+layout_mode = 1
+offset_left = 49.917
+offset_top = 84.174
+offset_right = 441.88736
+offset_bottom = 602.73267
+scale = Vector2(0.79, 0.86)
 
 [node name="Frame" type="TextureRect" parent="WardVisual" unique_id=697249831]
 layout_mode = 0
@@ -159,50 +163,6 @@ layout_mode = 2
 texture = ExtResource("7_wjgmy")
 expand_mode = 1
 stretch_mode = 5
-
-[node name="HPAnim" type="Control" parent="." unique_id=1231230647]
-visible = false
-anchors_preset = 0
-offset_top = -530.0
-offset_right = 40.0
-offset_bottom = -490.0
-script = ExtResource("8_6y6oh")
-
-[node name="HP_background" type="TextureRect" parent="HPAnim" unique_id=183722365]
-layout_mode = 0
-offset_left = 20.0
-offset_top = 560.0
-offset_right = 400.0
-offset_bottom = 590.0
-texture = ExtResource("9_jsfmg")
-expand_mode = 1
-
-[node name="HP_delay" type="TextureProgressBar" parent="HPAnim" unique_id=1604469127]
-layout_mode = 0
-offset_left = 20.0
-offset_top = 560.0
-offset_right = 400.0
-offset_bottom = 590.0
-value = 65.0
-texture_progress = ExtResource("10_pu4rq")
-
-[node name="HP_current" type="TextureProgressBar" parent="HPAnim" unique_id=2139706394]
-layout_mode = 0
-offset_left = 20.0
-offset_top = 560.0
-offset_right = 400.0
-offset_bottom = 590.0
-value = 65.0
-texture_progress = ExtResource("11_qqi5i")
-
-[node name="HP_frame" type="TextureRect" parent="HPAnim" unique_id=241366816]
-layout_mode = 0
-offset_left = 4.0
-offset_top = 559.0
-offset_right = 403.0
-offset_bottom = 591.0
-texture = ExtResource("12_io57c")
-expand_mode = 1
 
 [node name="WardSkillButtons" type="Control" parent="." unique_id=1188095056]
 anchors_preset = 0
