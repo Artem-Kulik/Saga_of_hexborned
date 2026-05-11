@@ -1,0 +1,71 @@
+[gd_scene format=3 uid="uid://3urukl8qraml"]
+
+[ext_resource type="Script" uid="uid://d3fa17f4at6og" path="res://Основа/visual/Skill_list/skill_button.gd" id="1_xixp4"]
+[ext_resource type="Shader" uid="uid://dn6eey8nl3iyl" path="res://ward_slot.gdshader" id="2_u4o8d"]
+[ext_resource type="Shader" uid="uid://bq4ums7tmq24a" path="res://new_shader.gdshader" id="3_qgxld"]
+[ext_resource type="Texture2D" uid="uid://hiyyruhmbnet" path="res://Основа/portrait_mask_oval.png" id="4_22p8v"]
+[ext_resource type="Texture2D" uid="uid://bh5c0efo67o47" path="res://Основа/char/Вогонь/Майстер Оічі/E.png" id="5_5b0rb"]
+[ext_resource type="Texture2D" uid="uid://dqv2ctd0bxntm" path="res://Основа/visual/Skill_list/Skill_frame.png" id="6_jwkt4"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_u4o8d"]
+shader = ExtResource("2_u4o8d")
+shader_parameter/mask_texture = ExtResource("4_22p8v")
+shader_parameter/highlight_color = Color(0.2509804, 1, 0, 0.34509805)
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_oke10"]
+shader = ExtResource("3_qgxld")
+shader_parameter/mask_texture = ExtResource("4_22p8v")
+
+[node name="SkillButton" type="Control" unique_id=994800476]
+layout_mode = 3
+anchor_left = 0.039
+anchor_right = 0.039
+anchor_bottom = 0.002
+offset_left = -74.880005
+offset_top = 2.0
+offset_right = -54.880005
+offset_bottom = 19.84
+script = ExtResource("1_xixp4")
+
+[node name="Highlight" type="ColorRect" parent="." unique_id=1662953097]
+visible = false
+material = SubResource("ShaderMaterial_u4o8d")
+layout_mode = 0
+offset_left = -32.815
+offset_top = -35.91
+offset_right = 33.185
+offset_bottom = 32.435
+color = Color(0.2509804, 1, 0, 0.8862745)
+
+[node name="Icon" type="TextureRect" parent="." unique_id=1709806895]
+material = SubResource("ShaderMaterial_oke10")
+layout_mode = 0
+offset_left = -29.645
+offset_top = -35.27
+offset_right = 30.355
+offset_bottom = 30.73
+mouse_filter = 2
+texture = ExtResource("5_5b0rb")
+expand_mode = 1
+
+[node name="Frame" type="TextureRect" parent="." unique_id=1759105154]
+layout_mode = 0
+offset_left = -31.0
+offset_top = -27.0
+offset_right = 32.136093
+offset_bottom = 28.0
+mouse_filter = 2
+texture = ExtResource("6_jwkt4")
+expand_mode = 1
+
+[node name="Key" type="Label" parent="." unique_id=855121665]
+layout_mode = 0
+offset_left = -31.0
+offset_top = 4.0
+offset_right = -8.0
+offset_bottom = 34.0
+theme_override_font_sizes/font_size = 21
+text = "Q"
+
+[connection signal="mouse_entered" from="." to="." method="_on_mouse_entered"]
+[connection signal="mouse_exited" from="." to="." method="_on_mouse_exited"]
