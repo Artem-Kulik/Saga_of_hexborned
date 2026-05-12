@@ -9,6 +9,9 @@ var skill_q = null
 var skill_w = null
 var skill_e = null
 
+var target_arrow = null
+var target_arrow_scene := preload("res://Основа/animation/target_arrow.tscn")
+
 
 func setup(
 	team_value: String,
@@ -56,8 +59,42 @@ func _update_visibility() -> void:
 	skill_buttons.visible = true
 
 
+func show_target_arrow(from_position: Vector2) -> void:
+	if target_arrow:
+		target_arrow.queue_free()
+		target_arrow = null
+
+	target_arrow = target_arrow_scene.instantiate()
+
+	get_tree().current_scene.add_child(target_arrow)
+
+	if target_arrow.has_method("setup"):
+		target_arrow.setup(from_position)
+
+
+func hide_target_arrow() -> void:
+	if target_arrow:
+		target_arrow.queue_free()
+		target_arrow = null
+
+
 func _on_skill_pressed(skill_key: String) -> void:
 	if team != "ally":
 		return
+
+	var pressed_button = null
+
+	match skill_key:
+		"Q":
+			pressed_button = skill_q
+			AnimationCode.skill_pressed_animation(skill_q)
+
+		"W":
+			pressed_button = skill_w
+			AnimationCode.skill_pressed_animation(skill_w)
+
+		"E":
+			pressed_button = skill_e
+			AnimationCode.skill_pressed_animation(skill_e)
 
 	skill_selected.emit(skill_key)

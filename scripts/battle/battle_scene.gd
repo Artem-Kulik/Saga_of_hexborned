@@ -20,6 +20,9 @@ const BattleReorderManagerScript = preload("res://scripts/battle/battle_reorder_
 	$arena/BackGround/"Wards Enemy"/WardSlot_enemy3
 ]
 
+var target_arrow = null
+var target_arrow_scene := preload("res://Основа/animation/target_arrow.tscn")
+
 @onready var music_player: AudioStreamPlayer = $MusicPlayer
 
 var music_tracks: Array[AudioStream] = [
@@ -27,7 +30,6 @@ var music_tracks: Array[AudioStream] = [
 	preload("res://Основа/audio/main_theme/sound_2.mp3"),
 	preload("res://Основа/audio/main_theme/sound_3.mp3")
 ]
-
 
 var turn_number: int = 0
 var turn_manager
@@ -52,20 +54,53 @@ func _ready() -> void:
 	play_random_track()
 	music_player.finished.connect(_on_music_finished)
 
+
 func play_random_track() -> void:
 	if music_tracks.is_empty():
 		return
 
 	var random_track = music_tracks.pick_random()
-
 	music_player.stream = random_track
 	music_player.play()
-	
+
+
 func _on_music_finished() -> void:
 	play_random_track()
 
+
 func _process(_delta: float) -> void:
 	reorder_manager.process_drag()
+
+
+func show_target_arrow(from_position: Vector2) -> void:
+	hide_target_arrow()
+
+	target_arrow = target_arrow_scene.instantiate()
+	add_child(target_arrow)
+
+	if target_arrow.has_method("setup"):
+		target_arrow.setup(from_position)
+
+
+func hide_target_arrow() -> void:
+	if target_arrow:
+		target_arrow.queue_free()
+		target_arrow = null
+
+
+func _get_skill_button(ward, skill_key: String):
+	if ward == null:
+		return null
+
+	match skill_key:
+		"Q":
+			return ward.skill_q
+		"W":
+			return ward.skill_w
+		"E":
+			return ward.skill_e
+
+	return null
 
 
 func _input(event: InputEvent) -> void:
@@ -143,6 +178,8 @@ func _start_turn() -> void:
 	if battle_finished:
 		return
 
+	hide_target_arrow()
+
 	if battle_resolver.is_team_dead(ally_wards):
 		_finish_battle("ПОРАЗКА")
 		return
@@ -153,6 +190,7 @@ func _start_turn() -> void:
 	
 	turn_number += 1
 	battle_log.start_turn(turn_number)
+
 	selected_attacker = null
 	selected_skill = ""
 	waiting_for_target = false
@@ -199,6 +237,13 @@ func _on_skill_clicked(ward, skill_key: String) -> void:
 	selected_skill = skill_key
 	waiting_for_target = true
 
+	var pressed_button = _get_skill_button(ward, skill_key)
+
+	if pressed_button:
+		show_target_arrow(
+			pressed_button.global_position + pressed_button.size * 0.5
+		)
+
 	battle_log.add_entry("Обраний скіл: " + skill_key)
 	battle_log.add_entry("Обери ворога")
 
@@ -220,6 +265,9 @@ func _on_ward_clicked(ward) -> void:
 	if ward.is_dead:
 		battle_log.add_entry("Ціль вже мертва")
 		return
+
+	hide_target_arrow()
+
 	battle_resolver.attack(selected_attacker, ward, selected_skill)
 	_next_turn()
 
@@ -234,6 +282,8 @@ func _on_ward_drag_started(ward) -> void:
 func _enemy_attack(enemy_ward) -> void:
 	if battle_finished:
 		return
+
+	hide_target_arrow()
 
 	var alive_targets: Array = battle_resolver.get_alive_wards(ally_wards)
 
@@ -251,6 +301,8 @@ func _enemy_attack(enemy_ward) -> void:
 func _next_turn() -> void:
 	if battle_finished:
 		return
+
+	hide_target_arrow()
 
 	turn_manager.switch_team()
 	_start_turn()
@@ -288,6 +340,7 @@ func _finish_battle(result_text: String) -> void:
 	selected_attacker = null
 	selected_skill = ""
 
+	hide_target_arrow()
 	_clear_active_ward_visual()
 	_show_battle_result(result_text)
 

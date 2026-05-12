@@ -9,6 +9,19 @@ func setup(log_ref) -> void:
 
 func attack(attacker, target, skill_key: String = "Q") -> void:
 	var damage: int = attacker.skill_damage
+	var pressed_button = null
+
+	match skill_key:
+		"Q":
+			pressed_button = attacker.skill_q
+		"W":
+			pressed_button = attacker.skill_w
+		"E":
+			pressed_button = attacker.skill_e
+		
+	AnimationCode.skill_used_animation(pressed_button)
+	AnimationCode.skill_qwe_animation(pressed_button)
+
 
 	apply_damage(
 		attacker.name,

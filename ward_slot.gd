@@ -27,6 +27,7 @@ signal ward_drag_started(ward)
 @export var scale_speed: float = 0.06
 
 @onready var hitbox_oval: Control = $WardVisual/HitboxOval
+@onready var portrait = $WardVisual
 
 
 @export var death_frames: Array[Texture2D] = []
@@ -198,6 +199,8 @@ func take_damage(amount: int) -> void:
 		return
 
 	health.take_damage(amount)
+	AnimationCode.animation_take_damage(portrait)
+
 
 	print(name, " отримав ", amount, " шкоди. HP: ", current_hp)
 

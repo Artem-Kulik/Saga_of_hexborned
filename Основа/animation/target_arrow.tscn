@@ -1,0 +1,50 @@
+[gd_scene format=3 uid="uid://bw4g8sadqvtwr"]
+
+[ext_resource type="Script" uid="uid://cbbrrdp5ehq8m" path="res://target_arrow.gd" id="1_ee5y4"]
+[ext_resource type="Texture2D" uid="uid://swxyellqwcrx" path="res://Основа/animation/target_arrow/tile_arrow.png" id="2_hly5n"]
+[ext_resource type="Texture2D" uid="uid://rogsm5l2tnga" path="res://Основа/animation/target_arrow/0.png" id="2_jlw85"]
+[ext_resource type="Texture2D" uid="uid://y3gtdef1rmyl" path="res://Основа/animation/target_arrow/1.png" id="3_hly5n"]
+[ext_resource type="Texture2D" uid="uid://bcl3i2q4vkq23" path="res://Основа/animation/target_arrow/2.png" id="4_lh5am"]
+[ext_resource type="Texture2D" uid="uid://ccw8plbw5wndt" path="res://Основа/animation/target_arrow/3.png" id="5_vyuo6"]
+[ext_resource type="Texture2D" uid="uid://byrlr2xrw2ta3" path="res://Основа/animation/target_arrow/4.png" id="6_mgg0l"]
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_ee5y4"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("2_jlw85")
+}, {
+"duration": 1.0,
+"texture": ExtResource("3_hly5n")
+}, {
+"duration": 1.0,
+"texture": ExtResource("4_lh5am")
+}, {
+"duration": 1.0,
+"texture": ExtResource("5_vyuo6")
+}, {
+"duration": 1.0,
+"texture": ExtResource("6_mgg0l")
+}],
+"loop": true,
+"name": &"default",
+"speed": 5.0
+}]
+
+[node name="TargetArrow" type="Node2D" unique_id=889344542]
+script = ExtResource("1_ee5y4")
+scroll_speed = 30.0
+
+[node name="Body" type="Sprite2D" parent="." unique_id=1963325476]
+texture_repeat = 2
+texture = ExtResource("2_hly5n")
+centered = false
+region_enabled = true
+region_rect = Rect2(0, -14.622, 283.85, 1508.427)
+
+[node name="Head" type="AnimatedSprite2D" parent="." unique_id=9648972]
+position = Vector2(0, 32.067474)
+scale = Vector2(0.08878092, 0.074871115)
+sprite_frames = SubResource("SpriteFrames_ee5y4")
+frame = 4
+frame_progress = 0.16735527

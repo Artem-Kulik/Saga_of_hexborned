@@ -22,6 +22,7 @@ signal skill_pressed(skill_key: String)
 var base_scale: Vector2
 var tween: Tween
 var hovering_oval: bool = false
+var base_modulate: Color
 
 
 func _ready() -> void:
@@ -36,6 +37,8 @@ func _ready() -> void:
 	for child in get_children():
 		if child is Control and child != highlight:
 			child.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	
+	base_modulate = modulate
 
 
 func _process(_delta: float) -> void:
