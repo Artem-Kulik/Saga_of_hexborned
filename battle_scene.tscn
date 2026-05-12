@@ -2,9 +2,9 @@
 
 [ext_resource type="Script" uid="uid://buahsjnk7qca3" path="res://scripts/battle/battle_scene.gd" id="1_3vhyp"]
 [ext_resource type="Texture2D" uid="uid://blsthrdyyqviy" path="res://Основа/background_floor_stone.jpg" id="1_fw8re"]
-[ext_resource type="PackedScene" uid="uid://rv7s3v87xlkn" path="res://ward_slot.tscn" id="2_r5l0u"]
+[ext_resource type="PackedScene" uid="uid://rv7s3v87xlkn" path="res://ward_slot.tscn.tscn" id="2_r5l0u"]
 [ext_resource type="Script" uid="uid://cciret7wp72cy" path="res://Основа/visual/Skill_list/skill_panel.gd" id="3_5joda"]
-[ext_resource type="PackedScene" uid="uid://c4npluysdah3r" path="res://ward_slot_enemy.tscn" id="3_x76d4"]
+[ext_resource type="PackedScene" uid="uid://c4npluysdah3r" path="res://ward_slot_enemy.tscn.tscn" id="3_x76d4"]
 [ext_resource type="Texture2D" uid="uid://lcwkh5yo4ro6" path="res://Основа/visual/Skill_list/рамка SkillPanel.png" id="4_m1vkf"]
 [ext_resource type="Texture2D" uid="uid://d1oqk5ocx1cpf" path="res://Основа/char/Вогонь/Майстер Оічі/Майстер Оічі Скіли.png" id="5_715r7"]
 [ext_resource type="Texture2D" uid="uid://ccusj82vd0uds" path="res://Основа/visual/Skill_list/Skill_background.png" id="6_x76d4"]
@@ -74,7 +74,6 @@ layout_mode = 2
 
 [node name="WardSlot3" parent="arena/BackGround/Wards Ally" unique_id=609565983 instance=ExtResource("2_r5l0u")]
 layout_mode = 2
-oval_width = 350.0
 
 [node name="Wards Enemy" type="HBoxContainer" parent="arena/BackGround" unique_id=1637008145]
 layout_mode = 1
@@ -417,3 +416,6 @@ theme_override_colors/font_color = Color(0.09366939, 0.09366938, 0.09366938, 1)
 theme_override_fonts/font = ExtResource("7_wy2mt")
 theme_override_font_sizes/font_size = 39
 text = "Battle Log"
+
+[node name="MusicPlayer" type="AudioStreamPlayer" parent="." unique_id=277861806]
+volume_db = -15.0

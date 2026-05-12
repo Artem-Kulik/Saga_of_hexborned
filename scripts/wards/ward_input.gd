@@ -7,10 +7,7 @@ signal hover_exited
 
 var owner_control: Control
 var skill_buttons: Control
-
-var oval_width: float = 315.0
-var oval_height: float = 420.0
-var oval_offset: Vector2 = Vector2(-60, -40)
+var hitbox_oval: Control
 
 var hovering_oval: bool = false
 
@@ -18,32 +15,31 @@ var hovering_oval: bool = false
 func setup(
 	owner_ref: Control,
 	skill_buttons_ref: Control,
-	oval_width_value: float,
-	oval_height_value: float,
-	oval_offset_value: Vector2
+	hitbox_oval_ref: Control
 ) -> void:
 	owner_control = owner_ref
 	skill_buttons = skill_buttons_ref
-
-	oval_width = oval_width_value
-	oval_height = oval_height_value
-	oval_offset = oval_offset_value
+	hitbox_oval = hitbox_oval_ref
 
 
 func process_hover() -> void:
 	if owner_control == null:
 		return
 
-	if hovering_oval:
-		var local_mouse_pos: Vector2 = owner_control.get_local_mouse_position()
+	if hitbox_oval == null:
+		return
 
-		if not _is_inside_oval(local_mouse_pos):
+	if hovering_oval:
+		if not _is_inside_hitbox():
 			hovering_oval = false
 			hover_exited.emit()
 
 
 func handle_gui_input(event: InputEvent) -> void:
 	if owner_control == null:
+		return
+
+	if hitbox_oval == null:
 		return
 
 	if event is InputEventMouseMotion:
@@ -53,18 +49,22 @@ func handle_gui_input(event: InputEvent) -> void:
 				hover_exited.emit()
 			return
 
-		var inside_oval: bool = _is_inside_oval(event.position)
+		var inside_hitbox: bool = _is_inside_hitbox()
 
-		if inside_oval and not hovering_oval:
+		if inside_hitbox and not hovering_oval:
 			hovering_oval = true
 			hover_entered.emit()
-		elif not inside_oval and hovering_oval:
+
+		elif not inside_hitbox and hovering_oval:
 			hovering_oval = false
 			hover_exited.emit()
 
 	elif event is InputEventMouseButton:
 		if event.button_index == MOUSE_BUTTON_LEFT and event.pressed:
 			if _is_mouse_over_skills():
+				return
+
+			if not _is_inside_hitbox():
 				return
 
 			ward_clicked.emit()
@@ -77,12 +77,18 @@ func handle_mouse_exit() -> void:
 		hover_exited.emit()
 
 
-func _is_inside_oval(local_mouse_pos: Vector2) -> bool:
-	var center: Vector2 = owner_control.size / 2.0 + oval_offset
-	var p: Vector2 = local_mouse_pos - center
+func _is_inside_hitbox() -> bool:
+	var local_mouse_pos: Vector2 = hitbox_oval.get_local_mouse_position()
 
-	var rx: float = oval_width / 2.0
-	var ry: float = oval_height / 2.0
+	var center: Vector2 = hitbox_oval.size / 2.0
+
+	var rx: float = hitbox_oval.size.x / 2.0
+	var ry: float = hitbox_oval.size.y / 2.0
+
+	if rx <= 0.0 or ry <= 0.0:
+		return false
+
+	var p: Vector2 = local_mouse_pos - center
 
 	return ((p.x * p.x) / (rx * rx) + (p.y * p.y) / (ry * ry)) <= 1.0
 

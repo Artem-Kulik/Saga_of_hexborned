@@ -19,6 +19,16 @@ const BattleReorderManagerScript = preload("res://scripts/battle/battle_reorder_
 	$arena/BackGround/"Wards Enemy"/WardSlot_enemy2,
 	$arena/BackGround/"Wards Enemy"/WardSlot_enemy3
 ]
+
+@onready var music_player: AudioStreamPlayer = $MusicPlayer
+
+var music_tracks: Array[AudioStream] = [
+	preload("res://Основа/audio/main_theme/sound_1.mp3"),
+	preload("res://Основа/audio/main_theme/sound_2.mp3"),
+	preload("res://Основа/audio/main_theme/sound_3.mp3")
+]
+
+
 var turn_number: int = 0
 var turn_manager
 var battle_log
@@ -39,7 +49,20 @@ func _ready() -> void:
 	_create_battle_systems()
 	_connect_wards()
 	_roll_first_turn()
+	play_random_track()
+	music_player.finished.connect(_on_music_finished)
 
+func play_random_track() -> void:
+	if music_tracks.is_empty():
+		return
+
+	var random_track = music_tracks.pick_random()
+
+	music_player.stream = random_track
+	music_player.play()
+	
+func _on_music_finished() -> void:
+	play_random_track()
 
 func _process(_delta: float) -> void:
 	reorder_manager.process_drag()

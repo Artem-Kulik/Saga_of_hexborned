@@ -19,13 +19,15 @@ signal ward_drag_started(ward)
 @export var debug_oval_color: Color = Color.RED
 @export var debug_oval_width: float = 3.0
 
-@export var oval_width: float = 315.0
-@export var oval_height: float = 420.0
-@export var oval_offset: Vector2 = Vector2(-60, -40)
+@onready var death_sound: AudioStreamPlayer = $DeathSound
+
 
 @export var hover_scale: Vector2 = Vector2(1.015, 1.015)
 @export var active_scale: Vector2 = Vector2(1.04, 1.04)
 @export var scale_speed: float = 0.06
+
+@onready var hitbox_oval: Control = $WardVisual/HitboxOval
+
 
 @export var death_frames: Array[Texture2D] = []
 @export var death_shake_strength: float = 6.0
@@ -41,6 +43,9 @@ signal ward_drag_started(ward)
 @onready var skill_q = get_node_or_null("WardSkillButtons/SkillButton_Q")
 @onready var skill_w = get_node_or_null("WardSkillButtons/SkillButton_W")
 @onready var skill_e = get_node_or_null("WardSkillButtons/SkillButton_E")
+
+@export var show_oval_preview: bool = true
+@export var preview_color: Color = Color(1, 0, 0, 0.25)
 
 var current_hp: int
 var is_dead: bool = false
@@ -79,6 +84,7 @@ func _process(_delta: float) -> void:
 	if input_controller:
 		input_controller.process_hover()
 
+	queue_redraw()
 
 func _gui_input(event: InputEvent) -> void:
 	if is_dead:
@@ -91,26 +97,6 @@ func _gui_input(event: InputEvent) -> void:
 func _notification(what: int) -> void:
 	if what == NOTIFICATION_MOUSE_EXIT and input_controller:
 		input_controller.handle_mouse_exit()
-
-
-func _draw() -> void:
-	if not debug_draw_oval:
-		return
-
-	var points: PackedVector2Array = PackedVector2Array()
-	var center: Vector2 = size / 2.0 + oval_offset
-	var rx: float = oval_width / 2.0
-	var ry: float = oval_height / 2.0
-	var steps: int = 96
-
-	for i in range(steps + 1):
-		var t: float = (float(i) / float(steps)) * TAU
-		var x: float = center.x + cos(t) * rx
-		var y: float = center.y + sin(t) * ry
-		points.append(Vector2(x, y))
-
-	draw_polyline(points, debug_oval_color, debug_oval_width)
-
 
 func _setup_mouse_filters() -> void:
 	mouse_filter = Control.MOUSE_FILTER_STOP
@@ -144,13 +130,12 @@ func _create_systems() -> void:
 
 	input_controller = WardInputScript.new()
 	add_child(input_controller)
+
 	input_controller.setup(
-		self,
-		skill_buttons,
-		oval_width,
-		oval_height,
-		oval_offset
-	)
+	self,
+	skill_buttons,
+	hitbox_oval
+)
 	input_controller.ward_clicked.connect(_on_input_ward_clicked)
 	input_controller.ward_drag_started.connect(_on_input_ward_drag_started)
 	input_controller.hover_entered.connect(_on_hover_entered)
@@ -222,6 +207,8 @@ func die() -> void:
 		return
 
 	is_dead = true
+	if death_sound:
+		death_sound.play()
 	current_hp = 0
 	mouse_filter = Control.MOUSE_FILTER_IGNORE
 
@@ -232,7 +219,6 @@ func die() -> void:
 
 	if hp_bar and hp_bar.has_method("set_hp"):
 		hp_bar.set_hp(0, true)
-
 	await play_anim_death()
 	await dissolve_death()
 

@@ -16,8 +16,9 @@
 [ext_resource type="Texture2D" uid="uid://cn0c7lgws2l18" path="res://Основа/visual/status/горіння.png" id="7_wjgmy"]
 [ext_resource type="Texture2D" uid="uid://b0gsup6se3cjl" path="res://Основа/animation/death/death_6.png" id="8_e1i0d"]
 [ext_resource type="Texture2D" uid="uid://dv8u1vpuawkcr" path="res://Основа/visual/element_cards/status_card_frame.png" id="8_p8tk1"]
-[ext_resource type="PackedScene" uid="uid://cpcbc07o7o12j" path="res://circle_hp_bar.tscn" id="11_nlxfe"]
+[ext_resource type="PackedScene" uid="uid://bqa8dc6msvca0" path="res://circle_hp_bar.tscn" id="11_nlxfe"]
 [ext_resource type="PackedScene" uid="uid://3urukl8qraml" path="res://skill_button.tscn" id="13_aqxxb"]
+[ext_resource type="AudioStream" uid="uid://bnbb1hlnor0i5" path="res://Основа/audio/audio_effects/death_effect.mp3" id="19_xdpea"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_e1i0d"]
 shader = ExtResource("2_aqxxb")
@@ -38,7 +39,6 @@ anchors_preset = 0
 offset_right = 40.0
 offset_bottom = 40.0
 script = ExtResource("1_3437y")
-oval_offset = Vector2(0, 30)
 death_frames = Array[Texture2D]([ExtResource("2_wjgmy"), ExtResource("3_6y6oh"), ExtResource("4_jsfmg"), ExtResource("5_pu4rq"), ExtResource("6_qqi5i"), ExtResource("7_io57c"), ExtResource("8_e1i0d")])
 
 [node name="card_element" type="TextureRect" parent="." unique_id=1013460604]
@@ -98,6 +98,14 @@ offset_left = 28.37499
 offset_top = 69.92498
 offset_right = 389.62494
 offset_bottom = 557.4249
+
+[node name="HitboxOval" type="Control" parent="WardVisual" unique_id=3711684]
+anchors_preset = 0
+offset_left = 50.57471
+offset_top = 98.85057
+offset_right = 365.5747
+offset_bottom = 518.8506
+mouse_filter = 2
 
 [node name="Status_frame" type="TextureRect" parent="." unique_id=1569687526]
 layout_mode = 0
@@ -214,6 +222,11 @@ offset_top = 328.312
 offset_right = -6.558445
 offset_bottom = 372.98737
 skill_key = "E"
+
+[node name="DeathSound" type="AudioStreamPlayer" parent="." unique_id=2088507009]
+stream = ExtResource("19_xdpea")
+volume_db = -10.0
+pitch_scale = 0.93
 
 [connection signal="mouse_entered" from="." to="." method="_on_mouse_entered"]
 [connection signal="mouse_exited" from="." to="." method="_on_mouse_exited"]
