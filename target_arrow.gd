@@ -50,6 +50,7 @@ func _process(delta: float) -> void:
 	var tex_h: float = body.texture.get_height()
 
 	var static_tex_w: float = body_static.texture.get_width()
+	@warning_ignore("unused_variable")
 	var static_tex_h: float = body_static.texture.get_height()
 
 	var body_length: float = max(distance - head_tip_offset - body_end_gap, 1.0)

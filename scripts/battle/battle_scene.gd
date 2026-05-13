@@ -20,10 +20,22 @@ const BattleReorderManagerScript = preload("res://scripts/battle/battle_reorder_
 	$arena/BackGround/"Wards Enemy"/WardSlot_enemy3
 ]
 
+@onready var music_player: AudioStreamPlayer = $MusicPlayer
+
+@onready var end_game_overlay: Control = $EndGameOverlay
+@onready var background_overlay: TextureRect = $EndGameOverlay/BackGroundOverlay
+
+@onready var win_title: Control = $EndGameOverlay/CenterContainer/WinTitle
+@onready var loose_title: Control = $EndGameOverlay/CenterContainer/LooseTitle
+@onready var victory_particles: GPUParticles2D = $EndGameOverlay/CenterContainer/VictoryParticles
+@onready var defeat_particles: GPUParticles2D = $EndGameOverlay/CenterContainer/DefeatParticles
+@onready var defeat_smoke: GPUParticles2D = $EndGameOverlay/CenterContainer/DefeatSmoke
+@onready var defeat_ash: GPUParticles2D = $EndGameOverlay/CenterContainer/DefeatAsh
+
 var target_arrow = null
 var target_arrow_scene := preload("res://Основа/animation/target_arrow.tscn")
-
-@onready var music_player: AudioStreamPlayer = $MusicPlayer
+var end_screen_tween: Tween
+var overlay_tween: Tween
 
 var music_tracks: Array[AudioStream] = [
 	preload("res://Основа/audio/main_theme/sound_1.mp3"),
@@ -50,9 +62,74 @@ var battle_started: bool = false
 func _ready() -> void:
 	_create_battle_systems()
 	_connect_wards()
+	_setup_end_game_overlay()
 	_roll_first_turn()
 	play_random_track()
 	music_player.finished.connect(_on_music_finished)
+func _fade_in_end_screen() -> void:
+	end_game_overlay.visible = true
+	end_game_overlay.modulate.a = 0.0
+
+	if end_screen_tween:
+		end_screen_tween.kill()
+
+	end_screen_tween = create_tween()
+	end_screen_tween.tween_property(
+		end_game_overlay,
+		"modulate:a",
+		1.0,
+		0.45
+	)
+
+func _setup_end_game_overlay() -> void:
+	end_game_overlay.visible = false
+
+	win_title.visible = false
+	loose_title.visible = false
+
+	victory_particles.emitting = false
+	defeat_particles.emitting = false
+	defeat_smoke.emitting = false
+	defeat_ash.emitting = false
+
+
+func show_victory_screen() -> void:
+	print("SHOW VICTORY SCREEN")
+
+	_fade_in_end_screen()
+	background_overlay.visible = true
+	win_title.visible = true
+	loose_title.visible = false
+
+	victory_particles.visible = true
+	victory_particles.emitting = true
+
+	defeat_particles.visible = false
+	defeat_particles.emitting = false
+	defeat_smoke.visible = false
+	defeat_smoke.emitting = false
+	defeat_ash.visible = false
+	defeat_ash.emitting = false
+
+func show_defeat_screen() -> void:
+	print("SHOW DEFEAT SCREEN")
+
+	_fade_in_end_screen()
+	background_overlay.visible = true
+	win_title.visible = false
+	loose_title.visible = true
+
+	victory_particles.visible = false
+	victory_particles.emitting = false
+
+	defeat_particles.visible = true
+	defeat_particles.emitting = true
+	defeat_smoke.visible = true
+	defeat_smoke.emitting = true
+	defeat_ash.visible = true
+	defeat_ash.emitting = true
+
+	background_overlay.modulate.a = 0.9
 
 
 func play_random_track() -> void:
@@ -226,6 +303,7 @@ func _start_turn() -> void:
 	else:
 		battle_log.add_entry("Обери Q/W/E")
 
+
 func _on_skill_clicked(ward, skill_key: String) -> void:
 	if not battle_started:
 		return
@@ -278,20 +356,21 @@ func _on_ward_clicked(ward) -> void:
 	waiting_for_target = false
 
 	await battle_resolver.attack(
-	selected_attacker,
-	ward,
-	selected_skill
+		selected_attacker,
+		ward,
+		selected_skill
 	)
 
 	if battle_resolver.is_team_dead(enemy_wards):
-		_finish_battle("ally")
+		_finish_battle("ПЕРЕМОГА")
 		return
 
 	if battle_resolver.is_team_dead(ally_wards):
-		_finish_battle("enemy")
+		_finish_battle("ПОРАЗКА")
 		return
 
 	_next_turn()
+
 
 func _on_ward_drag_started(ward) -> void:
 	if battle_started:
@@ -338,6 +417,7 @@ func _enemy_attack(enemy_ward) -> void:
 
 	_next_turn()
 
+
 func _next_turn() -> void:
 	if battle_finished:
 		return
@@ -346,6 +426,7 @@ func _next_turn() -> void:
 
 	turn_manager.switch_team()
 	_start_turn()
+
 
 func _update_active_ward_visual() -> void:
 	for ward in ally_wards:
@@ -382,6 +463,11 @@ func _finish_battle(result_text: String) -> void:
 	hide_target_arrow()
 	_clear_active_ward_visual()
 	_show_battle_result(result_text)
+
+	if result_text == "ПЕРЕМОГА":
+		show_victory_screen()
+	elif result_text == "ПОРАЗКА":
+		show_defeat_screen()
 
 
 func _show_battle_result(result_text: String) -> void:
