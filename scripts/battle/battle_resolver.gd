@@ -8,6 +8,9 @@ func setup(log_ref) -> void:
 
 
 func attack(attacker, target, skill_key: String = "Q") -> void:
+	if attacker == null or target == null:
+		return
+
 	var damage: int = attacker.skill_damage
 	var pressed_button = null
 
@@ -18,14 +21,13 @@ func attack(attacker, target, skill_key: String = "Q") -> void:
 			pressed_button = attacker.skill_w
 		"E":
 			pressed_button = attacker.skill_e
-		
-	AnimationCode.skill_used_animation(pressed_button)
-	AnimationCode.skill_qwe_animation(pressed_button)
 
+	if pressed_button != null:
+		await AnimationCode.skill_used_animation(pressed_button)
+		AnimationCode.skill_qwe_animation(pressed_button)
 
-	apply_damage(
-		attacker.name,
-		attacker.team,
+	await apply_damage(
+		attacker,
 		target,
 		damage,
 		skill_key,
@@ -35,18 +37,35 @@ func attack(attacker, target, skill_key: String = "Q") -> void:
 
 
 func apply_damage(
-	source_name: String,
-	source_team: String,
+	source,
 	target,
 	damage: int,
 	skill_name: String = "-",
 	status_text: String = "-",
 	damage_source: String = "effect"
 ) -> void:
+	if target == null:
+		return
+
+	var source_name: String = "Невідомо"
+	var source_team: String = "-"
+
+	if source != null:
+		source_name = source.name
+		source_team = source.team
+
 	var hp_before: int = target.current_hp
 	var max_hp: int = target.max_hp
 
-	target.take_damage(damage)
+	if damage_source == "skill" and source != null:
+		await AnimationCode.skill_hit_animation(
+			source,
+			target,
+			func():
+				target.take_damage(damage)
+		)
+	else:
+		target.take_damage(damage)
 
 	var hp_after: int = target.current_hp
 
@@ -92,9 +111,8 @@ func is_team_dead(wards: Array) -> bool:
 func kill_team(wards: Array) -> void:
 	for ward in wards:
 		if not ward.is_dead:
-			apply_damage(
-				"Здатися",
-				"ally",
+			await apply_damage(
+				null,
 				ward,
 				ward.current_hp,
 				"-",
