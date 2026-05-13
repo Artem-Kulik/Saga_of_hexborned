@@ -2,9 +2,9 @@
 
 [ext_resource type="Script" uid="uid://buahsjnk7qca3" path="res://scripts/battle/battle_scene.gd" id="1_3vhyp"]
 [ext_resource type="Texture2D" uid="uid://blsthrdyyqviy" path="res://Основа/background_floor_stone.jpg" id="1_fw8re"]
-[ext_resource type="PackedScene" uid="uid://rv7s3v87xlkn" path="res://ward_slot.tscn.tscn" id="2_r5l0u"]
+[ext_resource type="PackedScene" uid="uid://rv7s3v87xlkn" path="res://ward_slot.tscn" id="2_r5l0u"]
 [ext_resource type="Script" uid="uid://cciret7wp72cy" path="res://Основа/visual/Skill_list/skill_panel.gd" id="3_5joda"]
-[ext_resource type="PackedScene" uid="uid://c4npluysdah3r" path="res://ward_slot_enemy.tscn.tscn" id="3_x76d4"]
+[ext_resource type="PackedScene" uid="uid://c4npluysdah3r" path="res://ward_slot_enemy.tscn" id="3_x76d4"]
 [ext_resource type="Texture2D" uid="uid://lcwkh5yo4ro6" path="res://Основа/visual/Skill_list/рамка SkillPanel.png" id="4_m1vkf"]
 [ext_resource type="Texture2D" uid="uid://d1oqk5ocx1cpf" path="res://Основа/char/Вогонь/Майстер Оічі/Майстер Оічі Скіли.png" id="5_715r7"]
 [ext_resource type="Texture2D" uid="uid://ccusj82vd0uds" path="res://Основа/visual/Skill_list/Skill_background.png" id="6_x76d4"]
@@ -13,9 +13,9 @@
 [ext_resource type="Texture2D" uid="uid://dgyo7cggywhbb" path="res://Основа/char/Вогонь/Майстер Оічі/W.png" id="8_rx3wi"]
 [ext_resource type="Texture2D" uid="uid://bh5c0efo67o47" path="res://Основа/char/Вогонь/Майстер Оічі/E.png" id="9_f7bhn"]
 [ext_resource type="Texture2D" uid="uid://bwftmu2tx2chj" path="res://Основа/char/Вогонь/Майстер Оічі/P.png" id="10_wy2mt"]
-[ext_resource type="Texture2D" uid="uid://cq68ibjgv6v2y" path="res://Основа/visual/sigils/sigil_fire.png" id="11_f7bhn"]
 [ext_resource type="Shader" uid="uid://bq4ums7tmq24a" path="res://new_shader.gdshader" id="12_wy2mt"]
 [ext_resource type="Texture2D" uid="uid://hiyyruhmbnet" path="res://Основа/portrait_mask_oval.png" id="13_3vhyp"]
+[ext_resource type="Texture2D" uid="uid://b801le688h3ov" path="res://Основа/visual/sigils/sigil_air.png" id="13_67y2d"]
 [ext_resource type="Texture2D" uid="uid://bfji65fvo0scu" path="res://Основа/visual/Skill_list/рамка BattleLog.png" id="17_67y2d"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_67y2d"]
@@ -309,12 +309,12 @@ layout_mode = 2
 
 [node name="Frame_pas" type="TextureRect" parent="SkillPanel/Content/SkillList/Skill_P" unique_id=684439426]
 layout_mode = 0
-offset_left = 122.325
-offset_top = -66.225
-offset_right = 223.735
-offset_bottom = 83.775
+offset_left = 113.00001
+offset_top = -37.999996
+offset_right = 226.62839
+offset_bottom = 92.8078
 scale = Vector2(1.365, 1.365)
-texture = ExtResource("11_f7bhn")
+texture = ExtResource("13_67y2d")
 expand_mode = 1
 
 [node name="Icon_pas" type="TextureRect" parent="SkillPanel/Content/SkillList/Skill_P" unique_id=721957460]

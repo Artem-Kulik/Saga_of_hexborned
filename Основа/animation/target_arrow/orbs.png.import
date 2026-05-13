@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://bh5c0efo67o47"
-path="res://.godot/imported/E.png-da65043ad56c756ae5043e9bcecb91cc.ctex"
+uid="uid://dxnv4p8h8ca84"
+path="res://.godot/imported/orbs.png-97b28fa9f4f74859a156e148dcc2bc68.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://Основа/char/Вогонь/Майстер Оічі/E.png"
-dest_files=["res://.godot/imported/E.png-da65043ad56c756ae5043e9bcecb91cc.ctex"]
+source_file="res://Основа/animation/target_arrow/orbs.png"
+dest_files=["res://.godot/imported/orbs.png-97b28fa9f4f74859a156e148dcc2bc68.ctex"]
 
 [params]
 

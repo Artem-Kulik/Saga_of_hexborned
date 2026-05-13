@@ -37,23 +37,26 @@ func get_next_alive_ward(ally_wards: Array, enemy_wards: Array):
 
 
 func _get_next_alive_from_team(wards: Array, is_ally: bool):
-	var start_index: int
+	if wards.is_empty():
+		return null
 
-	if is_ally:
-		start_index = ally_turn_index
-	else:
-		start_index = enemy_turn_index
+	var start_index: int = ally_turn_index if is_ally else enemy_turn_index
 
 	for i in range(wards.size()):
 		var check_index: int = (start_index + i) % wards.size()
 		var ward = wards[check_index]
 
-		if not ward.is_dead:
-			if is_ally:
-				ally_turn_index = (check_index + 1) % wards.size()
-			else:
-				enemy_turn_index = (check_index + 1) % wards.size()
+		if ward == null:
+			continue
 
-			return ward
+		if ward.is_dead:
+			continue
+
+		if is_ally:
+			ally_turn_index = (check_index + 1) % wards.size()
+		else:
+			enemy_turn_index = (check_index + 1) % wards.size()
+
+		return ward
 
 	return null

@@ -201,6 +201,10 @@ func _start_turn() -> void:
 		_next_turn()
 		return
 
+	if current_ward.is_dead:
+		_next_turn()
+		return
+
 	_update_active_ward_visual()
 
 	battle_log.add_empty_line()
@@ -214,10 +218,13 @@ func _start_turn() -> void:
 		if battle_finished:
 			return
 
-		_enemy_attack(current_ward)
+		if current_ward == null or current_ward.is_dead:
+			_next_turn()
+			return
+
+		await _enemy_attack(current_ward)
 	else:
 		battle_log.add_entry("Обери Q/W/E")
-
 
 func _on_skill_clicked(ward, skill_key: String) -> void:
 	if not battle_started:
@@ -268,9 +275,23 @@ func _on_ward_clicked(ward) -> void:
 
 	hide_target_arrow()
 
-	battle_resolver.attack(selected_attacker, ward, selected_skill)
-	_next_turn()
+	waiting_for_target = false
 
+	await battle_resolver.attack(
+	selected_attacker,
+	ward,
+	selected_skill
+	)
+
+	if battle_resolver.is_team_dead(enemy_wards):
+		_finish_battle("ally")
+		return
+
+	if battle_resolver.is_team_dead(ally_wards):
+		_finish_battle("enemy")
+		return
+
+	_next_turn()
 
 func _on_ward_drag_started(ward) -> void:
 	if battle_started:
@@ -281,6 +302,10 @@ func _on_ward_drag_started(ward) -> void:
 
 func _enemy_attack(enemy_ward) -> void:
 	if battle_finished:
+		return
+
+	if enemy_ward == null or enemy_ward.is_dead:
+		_next_turn()
 		return
 
 	hide_target_arrow()
@@ -294,9 +319,24 @@ func _enemy_attack(enemy_ward) -> void:
 	var target = alive_targets.pick_random()
 	var random_skill: String = ["Q", "W", "E"].pick_random()
 
-	battle_resolver.attack(enemy_ward, target, random_skill)
-	_next_turn()
+	await battle_resolver.attack(
+		enemy_ward,
+		target,
+		random_skill
+	)
 
+	if battle_finished:
+		return
+
+	if battle_resolver.is_team_dead(ally_wards):
+		_finish_battle("ПОРАЗКА")
+		return
+
+	if battle_resolver.is_team_dead(enemy_wards):
+		_finish_battle("ПЕРЕМОГА")
+		return
+
+	_next_turn()
 
 func _next_turn() -> void:
 	if battle_finished:
@@ -306,7 +346,6 @@ func _next_turn() -> void:
 
 	turn_manager.switch_team()
 	_start_turn()
-
 
 func _update_active_ward_visual() -> void:
 	for ward in ally_wards:
