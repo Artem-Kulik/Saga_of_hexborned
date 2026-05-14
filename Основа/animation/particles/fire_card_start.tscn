@@ -28,6 +28,41 @@
 [ext_resource type="Texture2D" uid="uid://er417jo5nih1" path="res://Основа/visual/element_cards/card_start_animation/fire/21.png" id="24_lqhp2"]
 [ext_resource type="Texture2D" uid="uid://cgr0t8xjp6s5j" path="res://Основа/visual/element_cards/card_start_animation/fire/22.png" id="25_6c7v0"]
 [ext_resource type="Texture2D" uid="uid://1pt57kc0uxio" path="res://Основа/visual/element_cards/card_start_animation/fire/23.png" id="26_lk1dd"]
+[ext_resource type="Texture2D" uid="uid://dyw46ofgmp6a2" path="res://Основа/visual/element_cards/card_water.png" id="29_yqa72"]
+[ext_resource type="Texture2D" uid="uid://dm2m3ibcp31av" path="res://Основа/visual/element_cards/card_start_animation/water/0.png" id="30_gtjlh"]
+[ext_resource type="Texture2D" uid="uid://d0kjmpge7c1s" path="res://Основа/visual/element_cards/card_start_animation/water/1.png" id="31_jx325"]
+[ext_resource type="Texture2D" uid="uid://wid6kb8xdwne" path="res://Основа/visual/element_cards/card_start_animation/water/2.png" id="32_65e1m"]
+[ext_resource type="Texture2D" uid="uid://bdjlykpo5ll1h" path="res://Основа/visual/element_cards/card_start_animation/water/3.png" id="33_m6onp"]
+[ext_resource type="Texture2D" uid="uid://bw3mkcbg0ub2b" path="res://Основа/visual/element_cards/card_start_animation/water/4.png" id="34_wdtjv"]
+[ext_resource type="Texture2D" uid="uid://bsmn11ymhxwqk" path="res://Основа/visual/element_cards/card_start_animation/water/5.png" id="35_a5yvn"]
+[ext_resource type="Texture2D" uid="uid://tnxwsyi41fae" path="res://Основа/visual/element_cards/card_start_animation/water/6.png" id="36_lnpph"]
+[ext_resource type="Texture2D" uid="uid://dlqjx3l6mmoh8" path="res://Основа/visual/element_cards/card_start_animation/water/7.png" id="37_4ulpo"]
+[ext_resource type="Texture2D" uid="uid://b6ex8o3ia3k4q" path="res://Основа/visual/element_cards/card_start_animation/water/8.png" id="38_16e6f"]
+[ext_resource type="Texture2D" uid="uid://b6kdlonodc3ku" path="res://Основа/visual/element_cards/card_start_animation/water/9.png" id="39_aaask"]
+[ext_resource type="Texture2D" uid="uid://dmkkfhqeno6ae" path="res://Основа/visual/element_cards/card_start_animation/water/10.png" id="40_vtclj"]
+[ext_resource type="Texture2D" uid="uid://blpgf2jka4586" path="res://Основа/visual/element_cards/card_start_animation/water/12.png" id="41_xteq3"]
+[ext_resource type="Texture2D" uid="uid://bl6ya72tew28o" path="res://Основа/visual/element_cards/card_start_animation/water/13.png" id="42_vcfcq"]
+[ext_resource type="Texture2D" uid="uid://grrq7hvio2pn" path="res://Основа/visual/element_cards/card_start_animation/water/14.png" id="43_k8avt"]
+[ext_resource type="Texture2D" uid="uid://ikhhsxxhsaj3" path="res://Основа/visual/element_cards/card_start_animation/water/15.png" id="44_fd84l"]
+[ext_resource type="Texture2D" uid="uid://blvsxlamljmnd" path="res://Основа/visual/element_cards/card_start_animation/water/16.png" id="45_nbv76"]
+[ext_resource type="Texture2D" uid="uid://dum77jdkls7jc" path="res://Основа/visual/element_cards/card_start_animation/water/17.png" id="46_h5x1f"]
+[ext_resource type="Texture2D" uid="uid://dgumpw5lqulow" path="res://Основа/visual/element_cards/card_start_animation/water/18.png" id="47_kkakk"]
+[ext_resource type="Texture2D" uid="uid://bf3ga2554gwx5" path="res://Основа/visual/element_cards/card_start_animation/water/19.png" id="48_ymv38"]
+[ext_resource type="Texture2D" uid="uid://cu73ii5gjhxbo" path="res://Основа/visual/element_cards/card_start_animation/water/20.png" id="49_fklgy"]
+[ext_resource type="Texture2D" uid="uid://dhbw86n1qnwro" path="res://Основа/visual/element_cards/card_start_animation/water/21.png" id="50_6hxry"]
+[ext_resource type="Texture2D" uid="uid://1w5yfob2rf0c" path="res://Основа/visual/element_cards/card_start_animation/water/22.png" id="51_gbs75"]
+[ext_resource type="Texture2D" uid="uid://dtwh2qa2vjmi" path="res://Основа/visual/element_cards/card_start_animation/water/23.png" id="52_l0pci"]
+[ext_resource type="Texture2D" uid="uid://notxt02m12w6" path="res://Основа/visual/element_cards/card_start_animation/water/24.png" id="53_r80dg"]
+[ext_resource type="Texture2D" uid="uid://d0xq3nij87m0j" path="res://Основа/visual/element_cards/card_start_animation/water/26.png" id="54_k7fjm"]
+[ext_resource type="Texture2D" uid="uid://b3rxls6208dxp" path="res://Основа/visual/element_cards/card_start_animation/water/27.png" id="55_8uqm3"]
+[ext_resource type="Texture2D" uid="uid://sdtqbqt1yc7o" path="res://Основа/visual/element_cards/card_start_animation/water/28.png" id="56_34eif"]
+[ext_resource type="Texture2D" uid="uid://h5fry2pik6kk" path="res://Основа/visual/element_cards/card_start_animation/water/29.png" id="57_46g2h"]
+[ext_resource type="Texture2D" uid="uid://d2agreettvx3j" path="res://Основа/visual/element_cards/card_start_animation/water/30.png" id="58_8mwv3"]
+[ext_resource type="Texture2D" uid="uid://bdyncw2ps67op" path="res://Основа/visual/element_cards/card_start_animation/water/31.png" id="59_av5hj"]
+[ext_resource type="Texture2D" uid="uid://ber0dgmuc31a0" path="res://Основа/visual/element_cards/card_start_animation/water/32.png" id="60_503eo"]
+[ext_resource type="Texture2D" uid="uid://bmoaphnqjiye6" path="res://Основа/visual/element_cards/card_start_animation/water/33.png" id="61_uwoa5"]
+[ext_resource type="Texture2D" uid="uid://cw8jc2s2tovoi" path="res://Основа/animation/particles/water_particles.png" id="62_8bk1j"]
+[ext_resource type="Texture2D" uid="uid://bkqqtyl24u8d8" path="res://Основа/animation/particles/water_particles2.png" id="63_gtjlh"]
 
 [sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_2jvn8"]
 particle_flag_disable_z = true
@@ -41,6 +76,36 @@ damping_min = 0.080000006
 damping_max = 18.5
 scale_min = 0.0
 scale_max = 20.3
+
+[sub_resource type="CanvasItemMaterial" id="CanvasItemMaterial_cf1l6"]
+blend_mode = 1
+
+[sub_resource type="Gradient" id="Gradient_ujn2s"]
+offsets = PackedFloat32Array(0, 0.47028422, 1)
+colors = PackedColorArray(0.99607843, 0.85490197, 0, 1, 0.8627451, 0.57254905, 0, 1, 1, 0.9882353, 0, 1)
+
+[sub_resource type="GradientTexture1D" id="GradientTexture1D_bff2f"]
+gradient = SubResource("Gradient_ujn2s")
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_ebqow"]
+lifetime_randomness = 1.0
+particle_flag_disable_z = true
+emission_shape_scale = Vector3(315, 445, 1)
+emission_shape = 3
+emission_box_extents = Vector3(1, 1, 1)
+angle_min = -509.8
+angle_max = 301.1
+direction = Vector3(1, 1, 0)
+initial_velocity_min = 180.0
+initial_velocity_max = 420.0
+angular_velocity_min = -720.0
+angular_velocity_max = 719.99994
+gravity = Vector3(0, 90, 0)
+radial_accel_min = -98.55
+radial_accel_max = 73.71
+scale_min = 0.02
+scale_max = 0.099999994
+color_ramp = SubResource("GradientTexture1D_bff2f")
 
 [sub_resource type="CanvasItemMaterial" id="CanvasItemMaterial_bl2cf"]
 
@@ -124,43 +189,157 @@ animations = [{
 "speed": 5.0
 }]
 
-[sub_resource type="CanvasItemMaterial" id="CanvasItemMaterial_cf1l6"]
-blend_mode = 1
+[sub_resource type="SpriteFrames" id="SpriteFrames_cm5lt"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("30_gtjlh")
+}, {
+"duration": 1.0,
+"texture": ExtResource("31_jx325")
+}, {
+"duration": 1.0,
+"texture": ExtResource("32_65e1m")
+}, {
+"duration": 1.0,
+"texture": ExtResource("33_m6onp")
+}, {
+"duration": 1.0,
+"texture": ExtResource("34_wdtjv")
+}, {
+"duration": 1.0,
+"texture": ExtResource("35_a5yvn")
+}, {
+"duration": 1.0,
+"texture": ExtResource("36_lnpph")
+}, {
+"duration": 1.0,
+"texture": ExtResource("37_4ulpo")
+}, {
+"duration": 1.0,
+"texture": ExtResource("38_16e6f")
+}, {
+"duration": 1.0,
+"texture": ExtResource("39_aaask")
+}, {
+"duration": 1.0,
+"texture": ExtResource("40_vtclj")
+}, {
+"duration": 1.0,
+"texture": ExtResource("41_xteq3")
+}, {
+"duration": 1.0,
+"texture": ExtResource("42_vcfcq")
+}, {
+"duration": 1.0,
+"texture": ExtResource("43_k8avt")
+}, {
+"duration": 1.0,
+"texture": ExtResource("44_fd84l")
+}, {
+"duration": 1.0,
+"texture": ExtResource("45_nbv76")
+}, {
+"duration": 1.0,
+"texture": ExtResource("46_h5x1f")
+}, {
+"duration": 1.0,
+"texture": ExtResource("47_kkakk")
+}, {
+"duration": 1.0,
+"texture": ExtResource("48_ymv38")
+}, {
+"duration": 1.0,
+"texture": ExtResource("49_fklgy")
+}, {
+"duration": 1.0,
+"texture": ExtResource("50_6hxry")
+}, {
+"duration": 0.1,
+"texture": ExtResource("51_gbs75")
+}, {
+"duration": 0.2,
+"texture": ExtResource("52_l0pci")
+}, {
+"duration": 0.4,
+"texture": ExtResource("53_r80dg")
+}, {
+"duration": 0.8,
+"texture": ExtResource("54_k7fjm")
+}, {
+"duration": 1.0,
+"texture": ExtResource("55_8uqm3")
+}, {
+"duration": 1.0,
+"texture": ExtResource("56_34eif")
+}, {
+"duration": 1.0,
+"texture": ExtResource("57_46g2h")
+}, {
+"duration": 1.0,
+"texture": ExtResource("58_8mwv3")
+}, {
+"duration": 1.0,
+"texture": ExtResource("59_av5hj")
+}, {
+"duration": 1.0,
+"texture": ExtResource("60_503eo")
+}, {
+"duration": 1.0,
+"texture": ExtResource("61_uwoa5")
+}],
+"loop": true,
+"name": &"default",
+"speed": 5.0
+}]
 
-[sub_resource type="Gradient" id="Gradient_ujn2s"]
-offsets = PackedFloat32Array(0, 0.47028422, 1)
-colors = PackedColorArray(0.99607843, 0.85490197, 0, 1, 0.8627451, 0.57254905, 0, 1, 1, 0.9882353, 0, 1)
+[sub_resource type="Gradient" id="Gradient_0q6is"]
+offsets = PackedFloat32Array(0, 0.59574467, 1)
+colors = PackedColorArray(1, 1, 1, 0.2627451, 1, 1, 1, 0.8980392, 1, 1, 1, 1)
 
-[sub_resource type="GradientTexture1D" id="GradientTexture1D_bff2f"]
-gradient = SubResource("Gradient_ujn2s")
+[sub_resource type="GradientTexture1D" id="GradientTexture1D_e7tos"]
+gradient = SubResource("Gradient_0q6is")
 
-[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_ebqow"]
-lifetime_randomness = 1.0
+[sub_resource type="Curve" id="Curve_aj3au"]
+_data = [Vector2(0.06818181, 0.63773584), 0.0, 0.0, 0, 0, Vector2(0.49242422, 0.4415095), 0.0, 0.0, 0, 0, Vector2(0.9848485, 0.07924533), 0.0, 0.0, 0, 0]
+point_count = 3
+
+[sub_resource type="CurveTexture" id="CurveTexture_asd4n"]
+curve = SubResource("Curve_aj3au")
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_deij2"]
 particle_flag_disable_z = true
-emission_shape_scale = Vector3(315, 445, 1)
-emission_shape = 3
-emission_box_extents = Vector3(1, 1, 1)
-angle_min = -509.8
-angle_max = 301.1
-direction = Vector3(1, 1, 0)
-initial_velocity_min = 180.0
-initial_velocity_max = 420.0
-angular_velocity_min = -720.0
-angular_velocity_max = 719.99994
-gravity = Vector3(0, 90, 0)
-radial_accel_min = -98.55
-radial_accel_max = 73.71
-scale_min = 0.02
-scale_max = 0.099999994
-color_ramp = SubResource("GradientTexture1D_bff2f")
+emission_shape = 6
+emission_ring_axis = Vector3(0, 0, 1)
+emission_ring_height = 0.0
+emission_ring_radius = 300.62
+emission_ring_inner_radius = 0.0
+emission_ring_cone_angle = 90.0
+initial_velocity_min = 80.0
+initial_velocity_max = 200.0
+angular_velocity_min = -90.000015
+angular_velocity_max = 89.999985
+orbit_velocity_min = 2.0000002
+orbit_velocity_max = 5.0000005
+gravity = Vector3(0, 40, 0)
+scale_min = 0.049999997
+scale_max = 0.29999998
+scale_curve = SubResource("CurveTexture_asd4n")
+color_ramp = SubResource("GradientTexture1D_e7tos")
 
-[node name="Fire_card_start" type="Control" unique_id=1714231024]
+[node name="Start_card_animation" type="Control" unique_id=1714231024]
+visible = false
 layout_mode = 3
 anchors_preset = 0
 offset_right = 40.0
 offset_bottom = 40.0
 
-[node name="elemental_card_fire_smoke" type="GPUParticles2D" parent="." unique_id=823183434]
+[node name="Fire_card" type="Control" parent="." unique_id=1488303015]
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="elemental_card_fire_smoke" type="GPUParticles2D" parent="Fire_card" unique_id=823183434]
 position = Vector2(314, 444)
 amount = 90
 texture = ExtResource("1_7pu5c")
@@ -168,21 +347,13 @@ lifetime = 4.31
 randomness = 1.0
 process_material = SubResource("ParticleProcessMaterial_2jvn8")
 
-[node name="elemental_card_fire2" type="TextureRect" parent="." unique_id=1500746499]
+[node name="elemental_card_fire2" type="TextureRect" parent="Fire_card" unique_id=1500746499]
 layout_mode = 0
 offset_right = 630.0
 offset_bottom = 890.0
 texture = ExtResource("2_cf1l6")
 
-[node name="elemental_card_fire" type="AnimatedSprite2D" parent="." unique_id=54380059]
-material = SubResource("CanvasItemMaterial_bl2cf")
-position = Vector2(315, 445)
-sprite_frames = SubResource("SpriteFrames_7pu5c")
-animation = &"card_start_fire"
-frame_progress = 0.53588367
-speed_scale = 2.5
-
-[node name="elemental_card_fire_particle" type="GPUParticles2D" parent="." unique_id=1468853941]
+[node name="elemental_card_fire_particle" type="GPUParticles2D" parent="Fire_card" unique_id=1468853941]
 texture_filter = 2
 material = SubResource("CanvasItemMaterial_cf1l6")
 position = Vector2(314, 445)
@@ -194,3 +365,60 @@ explosiveness = 0.11
 randomness = 1.0
 process_material = SubResource("ParticleProcessMaterial_ebqow")
 script = ExtResource("14_qce4f")
+
+[node name="elemental_card_fire" type="AnimatedSprite2D" parent="Fire_card" unique_id=54380059]
+material = SubResource("CanvasItemMaterial_bl2cf")
+position = Vector2(315, 445)
+sprite_frames = SubResource("SpriteFrames_7pu5c")
+animation = &"card_start_fire"
+frame = 19
+frame_progress = 0.11367085
+speed_scale = 2.5
+
+[node name="Water_card" type="Control" parent="." unique_id=378487933]
+visible = false
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="elemental_card_water" type="TextureRect" parent="Water_card" unique_id=1104686694]
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 40.0
+texture = ExtResource("29_yqa72")
+
+[node name="water_card_start_animation" type="AnimatedSprite2D" parent="Water_card" unique_id=1156183463]
+position = Vector2(314, 444)
+sprite_frames = SubResource("SpriteFrames_cm5lt")
+frame_progress = 0.80647117
+speed_scale = 3.0
+
+[node name="GPUParticles2D" type="GPUParticles2D" parent="Water_card" unique_id=2034795700]
+texture_filter = 2
+position = Vector2(302, 462)
+amount = 1784
+texture = ExtResource("62_8bk1j")
+lifetime = 2.3899999999999997
+speed_scale = 2.79
+randomness = 0.26
+process_material = SubResource("ParticleProcessMaterial_deij2")
+
+[node name="GPUParticles2D2" type="GPUParticles2D" parent="Water_card" unique_id=143138686]
+texture_filter = 2
+position = Vector2(302, 462)
+amount = 500
+texture = ExtResource("63_gtjlh")
+lifetime = 2.3899999999999997
+speed_scale = 2.79
+randomness = 0.26
+process_material = SubResource("ParticleProcessMaterial_deij2")
+
+[node name="Air_card" type="Control" parent="." unique_id=619702031]
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="Earth_card" type="Control" parent="." unique_id=1068950990]
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
