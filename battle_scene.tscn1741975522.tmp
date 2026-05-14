@@ -702,8 +702,5 @@ theme_override_styles/focus = SubResource("StyleBoxEmpty_ep84i")
 flat = true
 script = ExtResource("19_vmq30")
 
-[node name="ResultPlayer" type="AudioStreamPlayer2D" parent="." unique_id=1933343620]
-volume_db = 15.0
-
 [connection signal="mouse_entered" from="EndGameOverlay/RestartButton/ClickButton" to="EndGameOverlay/RestartButton/ClickButton" method="_on_mouse_entered"]
 [connection signal="mouse_exited" from="EndGameOverlay/RestartButton/ClickButton" to="EndGameOverlay/RestartButton/ClickButton" method="_on_mouse_exited"]

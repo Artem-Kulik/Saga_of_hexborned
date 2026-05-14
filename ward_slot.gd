@@ -193,13 +193,16 @@ func _on_skill_selected(skill_key: String) -> void:
 
 	skill_clicked.emit(self, skill_key)
 
-
-func take_damage(amount: int) -> void:
+func take_damage(amount: int, attacker = null, skill_key: String = "") -> void:
 	if is_dead:
 		return
 
 	health.take_damage(amount)
-	AnimationCode.animation_take_damage(portrait)
+
+	if skill_key == "Q" and attacker != null:
+		AnimationCode.play_glass_hit_on_target(attacker, self)
+
+	await AnimationCode.animation_take_damage(portrait)
 
 
 	print(name, " отримав ", amount, " шкоди. HP: ", current_hp)

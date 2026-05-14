@@ -23,20 +23,14 @@ func setup(max_hp_value: int, start_hp_value: int, hp_bar_ref) -> void:
 	hp_changed.emit(current_hp, max_hp)
 
 
-func take_damage(amount: int) -> void:
+func take_damage(amount: int, attacker = null, skill_key: String = "") -> void:
 	if is_dead:
 		return
 
-	current_hp = clamp(current_hp - amount, 0, max_hp)
+	set_hp(current_hp - amount)
 
-	if hp_bar and hp_bar.has_method("set_hp"):
-		hp_bar.set_hp(current_hp, true)
-
-	hp_changed.emit(current_hp, max_hp)
-
-	if current_hp <= 0:
-		_die()
-
+	if skill_key == "Q" and attacker != null:
+		AnimationCode.play_glass_hit_on_target(attacker, owner)
 
 func heal(amount: int) -> void:
 	if is_dead:

@@ -26,6 +26,8 @@ func attack(attacker, target, skill_key: String = "Q") -> void:
 		await AnimationCode.skill_used_animation(pressed_button)
 		AnimationCode.skill_qwe_animation(pressed_button)
 
+
+
 	await apply_damage(
 		attacker,
 		target,
@@ -40,7 +42,7 @@ func apply_damage(
 	source,
 	target,
 	damage: int,
-	skill_name: String = "-",
+	skill_key: String = "Q",
 	status_text: String = "-",
 	damage_source: String = "effect"
 ) -> void:
@@ -62,10 +64,32 @@ func apply_damage(
 			source,
 			target,
 			func():
-				target.take_damage(damage)
+				var hp_before_hit: int = target.current_hp
+
+				await target.take_damage(damage, source, skill_key)
+
+				var hp_after_hit: int = target.current_hp
+				var hp_different: int = hp_before_hit - hp_after_hit
+
+				if hp_different > 0:
+					AnimationCode.animation_dmg_number(
+						hp_different,
+						target.portrait.get_global_rect().get_center()
+					)
 		)
 	else:
-		target.take_damage(damage)
+		var hp_before_hit: int = target.current_hp
+
+		await target.take_damage(damage, source, skill_key)
+
+		var hp_after_hit: int = target.current_hp
+		var hp_different: int = hp_before_hit - hp_after_hit
+
+		if hp_different > 0:
+			AnimationCode.animation_dmg_number(
+				hp_different,
+				target.portrait.get_global_rect().get_center()
+			)
 
 	var hp_after: int = target.current_hp
 
@@ -73,7 +97,7 @@ func apply_damage(
 		battle_log.add_attack(
 			source_name,
 			source_team,
-			skill_name,
+			skill_key,
 			damage,
 			status_text,
 			target.name,
@@ -88,7 +112,6 @@ func apply_damage(
 
 	if target.is_dead and battle_log:
 		battle_log.add_death(target.name, target.team)
-
 
 func get_alive_wards(wards: Array) -> Array:
 	var result: Array = []

@@ -43,7 +43,6 @@ func animation_take_damage(node: CanvasItem):
 	)
 
 	await tween.finished
-
 func skill_pressed_animation(node: CanvasItem):
 	if node == null:
 		return
@@ -55,7 +54,6 @@ func skill_pressed_animation(node: CanvasItem):
 	Color(0.0, 1.0, 0.055, 0.886),
 	0.1
 	)
-
 func skill_used_animation(node):
 	if node == null:
 		return
@@ -69,12 +67,9 @@ func skill_used_animation(node):
 	)
 	
 	await tween.finished
-
-
 func skill_qwe_animation(pressed_button):
 	var skill_name = pressed_button
 	print (skill_name)
-
 func skill_hit_animation(attacker, target, on_hit: Callable) -> void:
 	if attacker == null or target == null:
 		return
@@ -237,3 +232,49 @@ func skill_return_animation(attacker: CanvasItem) -> void:
 	).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
 
 	await tween.finished
+func play_glass_hit_on_target(attacker, target) -> void:
+	if attacker == null or target == null:
+		return
+
+	var hit_pos: Vector2
+
+	if target.has_node("WardVisual/Portrait"):
+		hit_pos = target.get_node("WardVisual/Portrait").get_global_rect().get_center()
+	elif "portrait" in target and target.portrait != null:
+		hit_pos = target.portrait.get_global_rect().get_center()
+	else:
+		hit_pos = target.global_position
+
+	var dir: Vector2 = (target.global_position - attacker.global_position).normalized()
+
+	play_glass_hit(hit_pos, dir)
+func play_glass_hit(pos: Vector2, dir: Vector2) -> void:
+	var glass = preload("res://Основа/animation/particles/glass_impact.tscn").instantiate()
+
+	get_tree().current_scene.add_child(glass)
+	glass.global_position = pos
+
+	if glass.has_method("play"):
+		glass.play(dir)
+func animation_dmg_number(value: int, pos: Vector2) -> void:
+	var label := Label.new()
+
+	get_tree().current_scene.add_child(label)
+
+	label.text = "-" + str(value)
+	label.z_index = 999
+	label.global_position = pos
+	label.modulate = Color(1, 0.25, 0.25, 1)
+	label.add_theme_font_size_override("font_size", 42)
+
+	var tween := create_tween()
+	tween.set_parallel(true)
+
+	tween.tween_property(label, "global_position", pos + Vector2(0, -120), 0.8)
+	tween.tween_property(label, "scale", Vector2(1.35, 1.35), 0.12)
+	tween.tween_property(label, "modulate:a", 0.0, 0.8).set_delay(0.1)
+
+	await tween.finished
+
+	if is_instance_valid(label):
+		label.queue_free()

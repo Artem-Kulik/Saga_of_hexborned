@@ -17,16 +17,14 @@
 [ext_resource type="PackedScene" uid="uid://bqa8dc6msvca0" path="res://circle_hp_bar.tscn" id="8_ea0tg"]
 [ext_resource type="Texture2D" uid="uid://dv8u1vpuawkcr" path="res://Основа/visual/element_cards/status_card_frame.png" id="8_eet5o"]
 [ext_resource type="Texture2D" uid="uid://vngklobv78sc" path="res://Основа/visual/element_cards/card_earth.png" id="9_im77c"]
+[ext_resource type="Texture2D" uid="uid://ccmi1jrtt83kk" path="res://Основа/visual/green_highlight.png" id="12_6bynp"]
 [ext_resource type="PackedScene" uid="uid://3urukl8qraml" path="res://skill_button.tscn" id="13_ahwtq"]
 [ext_resource type="AudioStream" uid="uid://bnbb1hlnor0i5" path="res://Основа/audio/audio_effects/death_effect.mp3" id="19_wub2q"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_bibww"]
 shader = ExtResource("2_jnv6q")
 shader_parameter/mask_texture = ExtResource("3_j5l4v")
-shader_parameter/highlight_color = Color(1, 0.7, 0.2, 0.5)
-
-[sub_resource type="CanvasTexture" id="CanvasTexture_ea0tg"]
-specular_color = Color(0, 0.67892295, 0.8505711, 1)
+shader_parameter/highlight_color = Color(0, 0.8, 0, 0.52156866)
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_qbcgw"]
 shader = ExtResource("1_eey8g")
@@ -70,7 +68,8 @@ offset_top = -6.0
 offset_right = 444.0
 offset_bottom = 604.0
 mouse_filter = 2
-texture = SubResource("CanvasTexture_ea0tg")
+texture = ExtResource("12_6bynp")
+expand_mode = 1
 
 [node name="Portrait" type="TextureRect" parent="WardVisual" unique_id=864329980]
 material = SubResource("ShaderMaterial_qbcgw")

@@ -31,6 +31,9 @@ const BattleReorderManagerScript = preload("res://scripts/battle/battle_reorder_
 @onready var defeat_particles: GPUParticles2D = $EndGameOverlay/CenterContainer/DefeatParticles
 @onready var defeat_smoke: GPUParticles2D = $EndGameOverlay/CenterContainer/DefeatSmoke
 @onready var defeat_ash: GPUParticles2D = $EndGameOverlay/CenterContainer/DefeatAsh
+@onready var result_player: AudioStreamPlayer2D = $ResultPlayer
+var defeat_music := preload ("res://Основа/audio/audio_effects/defeat.mp3")
+var victory_music := preload ("res://Основа/audio/audio_effects/victory.mp3")
 
 var target_arrow = null
 var target_arrow_scene := preload("res://Основа/animation/target_arrow.tscn")
@@ -97,6 +100,8 @@ func show_victory_screen() -> void:
 	print("SHOW VICTORY SCREEN")
 
 	_fade_in_end_screen()
+	result_player.stream = victory_music
+	result_player.play()
 	background_overlay.visible = true
 	win_title.visible = true
 	loose_title.visible = false
@@ -113,7 +118,8 @@ func show_victory_screen() -> void:
 
 func show_defeat_screen() -> void:
 	print("SHOW DEFEAT SCREEN")
-
+	result_player.stream = defeat_music
+	result_player.play()
 	_fade_in_end_screen()
 	background_overlay.visible = true
 	win_title.visible = false
