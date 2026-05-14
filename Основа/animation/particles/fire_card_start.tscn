@@ -1,0 +1,196 @@
+[gd_scene format=3 uid="uid://boc4ahcosibm6"]
+
+[ext_resource type="Texture2D" uid="uid://dscmjd4j55hvh" path="res://Основа/visual/element_cards/card_start_animation/fire/1.png" id="1_5nfjw"]
+[ext_resource type="Texture2D" uid="uid://dq6ku4ylkg1wl" path="res://Основа/animation/particles/ash_particles.png" id="1_7pu5c"]
+[ext_resource type="Texture2D" uid="uid://dieccdi40hjps" path="res://Основа/visual/element_cards/card_start_animation/fire/2.png" id="2_4tosm"]
+[ext_resource type="Texture2D" uid="uid://ccxk5y5s2fhff" path="res://Основа/visual/element_cards/card_fire.png" id="2_cf1l6"]
+[ext_resource type="Texture2D" uid="uid://be2vb323q53op" path="res://Основа/visual/element_cards/card_start_animation/fire/3.png" id="3_1x2j5"]
+[ext_resource type="Texture2D" uid="uid://v4wtsote30gx" path="res://Основа/visual/element_cards/card_start_animation/fire/0.png" id="3_ujn2s"]
+[ext_resource type="Texture2D" uid="uid://bi454g1krvmck" path="res://Основа/visual/element_cards/card_start_animation/fire/4.png" id="4_mws6e"]
+[ext_resource type="Texture2D" uid="uid://cj65svj6h5ljg" path="res://Основа/visual/element_cards/card_start_animation/fire/5.png" id="5_r1tem"]
+[ext_resource type="Texture2D" uid="uid://cgm05u1j0x5qu" path="res://Основа/visual/element_cards/card_start_animation/fire/7.png" id="6_47q65"]
+[ext_resource type="Texture2D" uid="uid://cxey5fn82ycxr" path="res://Основа/visual/element_cards/card_start_animation/fire/8.png" id="7_xab63"]
+[ext_resource type="Texture2D" uid="uid://b4rxu6m2ok83y" path="res://Основа/visual/element_cards/card_start_animation/fire/9.png" id="8_p73on"]
+[ext_resource type="Texture2D" uid="uid://qp73tcq00hhy" path="res://Основа/visual/element_cards/card_start_animation/fire/6.png" id="9_bff2f"]
+[ext_resource type="Texture2D" uid="uid://c3u4mhh6jo26s" path="res://Основа/visual/element_cards/card_start_animation/fire/10.png" id="9_oo5st"]
+[ext_resource type="Texture2D" uid="uid://cwniokifh0qhn" path="res://Основа/visual/element_cards/card_start_animation/fire/11.png" id="10_le3pc"]
+[ext_resource type="Texture2D" uid="uid://dqp5edehkp6rm" path="res://Основа/visual/element_cards/card_start_animation/fire/12.png" id="11_4741o"]
+[ext_resource type="Texture2D" uid="uid://bnuajr1cudvyw" path="res://Основа/visual/element_cards/card_start_animation/fire/13.png" id="12_0xkc2"]
+[ext_resource type="Texture2D" uid="uid://cmxy4xcxdtlxt" path="res://Основа/animation/particles/ember_particles.png" id="13_wcenx"]
+[ext_resource type="Script" uid="uid://crfcjfswmyohv" path="res://Основа/animation/particles/elemental_card_fire_particle.gd" id="14_qce4f"]
+[ext_resource type="Texture2D" uid="uid://dstafc1cda2v2" path="res://Основа/visual/element_cards/card_start_animation/fire/14.png" id="17_ebqow"]
+[ext_resource type="Texture2D" uid="uid://716lfrtf4x5f" path="res://Основа/visual/element_cards/card_start_animation/fire/15.png" id="18_skfhn"]
+[ext_resource type="Texture2D" uid="uid://cd104jk8qc6bf" path="res://Основа/visual/element_cards/card_start_animation/fire/16.png" id="19_htfgr"]
+[ext_resource type="Texture2D" uid="uid://lrt67cxsgp4u" path="res://Основа/visual/element_cards/card_start_animation/fire/17.png" id="20_3sba5"]
+[ext_resource type="Texture2D" uid="uid://wiagxn11xpog" path="res://Основа/visual/element_cards/card_start_animation/fire/18.png" id="21_2xbu1"]
+[ext_resource type="Texture2D" uid="uid://c1tcaor1037hi" path="res://Основа/visual/element_cards/card_start_animation/fire/19.png" id="22_wpd18"]
+[ext_resource type="Texture2D" uid="uid://d0p0aak1lqid" path="res://Основа/visual/element_cards/card_start_animation/fire/20.png" id="23_mtr7a"]
+[ext_resource type="Texture2D" uid="uid://er417jo5nih1" path="res://Основа/visual/element_cards/card_start_animation/fire/21.png" id="24_lqhp2"]
+[ext_resource type="Texture2D" uid="uid://cgr0t8xjp6s5j" path="res://Основа/visual/element_cards/card_start_animation/fire/22.png" id="25_6c7v0"]
+[ext_resource type="Texture2D" uid="uid://1pt57kc0uxio" path="res://Основа/visual/element_cards/card_start_animation/fire/23.png" id="26_lk1dd"]
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_2jvn8"]
+particle_flag_disable_z = true
+emission_shape_scale = Vector3(315, 445, 1)
+emission_shape = 3
+emission_box_extents = Vector3(1, 1, 1)
+direction = Vector3(0, -1, 0)
+spread = 90.0
+gravity = Vector3(0, -98, 0)
+damping_min = 0.080000006
+damping_max = 18.5
+scale_min = 0.0
+scale_max = 20.3
+
+[sub_resource type="CanvasItemMaterial" id="CanvasItemMaterial_bl2cf"]
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_7pu5c"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("3_ujn2s")
+}, {
+"duration": 1.0,
+"texture": ExtResource("1_5nfjw")
+}, {
+"duration": 1.0,
+"texture": ExtResource("2_4tosm")
+}, {
+"duration": 1.0,
+"texture": ExtResource("3_1x2j5")
+}, {
+"duration": 1.0,
+"texture": ExtResource("4_mws6e")
+}, {
+"duration": 1.0,
+"texture": ExtResource("5_r1tem")
+}, {
+"duration": 1.0,
+"texture": ExtResource("9_bff2f")
+}, {
+"duration": 1.0,
+"texture": ExtResource("6_47q65")
+}, {
+"duration": 1.0,
+"texture": ExtResource("7_xab63")
+}, {
+"duration": 1.0,
+"texture": ExtResource("8_p73on")
+}, {
+"duration": 1.0,
+"texture": ExtResource("9_oo5st")
+}, {
+"duration": 1.0,
+"texture": ExtResource("10_le3pc")
+}, {
+"duration": 1.0,
+"texture": ExtResource("11_4741o")
+}, {
+"duration": 1.0,
+"texture": ExtResource("12_0xkc2")
+}, {
+"duration": 1.0,
+"texture": ExtResource("17_ebqow")
+}, {
+"duration": 1.0,
+"texture": ExtResource("18_skfhn")
+}, {
+"duration": 1.0,
+"texture": ExtResource("19_htfgr")
+}, {
+"duration": 1.0,
+"texture": ExtResource("20_3sba5")
+}, {
+"duration": 1.0,
+"texture": ExtResource("21_2xbu1")
+}, {
+"duration": 1.0,
+"texture": ExtResource("22_wpd18")
+}, {
+"duration": 1.0,
+"texture": ExtResource("23_mtr7a")
+}, {
+"duration": 1.0,
+"texture": ExtResource("24_lqhp2")
+}, {
+"duration": 1.0,
+"texture": ExtResource("25_6c7v0")
+}, {
+"duration": 1.0,
+"texture": ExtResource("26_lk1dd")
+}],
+"loop": true,
+"name": &"card_start_fire",
+"speed": 5.0
+}]
+
+[sub_resource type="CanvasItemMaterial" id="CanvasItemMaterial_cf1l6"]
+blend_mode = 1
+
+[sub_resource type="Gradient" id="Gradient_ujn2s"]
+offsets = PackedFloat32Array(0, 0.47028422, 1)
+colors = PackedColorArray(0.99607843, 0.85490197, 0, 1, 0.8627451, 0.57254905, 0, 1, 1, 0.9882353, 0, 1)
+
+[sub_resource type="GradientTexture1D" id="GradientTexture1D_bff2f"]
+gradient = SubResource("Gradient_ujn2s")
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_ebqow"]
+lifetime_randomness = 1.0
+particle_flag_disable_z = true
+emission_shape_scale = Vector3(315, 445, 1)
+emission_shape = 3
+emission_box_extents = Vector3(1, 1, 1)
+angle_min = -509.8
+angle_max = 301.1
+direction = Vector3(1, 1, 0)
+initial_velocity_min = 180.0
+initial_velocity_max = 420.0
+angular_velocity_min = -720.0
+angular_velocity_max = 719.99994
+gravity = Vector3(0, 90, 0)
+radial_accel_min = -98.55
+radial_accel_max = 73.71
+scale_min = 0.02
+scale_max = 0.099999994
+color_ramp = SubResource("GradientTexture1D_bff2f")
+
+[node name="Fire_card_start" type="Control" unique_id=1714231024]
+layout_mode = 3
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="elemental_card_fire_smoke" type="GPUParticles2D" parent="." unique_id=823183434]
+position = Vector2(314, 444)
+amount = 90
+texture = ExtResource("1_7pu5c")
+lifetime = 4.31
+randomness = 1.0
+process_material = SubResource("ParticleProcessMaterial_2jvn8")
+
+[node name="elemental_card_fire2" type="TextureRect" parent="." unique_id=1500746499]
+layout_mode = 0
+offset_right = 630.0
+offset_bottom = 890.0
+texture = ExtResource("2_cf1l6")
+
+[node name="elemental_card_fire" type="AnimatedSprite2D" parent="." unique_id=54380059]
+material = SubResource("CanvasItemMaterial_bl2cf")
+position = Vector2(315, 445)
+sprite_frames = SubResource("SpriteFrames_7pu5c")
+animation = &"card_start_fire"
+frame_progress = 0.53588367
+speed_scale = 2.5
+
+[node name="elemental_card_fire_particle" type="GPUParticles2D" parent="." unique_id=1468853941]
+texture_filter = 2
+material = SubResource("CanvasItemMaterial_cf1l6")
+position = Vector2(314, 445)
+amount = 1200
+texture = ExtResource("13_wcenx")
+lifetime = 1.18
+speed_scale = 1.5
+explosiveness = 0.11
+randomness = 1.0
+process_material = SubResource("ParticleProcessMaterial_ebqow")
+script = ExtResource("14_qce4f")

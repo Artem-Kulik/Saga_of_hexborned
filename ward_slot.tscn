@@ -51,7 +51,6 @@ offset_bottom = 886.0
 size_flags_horizontal = 4
 size_flags_vertical = 4
 texture = ExtResource("9_im77c")
-expand_mode = 1
 
 [node name="WardVisual" type="Control" parent="." unique_id=766094763]
 anchors_preset = 0
