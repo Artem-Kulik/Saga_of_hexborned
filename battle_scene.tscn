@@ -6,16 +6,16 @@
 [ext_resource type="Script" uid="uid://cciret7wp72cy" path="res://Основа/visual/Skill_list/skill_panel.gd" id="3_5joda"]
 [ext_resource type="PackedScene" uid="uid://c4npluysdah3r" path="res://ward_slot_enemy.tscn" id="3_x76d4"]
 [ext_resource type="Texture2D" uid="uid://lcwkh5yo4ro6" path="res://Основа/visual/Skill_list/рамка SkillPanel.png" id="4_m1vkf"]
-[ext_resource type="Texture2D" path="res://Основа/char/Вогонь/Майстер Оічі/Майстер Оічі Скіли.png" id="5_715r7"]
+[ext_resource type="Texture2D" uid="uid://d5tacve37cas" path="res://Основа/char/Вода/Лія/Liah.png" id="6_suxjl"]
 [ext_resource type="Texture2D" uid="uid://ccusj82vd0uds" path="res://Основа/visual/Skill_list/Skill_background.png" id="6_x76d4"]
-[ext_resource type="Texture2D" path="res://Основа/char/Вогонь/Майстер Оічі/Q.png" id="7_715r7"]
 [ext_resource type="FontFile" uid="uid://cjitafj21pcqf" path="res://Основа/Шрифти/WeissGotnitials.ttf" id="7_wy2mt"]
-[ext_resource type="Texture2D" path="res://Основа/char/Вогонь/Майстер Оічі/W.png" id="8_rx3wi"]
-[ext_resource type="Texture2D" path="res://Основа/char/Вогонь/Майстер Оічі/E.png" id="9_f7bhn"]
-[ext_resource type="Texture2D" path="res://Основа/char/Вогонь/Майстер Оічі/P.png" id="10_wy2mt"]
+[ext_resource type="Texture2D" uid="uid://n0k0achm7fq2" path="res://Основа/char/Вогонь/МайстерОічі/Q.png" id="9_vsfrs"]
+[ext_resource type="Texture2D" uid="uid://df2efl5qw3v8v" path="res://Основа/char/Повітря/Шопей/shopey_q.png" id="10_suxjl"]
+[ext_resource type="Texture2D" uid="uid://dgyo7cggywhbb" path="res://Основа/char/Вогонь/МайстерОічі/W.png" id="11_r2yls"]
 [ext_resource type="Shader" uid="uid://bq4ums7tmq24a" path="res://new_shader.gdshader" id="12_wy2mt"]
 [ext_resource type="Texture2D" uid="uid://hiyyruhmbnet" path="res://Основа/portrait_mask_oval.png" id="13_3vhyp"]
 [ext_resource type="Texture2D" uid="uid://b801le688h3ov" path="res://Основа/visual/sigils/sigil_air.png" id="13_67y2d"]
+[ext_resource type="Texture2D" uid="uid://bwftmu2tx2chj" path="res://Основа/char/Вогонь/МайстерОічі/P.png" id="15_7h64b"]
 [ext_resource type="Texture2D" uid="uid://bfji65fvo0scu" path="res://Основа/visual/Skill_list/рамка BattleLog.png" id="17_67y2d"]
 [ext_resource type="Texture2D" uid="uid://4ohtxi66xf0n" path="res://Основа/animation/particles/smoke_particles.png" id="18_pp5u3"]
 [ext_resource type="Texture2D" uid="uid://dm6tt1ta4kijc" path="res://Основа/animation/particles/EndGameBG.png" id="18_suxjl"]
@@ -235,7 +235,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-texture = ExtResource("5_715r7")
+texture = ExtResource("6_suxjl")
 expand_mode = 1
 
 [node name="BackGround" type="ColorRect" parent="SkillPanel" unique_id=516284029]
@@ -304,7 +304,7 @@ offset_left = 41.0
 offset_top = 20.0
 offset_right = 89.000084
 offset_bottom = 67.99994
-texture = ExtResource("7_715r7")
+texture = ExtResource("9_vsfrs")
 expand_mode = 1
 
 [node name="Name_q" type="Label" parent="SkillPanel/Content/SkillList/Skill_Q" unique_id=906480579]
@@ -352,7 +352,7 @@ offset_left = 41.0
 offset_top = 20.0
 offset_right = 89.0
 offset_bottom = 68.0
-texture = ExtResource("8_rx3wi")
+texture = ExtResource("10_suxjl")
 expand_mode = 1
 
 [node name="Name_w" type="Label" parent="SkillPanel/Content/SkillList/Skill_W" unique_id=495790208]
@@ -399,7 +399,7 @@ offset_left = 41.0
 offset_top = 20.0
 offset_right = 89.0
 offset_bottom = 68.0
-texture = ExtResource("9_f7bhn")
+texture = ExtResource("11_r2yls")
 expand_mode = 1
 
 [node name="Name_e" type="Label" parent="SkillPanel/Content/SkillList/Skill_E" unique_id=2076683185]
@@ -454,7 +454,7 @@ offset_top = 21.999979
 offset_right = 212.16666
 offset_bottom = 77.245766
 scale = Vector2(1.2, 1.2)
-texture = ExtResource("10_wy2mt")
+texture = ExtResource("15_7h64b")
 expand_mode = 1
 
 [node name="Description_pas" type="RichTextLabel" parent="SkillPanel/Content/SkillList/Skill_P" unique_id=1539119011]
@@ -543,6 +543,7 @@ volume_db = -15.0
 
 [node name="EndGameOverlay" type="Control" parent="." unique_id=1655092424]
 visible = false
+z_index = 257
 anchors_preset = 0
 offset_right = 1919.0
 offset_bottom = 1086.0

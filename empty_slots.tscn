@@ -1,0 +1,33 @@
+[gd_scene format=3 uid="uid://ctcip5lgxyah7"]
+
+[ext_resource type="Texture2D" uid="uid://d1oqk5ocx1cpf" path="res://Основа/char/Вогонь/МайстерОічі/Майстер Оічі Скіли.png" id="1_7u4vi"]
+
+[node name="empty_slots" type="Control" unique_id=582356717]
+custom_minimum_size = Vector2(124, 170)
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_right = -1796.0
+offset_bottom = -910.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Control" type="Control" parent="." unique_id=1199475701]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="slot_1" type="TextureRect" parent="Control" unique_id=1962451057]
+custom_minimum_size = Vector2(124, 170)
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("1_7u4vi")
+expand_mode = 3

@@ -1,0 +1,556 @@
+[gd_scene format=3 uid="uid://ddnh02ix83qq1"]
+
+[ext_resource type="Texture2D" uid="uid://brdsg33hxt4lt" path="res://Основа/visual/choose_stage/BG.png" id="1_kc37t"]
+[ext_resource type="Texture2D" uid="uid://ccmi1jrtt83kk" path="res://Основа/visual/green_highlight.png" id="2_jejem"]
+[ext_resource type="Texture2D" uid="uid://cgjmqk6t3yfop" path="res://Основа/visual/element_cards/card_reverse.png" id="3_bd0us"]
+[ext_resource type="Texture2D" uid="uid://dtk30cvnsyt2h" path="res://Основа/visual/choose_stage/chosebg_earth.png" id="4_va5r4"]
+[ext_resource type="Texture2D" uid="uid://c1t4m1k4uqqbi" path="res://Основа/visual/choose_stage/emoframe.png" id="5_k242r"]
+[ext_resource type="Texture2D" uid="uid://ddh0w7a12yiix" path="res://Основа/visual/choose_stage/peregorodka.png" id="5_wo8qs"]
+[ext_resource type="Texture2D" uid="uid://blfre7t4lg51q" path="res://Основа/visual/sigils/sigil_earth.png" id="6_d5pi6"]
+[ext_resource type="Texture2D" uid="uid://c4yu41oavmkcn" path="res://Основа/visual/choose_stage/chosebg_water.png" id="7_bxopt"]
+[ext_resource type="Texture2D" uid="uid://bm5lx7b1hlwyk" path="res://Основа/visual/sigils/sigil_water.png" id="8_18k0n"]
+[ext_resource type="Texture2D" uid="uid://px7nwec8w2ov" path="res://Основа/visual/choose_stage/chosebg_red.png" id="9_eo2re"]
+[ext_resource type="Texture2D" uid="uid://cq68ibjgv6v2y" path="res://Основа/visual/sigils/sigil_fire.png" id="10_d40o3"]
+[ext_resource type="Texture2D" uid="uid://cad7yr62r3l0x" path="res://Основа/visual/choose_stage/chosebg_air.png" id="11_xma24"]
+[ext_resource type="Texture2D" uid="uid://b801le688h3ov" path="res://Основа/visual/sigils/sigil_air.png" id="12_0iq2c"]
+[ext_resource type="Texture2D" uid="uid://6tsgn6kxqpro" path="res://Основа/visual/choose_stage/tile_earth.png" id="14_18k0n"]
+[ext_resource type="PackedScene" uid="uid://ctcip5lgxyah7" path="res://empty_slots.tscn" id="14_eo2re"]
+[ext_resource type="Script" uid="uid://bbp54807il017" path="res://tabs_menu.gd" id="14_k242r"]
+[ext_resource type="Texture2D" uid="uid://cexdw0323h8yv" path="res://Основа/visual/choose_stage/tile_water.png" id="15_eo2re"]
+[ext_resource type="Texture2D" uid="uid://eaf2p58lh1oy" path="res://Основа/visual/choose_stage/tile_fire.png" id="16_d40o3"]
+[ext_resource type="Texture2D" uid="uid://cxwdwvnimwdqo" path="res://Основа/visual/choose_stage/tile_air.png" id="17_xma24"]
+
+[sub_resource type="CanvasItemMaterial" id="CanvasItemMaterial_wo8qs"]
+blend_mode = 1
+
+[node name="choose_wards_stage" type="Control" unique_id=58423613]
+layout_mode = 3
+anchors_preset = 0
+offset_right = 1920.0
+offset_bottom = 1080.0
+
+[node name="Background_box" type="Control" parent="." unique_id=1126096078]
+anchors_preset = 0
+offset_right = 1920.0
+offset_bottom = 1080.0
+
+[node name="BackGround" type="TextureRect" parent="Background_box" unique_id=3008379]
+layout_mode = 0
+offset_right = 1920.0
+offset_bottom = 1080.0
+texture = ExtResource("1_kc37t")
+
+[node name="color_BG_correct" type="ColorRect" parent="Background_box" unique_id=62673254]
+layout_mode = 0
+offset_right = 1920.0
+offset_bottom = 1080.0
+color = Color(0, 0, 0.21960784, 0.40392157)
+
+[node name="PickedWards" type="Control" parent="." unique_id=1605878584]
+layout_mode = 1
+anchors_preset = 10
+anchor_right = 1.0
+offset_bottom = 306.0
+grow_horizontal = 2
+
+[node name="ward_1" type="Control" parent="PickedWards" unique_id=236910795]
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="highlight_1" type="TextureRect" parent="PickedWards/ward_1" unique_id=863731912]
+visible = false
+material = SubResource("CanvasItemMaterial_wo8qs")
+layout_mode = 0
+offset_left = 979.0
+offset_top = -7.0
+offset_right = 1373.0
+offset_bottom = 465.0
+rotation = 1.5707964
+texture = ExtResource("2_jejem")
+expand_mode = 1
+
+[node name="reverse1" type="TextureRect" parent="PickedWards/ward_1" unique_id=1627987067]
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = 625.0
+offset_top = 50.0
+offset_right = 825.0
+offset_bottom = 325.0
+grow_horizontal = 2
+texture = ExtResource("3_bd0us")
+expand_mode = 1
+
+[node name="ward_2" type="Control" parent="PickedWards" unique_id=190020635]
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="highlight_2" type="TextureRect" parent="PickedWards/ward_2" unique_id=1310399509]
+visible = false
+material = SubResource("CanvasItemMaterial_wo8qs")
+layout_mode = 0
+offset_left = 1194.4666
+offset_top = -7.31633
+offset_right = 1588.3782
+offset_bottom = 464.417
+rotation = 1.5707964
+texture = ExtResource("2_jejem")
+expand_mode = 1
+
+[node name="reverse2" type="TextureRect" parent="PickedWards/ward_2" unique_id=380557389]
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = 842.0
+offset_top = 50.0
+offset_right = 1042.0
+offset_bottom = 325.0
+grow_horizontal = 2
+size_flags_vertical = 0
+size_flags_stretch_ratio = 0.0
+texture = ExtResource("3_bd0us")
+expand_mode = 1
+
+[node name="ward_3" type="Control" parent="PickedWards" unique_id=1910242448]
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="highlight_3" type="TextureRect" parent="PickedWards/ward_3" unique_id=1652924217]
+visible = false
+material = SubResource("CanvasItemMaterial_wo8qs")
+layout_mode = 0
+offset_left = 1409.4666
+offset_top = -7.31633
+offset_right = 1803.3782
+offset_bottom = 464.417
+rotation = 1.5707964
+texture = ExtResource("2_jejem")
+expand_mode = 1
+
+[node name="reverse3" type="TextureRect" parent="PickedWards/ward_3" unique_id=2131913119]
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = 1059.0
+offset_top = 50.0
+offset_right = 1258.9996
+offset_bottom = 325.0
+grow_horizontal = 2
+texture = ExtResource("3_bd0us")
+expand_mode = 1
+
+[node name="Wards_collection" type="Control" parent="." unique_id=82112796]
+anchors_preset = 0
+offset_right = 1920.0
+offset_bottom = 1080.0
+
+[node name="ward_collection_CR" type="ColorRect" parent="Wards_collection" unique_id=1401862299]
+layout_mode = 1
+anchors_preset = 12
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_top = -697.0
+offset_bottom = 5.0
+grow_horizontal = 2
+grow_vertical = 0
+color = Color(0, 0, 0, 0.7254902)
+
+[node name="chose_zone_color" type="ColorRect" parent="Wards_collection" unique_id=1448780859]
+layout_mode = 0
+offset_top = 383.0
+offset_right = 961.0
+offset_bottom = 1080.0
+color = Color(0.007843138, 1, 1, 0.15686275)
+
+[node name="chose_zone" type="Control" parent="Wards_collection" unique_id=1952023826]
+anchors_preset = 0
+offset_top = 383.415
+offset_right = 961.0
+offset_bottom = 1080.4149
+
+[node name="buttons" type="Control" parent="Wards_collection/chose_zone" unique_id=1788502763]
+anchors_preset = 0
+offset_top = -94.41501
+offset_right = 416.0
+offset_bottom = -3.4150085
+
+[node name="HBoxContainer" type="HBoxContainer" parent="Wards_collection/chose_zone/buttons" unique_id=2000620880]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+alignment = 1
+
+[node name="Earth" type="Control" parent="Wards_collection/chose_zone/buttons/HBoxContainer" unique_id=436167459]
+custom_minimum_size = Vector2(90, 75)
+layout_mode = 2
+
+[node name="TextureRect" type="TextureRect" parent="Wards_collection/chose_zone/buttons/HBoxContainer/Earth" unique_id=1033352447]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("4_va5r4")
+
+[node name="BG_earth" type="TextureRect" parent="Wards_collection/chose_zone/buttons/HBoxContainer/Earth" unique_id=2062112777]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("5_k242r")
+
+[node name="earth_sigil" type="TextureRect" parent="Wards_collection/chose_zone/buttons/HBoxContainer/Earth" unique_id=1048770184]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 7.0
+offset_top = 3.0
+offset_right = -3.0
+offset_bottom = -7.111107
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("6_d5pi6")
+expand_mode = 1
+
+[node name="Water" type="Control" parent="Wards_collection/chose_zone/buttons/HBoxContainer" unique_id=1091800818]
+custom_minimum_size = Vector2(90, 75)
+layout_mode = 2
+
+[node name="TextureRect" type="TextureRect" parent="Wards_collection/chose_zone/buttons/HBoxContainer/Water" unique_id=761799330]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("7_bxopt")
+
+[node name="bg_water" type="TextureRect" parent="Wards_collection/chose_zone/buttons/HBoxContainer/Water" unique_id=1104727559]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("5_k242r")
+
+[node name="water_sigil" type="TextureRect" parent="Wards_collection/chose_zone/buttons/HBoxContainer/Water" unique_id=907871288]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 14.0
+offset_top = 5.0
+offset_right = -10.0
+offset_bottom = -11.266663
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("8_18k0n")
+expand_mode = 1
+
+[node name="Fire" type="Control" parent="Wards_collection/chose_zone/buttons/HBoxContainer" unique_id=2090137846]
+custom_minimum_size = Vector2(90, 75)
+layout_mode = 2
+
+[node name="TextureRect" type="TextureRect" parent="Wards_collection/chose_zone/buttons/HBoxContainer/Fire" unique_id=541679469]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("9_eo2re")
+
+[node name="bg_fire" type="TextureRect" parent="Wards_collection/chose_zone/buttons/HBoxContainer/Fire" unique_id=1157554021]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("5_k242r")
+
+[node name="fire_sigil" type="TextureRect" parent="Wards_collection/chose_zone/buttons/HBoxContainer/Fire" unique_id=1821249000]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 13.0
+offset_top = 13.0
+offset_right = -9.0
+offset_bottom = -9.244446
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("10_d40o3")
+expand_mode = 1
+
+[node name="Air" type="Control" parent="Wards_collection/chose_zone/buttons/HBoxContainer" unique_id=1822120267]
+custom_minimum_size = Vector2(90, 75)
+layout_mode = 2
+
+[node name="TextureRect" type="TextureRect" parent="Wards_collection/chose_zone/buttons/HBoxContainer/Air" unique_id=793262292]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("11_xma24")
+
+[node name="bg_air" type="TextureRect" parent="Wards_collection/chose_zone/buttons/HBoxContainer/Air" unique_id=623576316]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("5_k242r")
+
+[node name="air_sigil" type="TextureRect" parent="Wards_collection/chose_zone/buttons/HBoxContainer/Air" unique_id=885550443]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 18.0
+offset_top = 16.999992
+offset_right = -16.0
+offset_bottom = -15.35556
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("12_0iq2c")
+expand_mode = 1
+
+[node name="TabsMenu" type="Control" parent="Wards_collection/chose_zone" unique_id=2001868371]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("14_k242r")
+empty_slot_scene = ExtResource("14_eo2re")
+slot_size = Vector2(124, 170)
+
+[node name="Buttons" type="Control" parent="Wards_collection/chose_zone/TabsMenu" unique_id=1547550369]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="but_earth" type="Button" parent="Wards_collection/chose_zone/TabsMenu/Buttons" unique_id=569348774]
+layout_mode = 0
+offset_left = 24.0
+offset_top = -73.41501
+offset_right = 112.0
+offset_bottom = -5.4150085
+flat = true
+
+[node name="but_water" type="Button" parent="Wards_collection/chose_zone/TabsMenu/Buttons" unique_id=781438613]
+layout_mode = 0
+offset_left = 118.0
+offset_top = -71.41501
+offset_right = 206.0
+offset_bottom = -3.4150085
+flat = true
+
+[node name="but_fire" type="Button" parent="Wards_collection/chose_zone/TabsMenu/Buttons" unique_id=405183790]
+layout_mode = 0
+offset_left = 212.0
+offset_top = -71.41501
+offset_right = 300.0
+offset_bottom = -3.4150085
+flat = true
+
+[node name="but_air" type="Button" parent="Wards_collection/chose_zone/TabsMenu/Buttons" unique_id=584178765]
+layout_mode = 0
+offset_left = 306.0
+offset_top = -72.41501
+offset_right = 394.0
+offset_bottom = -4.4150085
+flat = true
+
+[node name="Pages" type="Control" parent="Wards_collection/chose_zone/TabsMenu" unique_id=1571560658]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="page_earth" type="Control" parent="Wards_collection/chose_zone/TabsMenu/Pages" unique_id=1130301161]
+visible = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="TextureRect" type="TextureRect" parent="Wards_collection/chose_zone/TabsMenu/Pages/page_earth" unique_id=124322179]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("14_18k0n")
+expand_mode = 1
+stretch_mode = 1
+
+[node name="ScrollContainer" type="ScrollContainer" parent="Wards_collection/chose_zone/TabsMenu/Pages/page_earth" unique_id=1399746686]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 54.0
+offset_top = 32.58499
+offset_right = -42.0
+offset_bottom = -30.414917
+grow_horizontal = 2
+grow_vertical = 2
+horizontal_scroll_mode = 0
+
+[node name="GridContainer" type="GridContainer" parent="Wards_collection/chose_zone/TabsMenu/Pages/page_earth/ScrollContainer" unique_id=509916483]
+layout_mode = 2
+size_flags_vertical = 0
+theme_override_constants/h_separation = 112
+theme_override_constants/v_separation = 50
+columns = 4
+
+[node name="page_air" type="Control" parent="Wards_collection/chose_zone/TabsMenu/Pages" unique_id=2068255007]
+visible = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="TextureRect" type="TextureRect" parent="Wards_collection/chose_zone/TabsMenu/Pages/page_air" unique_id=183960756]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("17_xma24")
+
+[node name="ScrollContainer" type="ScrollContainer" parent="Wards_collection/chose_zone/TabsMenu/Pages/page_air" unique_id=9438376]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 54.0
+offset_top = 32.58499
+offset_right = -42.0
+offset_bottom = -30.414917
+grow_horizontal = 2
+grow_vertical = 2
+horizontal_scroll_mode = 0
+
+[node name="GridContainer" type="GridContainer" parent="Wards_collection/chose_zone/TabsMenu/Pages/page_air/ScrollContainer" unique_id=754325473]
+layout_mode = 2
+size_flags_vertical = 0
+theme_override_constants/h_separation = 112
+theme_override_constants/v_separation = 50
+columns = 4
+
+[node name="page_fire" type="Control" parent="Wards_collection/chose_zone/TabsMenu/Pages" unique_id=988131431]
+visible = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="TextureRect" type="TextureRect" parent="Wards_collection/chose_zone/TabsMenu/Pages/page_fire" unique_id=470135247]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("16_d40o3")
+
+[node name="ScrollContainer" type="ScrollContainer" parent="Wards_collection/chose_zone/TabsMenu/Pages/page_fire" unique_id=1376631570]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 54.0
+offset_top = 32.58499
+offset_right = -42.0
+offset_bottom = -30.414917
+grow_horizontal = 2
+grow_vertical = 2
+horizontal_scroll_mode = 0
+
+[node name="GridContainer" type="GridContainer" parent="Wards_collection/chose_zone/TabsMenu/Pages/page_fire/ScrollContainer" unique_id=2139829218]
+layout_mode = 2
+size_flags_vertical = 0
+theme_override_constants/h_separation = 112
+theme_override_constants/v_separation = 50
+columns = 4
+
+[node name="page_water" type="Control" parent="Wards_collection/chose_zone/TabsMenu/Pages" unique_id=153948484]
+visible = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="TextureRect2" type="TextureRect" parent="Wards_collection/chose_zone/TabsMenu/Pages/page_water" unique_id=1221114831]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("15_eo2re")
+
+[node name="ScrollContainer" type="ScrollContainer" parent="Wards_collection/chose_zone/TabsMenu/Pages/page_water" unique_id=947065860]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 54.0
+offset_top = 32.58499
+offset_right = -42.0
+offset_bottom = -30.414917
+grow_horizontal = 2
+grow_vertical = 2
+horizontal_scroll_mode = 0
+
+[node name="GridContainer" type="GridContainer" parent="Wards_collection/chose_zone/TabsMenu/Pages/page_water/ScrollContainer" unique_id=197029066]
+layout_mode = 2
+size_flags_vertical = 0
+theme_override_constants/h_separation = 112
+theme_override_constants/v_separation = 50
+columns = 4
+
+[node name="frame" type="TextureRect" parent="Wards_collection" unique_id=715814542]
+layout_mode = 0
+offset_left = -42.0
+offset_top = 355.0
+offset_right = 1024.0
+offset_bottom = 1108.0
+texture = ExtResource("5_wo8qs")
