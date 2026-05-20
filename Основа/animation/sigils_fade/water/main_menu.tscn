@@ -1,0 +1,679 @@
+[gd_scene format=3 uid="uid://ctkidkrp0lhrm"]
+
+[ext_resource type="Script" uid="uid://b8of68bqbc7vy" path="res://main_menu.gd" id="1_3l8t0"]
+[ext_resource type="Texture2D" uid="uid://c8ut3bxo5s0my" path="res://Основа/mainmenu/paralax1.png" id="2_wp4rq"]
+[ext_resource type="Texture2D" uid="uid://bvg28o2c7uwix" path="res://Основа/mainmenu/circle_pl2.png" id="3_ritct"]
+[ext_resource type="Texture2D" uid="uid://de4dkjnpcpcq3" path="res://Основа/mainmenu/paralax1_glow.png" id="3_wp4rq"]
+[ext_resource type="Texture2D" uid="uid://bia7btsda6jk1" path="res://Основа/mainmenu/branch_3.png" id="5_0t8aw"]
+[ext_resource type="Texture2D" uid="uid://cf5jo8sr4sgf7" path="res://Основа/mainmenu/branch_1.png" id="5_ritct"]
+[ext_resource type="Texture2D" uid="uid://cmxy4xcxdtlxt" path="res://Основа/animation/particles/ember_particles.png" id="5_rt1is"]
+[ext_resource type="AudioStream" uid="uid://balb85xa5coxc" path="res://Основа/audio/main_theme/main.mp3" id="8_7w3wf"]
+[ext_resource type="Texture2D" uid="uid://cwixtkq8vm4py" path="res://Основа/mainmenu/sigil_radiant_bg.png" id="9_o55qq"]
+[ext_resource type="Texture2D" uid="uid://dgvibc2qub1fj" path="res://Основа/mainmenu/ui/circle1.png" id="10_uvnve"]
+[ext_resource type="Script" uid="uid://cc1w4cvklyup6" path="res://Основа/animation/sigils_fade/water/mainmenuui.gd" id="11_0o1eg"]
+[ext_resource type="Texture2D" uid="uid://b5md05pbokwig" path="res://Основа/mainmenu/ui/bg_menu_circle_glow.png" id="11_ddreb"]
+[ext_resource type="Texture2D" uid="uid://ba7154skp86q3" path="res://Основа/mainmenu/ui/bg_menu_circle.png" id="11_pa6yk"]
+[ext_resource type="Texture2D" uid="uid://bvuj62wq7mseq" path="res://Основа/mainmenu/ui/earth_but.png" id="12_7ktlw"]
+[ext_resource type="Texture2D" uid="uid://l6dj4pkj6454" path="res://Основа/mainmenu/ui/earth_hl.png" id="12_ln0mw"]
+[ext_resource type="FontFile" uid="uid://bymkrthni0vye" path="res://Основа/Шрифти/silvus__.ttf" id="13_g5hsq"]
+[ext_resource type="Texture2D" uid="uid://d2v874d47t7k5" path="res://Основа/mainmenu/ui/air_but.png" id="14_fe2ab"]
+[ext_resource type="Texture2D" uid="uid://sfhewyai50xl" path="res://Основа/mainmenu/ui/air_hl.png" id="15_0o1eg"]
+[ext_resource type="Texture2D" uid="uid://cqt1xn3sr83fo" path="res://Основа/mainmenu/ui/water_but.png" id="15_ln0mw"]
+[ext_resource type="Texture2D" uid="uid://csvmwwwxypi8g" path="res://Основа/mainmenu/ui/fire_but.png" id="16_0o1eg"]
+[ext_resource type="Texture2D" uid="uid://dn6trq38mrfbw" path="res://Основа/mainmenu/ui/water_hl.png" id="17_cjue4"]
+[ext_resource type="Texture2D" uid="uid://btj8ft5j7r5ll" path="res://Основа/mainmenu/ui/fire_hl.png" id="19_roix4"]
+[ext_resource type="AudioStream" uid="uid://v5r8fx06nm28" path="res://Основа/audio/audio_effects/button_stone_menu.mp3" id="22_cjue4"]
+[ext_resource type="Script" uid="uid://bt7p87jv8rs42" path="res://Основа/animation/sigils_fade/water/settings_tabs.gd" id="23_clsva"]
+[ext_resource type="Shader" uid="uid://bq4ums7tmq24a" path="res://new_shader.gdshader" id="24_ddreb"]
+[ext_resource type="Texture2D" uid="uid://hiyyruhmbnet" path="res://Основа/portrait_mask_oval.png" id="25_rgw6j"]
+[ext_resource type="Texture2D" uid="uid://d5tacve37cas" path="res://Основа/char/Вода/Лія/Liah.png" id="26_ble6o"]
+[ext_resource type="Texture2D" uid="uid://dskby8dalt4nq" path="res://Основа/mainmenu/ui/settings_but.png" id="27_rgadl"]
+[ext_resource type="Texture2D" uid="uid://ds477i1h0p14f" path="res://Основа/mainmenu/ui/set_1.png" id="28_ce0dl"]
+[ext_resource type="Texture2D" uid="uid://cdimjgdjshaip" path="res://Основа/mainmenu/ui/set_2.png" id="29_jrfv1"]
+[ext_resource type="Texture2D" uid="uid://v82bq1brr2hl" path="res://Основа/mainmenu/ui/set_3.png" id="30_7gbe4"]
+[ext_resource type="Texture2D" uid="uid://bp4utx4hjr0yh" path="res://Основа/mainmenu/ui/set_4.png" id="31_7rbaw"]
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_7w3wf"]
+particle_flag_disable_z = true
+emission_shape_scale = Vector3(200, 20, 1)
+emission_shape = 3
+emission_box_extents = Vector3(1, 1, 1)
+direction = Vector3(0, -1, 0)
+spread = 35.0
+initial_velocity_min = 20.0
+initial_velocity_max = 65.0
+angular_velocity_min = -30.000015
+angular_velocity_max = 29.999983
+gravity = Vector3(0, -20, 0)
+scale_min = 0.03
+scale_max = 0.089999996
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_2vavp"]
+shader = ExtResource("24_ddreb")
+shader_parameter/mask_texture = ExtResource("25_rgw6j")
+
+[node name="main_menu" type="Control" unique_id=1380645710]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+script = ExtResource("1_3l8t0")
+metadata/_edit_horizontal_guides_ = [619.0]
+
+[node name="paralax_bg" type="TextureRect" parent="." unique_id=1271117492]
+custom_minimum_size = Vector2(2100, 1200)
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("2_wp4rq")
+
+[node name="glow1" type="TextureRect" parent="." unique_id=1875867417]
+custom_minimum_size = Vector2(2100, 1200)
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -90.0
+offset_top = -60.0
+offset_right = 90.0
+offset_bottom = 60.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("3_wp4rq")
+
+[node name="circle1" type="Sprite2D" parent="." unique_id=1280450825]
+position = Vector2(1917, 95.00009)
+scale = Vector2(1.676122, 1.6761222)
+texture = ExtResource("3_ritct")
+
+[node name="circle2" type="Sprite2D" parent="." unique_id=1960634984]
+position = Vector2(810, 1159)
+texture = ExtResource("3_ritct")
+
+[node name="particles" type="Control" parent="." unique_id=1019188597]
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="sparks" type="Control" parent="particles" unique_id=460363790]
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="GPUParticles2D" type="GPUParticles2D" parent="particles/sparks" unique_id=1039050550]
+position = Vector2(1944, 1101)
+rotation = -0.74351025
+amount = 60
+texture = ExtResource("5_rt1is")
+lifetime = 2.5
+preprocess = 2.0
+process_material = SubResource("ParticleProcessMaterial_7w3wf")
+
+[node name="GPUParticles2D3" type="GPUParticles2D" parent="particles/sparks" unique_id=1979539545]
+position = Vector2(1993.9998, 856)
+rotation = -1.2426745
+scale = Vector2(0.99999994, 0.99999994)
+amount = 60
+texture = ExtResource("5_rt1is")
+lifetime = 2.5
+preprocess = 2.0
+process_material = SubResource("ParticleProcessMaterial_7w3wf")
+
+[node name="GPUParticles2D2" type="GPUParticles2D" parent="particles/sparks" unique_id=1276124858]
+position = Vector2(1619, 1075)
+rotation = -0.2443461
+amount = 60
+texture = ExtResource("5_rt1is")
+lifetime = 2.5
+preprocess = 2.0
+process_material = SubResource("ParticleProcessMaterial_7w3wf")
+
+[node name="GPUParticles2D4" type="GPUParticles2D" parent="particles/sparks" unique_id=1336184062]
+position = Vector2(-65, 1121)
+rotation = 0.89884454
+amount = 60
+texture = ExtResource("5_rt1is")
+lifetime = 2.5
+preprocess = 2.0
+process_material = SubResource("ParticleProcessMaterial_7w3wf")
+
+[node name="GPUParticles2D5" type="GPUParticles2D" parent="particles/sparks" unique_id=2087135706]
+position = Vector2(185, 1171)
+rotation = 0.3281219
+amount = 60
+texture = ExtResource("5_rt1is")
+lifetime = 2.5
+preprocess = 2.0
+process_material = SubResource("ParticleProcessMaterial_7w3wf")
+
+[node name="GPUParticles2D6" type="GPUParticles2D" parent="particles/sparks" unique_id=164478607]
+position = Vector2(-28.00003, 802)
+rotation = 0.89884454
+amount = 60
+texture = ExtResource("5_rt1is")
+lifetime = 2.5
+preprocess = 2.0
+process_material = SubResource("ParticleProcessMaterial_7w3wf")
+
+[node name="GPUParticles2D7" type="GPUParticles2D" parent="particles/sparks" unique_id=1490393159]
+position = Vector2(-137, 226)
+rotation = 1.8989183
+amount = 60
+texture = ExtResource("5_rt1is")
+lifetime = 2.5
+preprocess = 2.0
+process_material = SubResource("ParticleProcessMaterial_7w3wf")
+
+[node name="GPUParticles2D8" type="GPUParticles2D" parent="particles/sparks" unique_id=101457710]
+position = Vector2(2101, 359.99988)
+rotation = -1.2426745
+scale = Vector2(0.99999994, 0.99999994)
+amount = 60
+texture = ExtResource("5_rt1is")
+lifetime = 2.5
+preprocess = 2.0
+process_material = SubResource("ParticleProcessMaterial_7w3wf")
+
+[node name="smoke" type="Control" parent="particles" unique_id=820041021]
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="branch1" type="Sprite2D" parent="." unique_id=2020313595]
+position = Vector2(231, 617)
+scale = Vector2(1.6493056, 1.6493057)
+texture = ExtResource("5_ritct")
+
+[node name="branch2" type="Sprite2D" parent="." unique_id=788852260]
+position = Vector2(696, 263)
+scale = Vector2(1.6493056, 1.6493057)
+texture = ExtResource("5_0t8aw")
+
+[node name="AudioStreamPlayer2D" type="AudioStreamPlayer2D" parent="." unique_id=432985136]
+stream = ExtResource("8_7w3wf")
+volume_db = 6.746
+pitch_scale = 0.7
+autoplay = true
+parameters/looping = true
+
+[node name="menu_bg" type="Sprite2D" parent="." unique_id=1444948303]
+position = Vector2(966, 505)
+scale = Vector2(4.5227275, 4.5227275)
+texture = ExtResource("9_o55qq")
+
+[node name="menu_bg2" type="Sprite2D" parent="." unique_id=1097821379]
+position = Vector2(966, 505)
+scale = Vector2(4.5227275, 4.5227275)
+texture = ExtResource("9_o55qq")
+
+[node name="logo_menu" type="Sprite2D" parent="." unique_id=1519389039]
+position = Vector2(962, 541)
+texture = ExtResource("10_uvnve")
+
+[node name="circle_glow_bg" type="Sprite2D" parent="." unique_id=1315640011]
+position = Vector2(960, 540)
+texture = ExtResource("11_ddreb")
+
+[node name="ui" type="Control" parent="." unique_id=84267524]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("11_0o1eg")
+
+[node name="TextureRect" type="TextureRect" parent="ui" unique_id=1241336470]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -512.0
+offset_top = -544.0
+offset_right = 512.0
+offset_bottom = 544.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("11_pa6yk")
+
+[node name="earth" type="Control" parent="ui" unique_id=1280426080]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -20.0
+offset_top = -20.0
+offset_right = 20.0
+offset_bottom = 20.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="earth_hl" type="TextureRect" parent="ui/earth" unique_id=853031786]
+visible = false
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -20.0
+offset_top = -20.0
+offset_right = 20.0
+offset_bottom = 20.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("12_ln0mw")
+
+[node name="earth_but" type="TextureRect" parent="ui/earth" unique_id=1184112515]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -512.0
+offset_top = -544.0
+offset_right = 512.0
+offset_bottom = 544.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("12_7ktlw")
+
+[node name="earth_label" type="Label" parent="ui/earth/earth_but" unique_id=692525174]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -44.0
+offset_top = -14.5
+offset_right = 44.0
+offset_bottom = 8.5
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(0.004556856, 0.014821248, 0.014066816, 1)
+theme_override_colors/font_shadow_color = Color(0.9019608, 0.9019608, 0.9019608, 0.5568628)
+theme_override_colors/font_outline_color = Color(1, 1, 1, 1)
+theme_override_fonts/font = ExtResource("13_g5hsq")
+theme_override_font_sizes/font_size = 15
+text = "CAMPAIN"
+
+[node name="button_earth" type="Button" parent="ui/earth" unique_id=990604244]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -50.0
+offset_top = -52.0
+offset_right = 48.0
+offset_bottom = 46.0
+grow_horizontal = 2
+grow_vertical = 2
+flat = true
+
+[node name="air" type="Control" parent="ui" unique_id=659784432]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -20.0
+offset_top = -20.0
+offset_right = 20.0
+offset_bottom = 20.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="air_hl" type="TextureRect" parent="ui/air" unique_id=211482879]
+visible = false
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -20.0
+offset_top = -20.0
+offset_right = 20.0
+offset_bottom = 20.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("15_0o1eg")
+
+[node name="air_but" type="TextureRect" parent="ui/air" unique_id=2003785589]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -512.0
+offset_top = -544.0
+offset_right = 512.0
+offset_bottom = 544.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("14_fe2ab")
+
+[node name="air_label" type="Label" parent="ui/air/air_but" unique_id=122888532]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -247.0
+offset_top = 163.0
+offset_right = -159.0
+offset_bottom = 181.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(0.004556856, 0.014821248, 0.014066816, 1)
+theme_override_colors/font_shadow_color = Color(0.9019608, 0.9019608, 0.9019608, 0.5568628)
+theme_override_colors/font_outline_color = Color(1, 1, 1, 1)
+theme_override_fonts/font = ExtResource("13_g5hsq")
+theme_override_font_sizes/font_size = 11
+text = "COLLECTION"
+
+[node name="button_air" type="Button" parent="ui/air" unique_id=762787524]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -252.0
+offset_top = 124.0
+offset_right = -154.0
+offset_bottom = 222.0
+grow_horizontal = 2
+grow_vertical = 2
+flat = true
+
+[node name="water" type="Control" parent="ui" unique_id=1192794720]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -20.0
+offset_top = -20.0
+offset_right = 20.0
+offset_bottom = 20.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="water_hl" type="TextureRect" parent="ui/water" unique_id=875488160]
+visible = false
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -512.0
+offset_top = -544.0
+offset_right = 512.0
+offset_bottom = 544.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("17_cjue4")
+
+[node name="water_but" type="TextureRect" parent="ui/water" unique_id=827325502]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -512.0
+offset_top = -544.0
+offset_right = 512.0
+offset_bottom = 544.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("15_ln0mw")
+
+[node name="water_label" type="Label" parent="ui/water/water_but" unique_id=1003582059]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -25.0
+offset_top = -239.5
+offset_right = 63.0
+offset_bottom = -221.5
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(0.004556856, 0.014821248, 0.014066816, 1)
+theme_override_colors/font_shadow_color = Color(0.9019608, 0.9019608, 0.9019608, 0.5568628)
+theme_override_colors/font_outline_color = Color(1, 1, 1, 1)
+theme_override_fonts/font = ExtResource("13_g5hsq")
+theme_override_font_sizes/font_size = 15
+text = "IVENT"
+
+[node name="button_water" type="Button" parent="ui/water" unique_id=314302318]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -48.0
+offset_top = -279.0
+offset_right = 50.0
+offset_bottom = -181.0
+grow_horizontal = 2
+grow_vertical = 2
+flat = true
+
+[node name="fire" type="Control" parent="ui" unique_id=1218058282]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -20.0
+offset_top = -20.0
+offset_right = 20.0
+offset_bottom = 20.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="fire_hl" type="TextureRect" parent="ui/fire" unique_id=348948251]
+visible = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("19_roix4")
+
+[node name="fire_but" type="TextureRect" parent="ui/fire" unique_id=701315739]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -512.0
+offset_top = -544.0
+offset_right = 512.0
+offset_bottom = 544.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("16_0o1eg")
+
+[node name="fire_label" type="Label" parent="ui/fire/fire_but" unique_id=918470236]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = 182.0
+offset_top = 162.0
+offset_right = 231.0
+offset_bottom = 180.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(0.004556856, 0.014821248, 0.014066816, 1)
+theme_override_colors/font_shadow_color = Color(0.9019608, 0.9019608, 0.9019608, 0.5568628)
+theme_override_colors/font_outline_color = Color(1, 1, 1, 1)
+theme_override_fonts/font = ExtResource("13_g5hsq")
+theme_override_font_sizes/font_size = 15
+text = "DUEL"
+
+[node name="button_fire" type="Button" parent="ui/fire" unique_id=376975028]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = 156.0
+offset_top = 118.0
+offset_right = 254.0
+offset_bottom = 216.0
+grow_horizontal = 2
+grow_vertical = 2
+flat = true
+
+[node name="button_effect" type="AudioStreamPlayer2D" parent="ui" unique_id=1004712759]
+stream = ExtResource("22_cjue4")
+volume_db = 3.0
+
+[node name="settings" type="Control" parent="ui" unique_id=287969973]
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+script = ExtResource("23_clsva")
+
+[node name="profile" type="Control" parent="ui/settings" unique_id=1217493321]
+anchors_preset = 0
+offset_left = -944.0
+offset_top = -519.0
+offset_right = -781.0
+offset_bottom = -360.0
+
+[node name="profile_portrait" type="TextureRect" parent="ui/settings/profile" unique_id=768996623]
+material = SubResource("ShaderMaterial_2vavp")
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -75.0
+offset_top = -76.5
+offset_right = 75.0
+offset_bottom = 76.5
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("26_ble6o")
+expand_mode = 1
+
+[node name="profile_frame" type="Sprite2D" parent="ui/settings/profile" unique_id=649373014]
+position = Vector2(81.00003, 82)
+scale = Vector2(0.20068361, 0.20068361)
+texture = ExtResource("27_rgadl")
+
+[node name="profile_button" type="Button" parent="ui/settings/profile" unique_id=597735129]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -52.5
+offset_top = -52.5
+offset_right = 52.5
+offset_bottom = 52.5
+grow_horizontal = 2
+grow_vertical = 2
+flat = true
+
+[node name="VBoxContainer" type="VBoxContainer" parent="ui/settings" unique_id=1629752342]
+layout_mode = 1
+offset_left = -922.0
+offset_top = -342.0
+offset_right = -802.0
+offset_bottom = -4.0
+
+[node name="Control" type="Control" parent="ui/settings/VBoxContainer" unique_id=321894310]
+custom_minimum_size = Vector2(120, 120)
+layout_mode = 2
+
+[node name="se" type="TextureRect" parent="ui/settings/VBoxContainer/Control" unique_id=1734750801]
+custom_minimum_size = Vector2(95.75, 100)
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("28_ce0dl")
+expand_mode = 1
+
+[node name="Control5" type="Control" parent="ui/settings/VBoxContainer" unique_id=403618193]
+custom_minimum_size = Vector2(120, 120)
+layout_mode = 2
+
+[node name="se" type="TextureRect" parent="ui/settings/VBoxContainer/Control5" unique_id=1283538454]
+custom_minimum_size = Vector2(95.75, 100)
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("29_jrfv1")
+expand_mode = 1
+
+[node name="Control2" type="Control" parent="ui/settings/VBoxContainer" unique_id=1866362869]
+custom_minimum_size = Vector2(120, 120)
+layout_mode = 2
+
+[node name="se" type="TextureRect" parent="ui/settings/VBoxContainer/Control2" unique_id=414428135]
+custom_minimum_size = Vector2(95.75, 100)
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("30_7gbe4")
+expand_mode = 1
+
+[node name="Control3" type="Control" parent="ui/settings/VBoxContainer" unique_id=1803884476]
+custom_minimum_size = Vector2(120, 120)
+layout_mode = 2
+
+[node name="se" type="TextureRect" parent="ui/settings/VBoxContainer/Control3" unique_id=235675537]
+custom_minimum_size = Vector2(95.75, 100)
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("31_7rbaw")
+expand_mode = 1

@@ -3,7 +3,9 @@
 [ext_resource type="Texture2D" uid="uid://brdsg33hxt4lt" path="res://Основа/visual/choose_stage/BG.png" id="1_kc37t"]
 [ext_resource type="Texture2D" uid="uid://ccmi1jrtt83kk" path="res://Основа/visual/green_highlight.png" id="2_jejem"]
 [ext_resource type="Texture2D" uid="uid://cgjmqk6t3yfop" path="res://Основа/visual/element_cards/card_reverse.png" id="3_bd0us"]
+[ext_resource type="Texture2D" uid="uid://5vw8fk0gxtfe" path="res://Основа/visual/logo.png" id="4_inqys"]
 [ext_resource type="Texture2D" uid="uid://dtk30cvnsyt2h" path="res://Основа/visual/choose_stage/chosebg_earth.png" id="4_va5r4"]
+[ext_resource type="Texture2D" uid="uid://8tqnsoshtyu1" path="res://Основа/visual/choose_stage/ward_collection_button_HL.png" id="4_w318r"]
 [ext_resource type="Texture2D" uid="uid://c1t4m1k4uqqbi" path="res://Основа/visual/choose_stage/emoframe.png" id="5_k242r"]
 [ext_resource type="Texture2D" uid="uid://ddh0w7a12yiix" path="res://Основа/visual/choose_stage/peregorodka.png" id="5_wo8qs"]
 [ext_resource type="Texture2D" uid="uid://blfre7t4lg51q" path="res://Основа/visual/sigils/sigil_earth.png" id="6_d5pi6"]
@@ -18,9 +20,22 @@
 [ext_resource type="Script" uid="uid://bbp54807il017" path="res://tabs_menu.gd" id="14_k242r"]
 [ext_resource type="Texture2D" uid="uid://cexdw0323h8yv" path="res://Основа/visual/choose_stage/tile_water.png" id="15_eo2re"]
 [ext_resource type="Texture2D" uid="uid://eaf2p58lh1oy" path="res://Основа/visual/choose_stage/tile_fire.png" id="16_d40o3"]
+[ext_resource type="Script" uid="uid://dvuwlduuiu1bu" path="res://buttons_chose_stage.gd" id="16_jprfe"]
 [ext_resource type="Texture2D" uid="uid://cxwdwvnimwdqo" path="res://Основа/visual/choose_stage/tile_air.png" id="17_xma24"]
+[ext_resource type="Texture2D" uid="uid://ccusj82vd0uds" path="res://Основа/visual/Skill_list/Skill_background.png" id="20_tyi47"]
+[ext_resource type="Texture2D" uid="uid://dpt2a13yle6ma" path="res://Основа/char/Вода/Лія/liah_q.png" id="21_w318r"]
+[ext_resource type="Texture2D" uid="uid://d5tacve37cas" path="res://Основа/char/Вода/Лія/Liah.png" id="22_jprfe"]
+[ext_resource type="FontFile" uid="uid://bymkrthni0vye" path="res://Основа/Шрифти/silvus__.ttf" id="26_m8a06"]
+[ext_resource type="Texture2D" uid="uid://oym6a1atnd2l" path="res://Основа/visual/choose_stage/page_lor_bg.png" id="27_m8a06"]
+[ext_resource type="FontFile" uid="uid://sin06uqgfb8o" path="res://Основа/Шрифти/Brock_Script_D.ttf" id="28_o6ifj"]
 
 [sub_resource type="CanvasItemMaterial" id="CanvasItemMaterial_wo8qs"]
+blend_mode = 1
+
+[sub_resource type="CanvasItemMaterial" id="CanvasItemMaterial_o6ifj"]
+blend_mode = 2
+
+[sub_resource type="CanvasItemMaterial" id="CanvasItemMaterial_jprfe"]
 blend_mode = 1
 
 [node name="choose_wards_stage" type="Control" unique_id=58423613]
@@ -150,6 +165,24 @@ anchors_preset = 0
 offset_right = 1920.0
 offset_bottom = 1080.0
 
+[node name="TextureRect" type="TextureRect" parent="Wards_collection" unique_id=205018281]
+material = SubResource("CanvasItemMaterial_o6ifj")
+custom_minimum_size = Vector2(500, 500)
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -729.5
+offset_top = -58.5
+offset_right = -229.5
+offset_bottom = 441.5
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("4_inqys")
+expand_mode = 1
+
 [node name="ward_collection_CR" type="ColorRect" parent="Wards_collection" unique_id=1401862299]
 layout_mode = 1
 anchors_preset = 12
@@ -167,7 +200,7 @@ layout_mode = 0
 offset_top = 383.0
 offset_right = 961.0
 offset_bottom = 1080.0
-color = Color(0.007843138, 1, 1, 0.15686275)
+color = Color(0.007843138, 1, 1, 0.09019608)
 
 [node name="chose_zone" type="Control" parent="Wards_collection" unique_id=1952023826]
 anchors_preset = 0
@@ -193,6 +226,24 @@ alignment = 1
 [node name="Earth" type="Control" parent="Wards_collection/chose_zone/buttons/HBoxContainer" unique_id=436167459]
 custom_minimum_size = Vector2(90, 75)
 layout_mode = 2
+
+[node name="earth_hl" type="TextureRect" parent="Wards_collection/chose_zone/buttons/HBoxContainer/Earth" unique_id=1223214221]
+visible = false
+material = SubResource("CanvasItemMaterial_jprfe")
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -75.0
+offset_top = -75.0
+offset_right = 75.0
+offset_bottom = 53.5
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("4_w318r")
+expand_mode = 1
 
 [node name="TextureRect" type="TextureRect" parent="Wards_collection/chose_zone/buttons/HBoxContainer/Earth" unique_id=1033352447]
 layout_mode = 1
@@ -230,6 +281,24 @@ expand_mode = 1
 custom_minimum_size = Vector2(90, 75)
 layout_mode = 2
 
+[node name="water_hl" type="TextureRect" parent="Wards_collection/chose_zone/buttons/HBoxContainer/Water" unique_id=1297109722]
+visible = false
+material = SubResource("CanvasItemMaterial_jprfe")
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -75.0
+offset_top = -75.0
+offset_right = 75.0
+offset_bottom = 53.5
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("4_w318r")
+expand_mode = 1
+
 [node name="TextureRect" type="TextureRect" parent="Wards_collection/chose_zone/buttons/HBoxContainer/Water" unique_id=761799330]
 layout_mode = 1
 anchors_preset = 15
@@ -266,6 +335,24 @@ expand_mode = 1
 custom_minimum_size = Vector2(90, 75)
 layout_mode = 2
 
+[node name="fire_hl" type="TextureRect" parent="Wards_collection/chose_zone/buttons/HBoxContainer/Fire" unique_id=1107692963]
+visible = false
+material = SubResource("CanvasItemMaterial_jprfe")
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -75.0
+offset_top = -75.0
+offset_right = 75.0
+offset_bottom = 53.5
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("4_w318r")
+expand_mode = 1
+
 [node name="TextureRect" type="TextureRect" parent="Wards_collection/chose_zone/buttons/HBoxContainer/Fire" unique_id=541679469]
 layout_mode = 1
 anchors_preset = 15
@@ -301,6 +388,24 @@ expand_mode = 1
 [node name="Air" type="Control" parent="Wards_collection/chose_zone/buttons/HBoxContainer" unique_id=1822120267]
 custom_minimum_size = Vector2(90, 75)
 layout_mode = 2
+
+[node name="air_hl" type="TextureRect" parent="Wards_collection/chose_zone/buttons/HBoxContainer/Air" unique_id=509767456]
+visible = false
+material = SubResource("CanvasItemMaterial_jprfe")
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -75.0
+offset_top = -75.0
+offset_right = 75.0
+offset_bottom = 53.5
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("4_w318r")
+expand_mode = 1
 
 [node name="TextureRect" type="TextureRect" parent="Wards_collection/chose_zone/buttons/HBoxContainer/Air" unique_id=793262292]
 layout_mode = 1
@@ -352,6 +457,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+script = ExtResource("16_jprfe")
 
 [node name="but_earth" type="Button" parent="Wards_collection/chose_zone/TabsMenu/Buttons" unique_id=569348774]
 layout_mode = 0
@@ -450,6 +556,7 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 texture = ExtResource("17_xma24")
+expand_mode = 1
 
 [node name="ScrollContainer" type="ScrollContainer" parent="Wards_collection/chose_zone/TabsMenu/Pages/page_air" unique_id=9438376]
 layout_mode = 1
@@ -488,6 +595,7 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 texture = ExtResource("16_d40o3")
+expand_mode = 1
 
 [node name="ScrollContainer" type="ScrollContainer" parent="Wards_collection/chose_zone/TabsMenu/Pages/page_fire" unique_id=1376631570]
 layout_mode = 1
@@ -526,6 +634,7 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 texture = ExtResource("15_eo2re")
+expand_mode = 1
 
 [node name="ScrollContainer" type="ScrollContainer" parent="Wards_collection/chose_zone/TabsMenu/Pages/page_water" unique_id=947065860]
 layout_mode = 1
@@ -553,4 +662,188 @@ offset_left = -42.0
 offset_top = 355.0
 offset_right = 1024.0
 offset_bottom = 1108.0
+mouse_filter = 2
 texture = ExtResource("5_wo8qs")
+
+[node name="Skill_panel" type="Control" parent="." unique_id=2121489772]
+anchors_preset = 0
+offset_left = 1004.0
+offset_top = 383.0
+offset_right = 1920.0
+offset_bottom = 1079.0
+
+[node name="Skills" type="VBoxContainer" parent="Skill_panel" unique_id=433007259]
+layout_mode = 0
+offset_right = 412.0
+offset_bottom = 697.0
+theme_override_constants/separation = 33
+
+[node name="q_back" type="TextureRect" parent="Skill_panel/Skills" unique_id=1190792828]
+custom_minimum_size = Vector2(75, 150)
+layout_mode = 2
+texture = ExtResource("20_tyi47")
+expand_mode = 1
+
+[node name="q_icon" type="TextureRect" parent="Skill_panel/Skills/q_back" unique_id=1349888284]
+layout_mode = 0
+offset_left = 60.0
+offset_top = 36.0
+offset_right = 133.0
+offset_bottom = 109.0
+texture = ExtResource("21_w318r")
+expand_mode = 1
+
+[node name="RichTextLabel" type="RichTextLabel" parent="Skill_panel/Skills/q_back" unique_id=48434364]
+layout_mode = 0
+offset_left = 147.0
+offset_top = 37.0
+offset_right = 347.0
+offset_bottom = 108.0
+text = "bla-bla-bla-bla-bla-bla-bla-blablablablablablalbalbalbalblalblsal"
+
+[node name="w_back" type="TextureRect" parent="Skill_panel/Skills" unique_id=192861247]
+custom_minimum_size = Vector2(75, 150)
+layout_mode = 2
+texture = ExtResource("20_tyi47")
+expand_mode = 1
+
+[node name="q_icon" type="TextureRect" parent="Skill_panel/Skills/w_back" unique_id=250944162]
+layout_mode = 0
+offset_left = 60.0
+offset_top = 36.0
+offset_right = 133.0
+offset_bottom = 109.0
+texture = ExtResource("21_w318r")
+expand_mode = 1
+
+[node name="RichTextLabel" type="RichTextLabel" parent="Skill_panel/Skills/w_back" unique_id=1829175559]
+layout_mode = 0
+offset_left = 147.0
+offset_top = 37.0
+offset_right = 347.0
+offset_bottom = 108.0
+text = "bla-bla-bla-bla-bla-bla-bla-blablablablablablalbalbalbalblalblsal"
+
+[node name="e_back" type="TextureRect" parent="Skill_panel/Skills" unique_id=2100385896]
+custom_minimum_size = Vector2(75, 150)
+layout_mode = 2
+texture = ExtResource("20_tyi47")
+expand_mode = 1
+
+[node name="q_icon" type="TextureRect" parent="Skill_panel/Skills/e_back" unique_id=1608033985]
+layout_mode = 0
+offset_left = 60.0
+offset_top = 36.0
+offset_right = 133.0
+offset_bottom = 109.0
+texture = ExtResource("21_w318r")
+expand_mode = 1
+
+[node name="RichTextLabel" type="RichTextLabel" parent="Skill_panel/Skills/e_back" unique_id=556678527]
+layout_mode = 0
+offset_left = 147.0
+offset_top = 37.0
+offset_right = 347.0
+offset_bottom = 108.0
+text = "bla-bla-bla-bla-bla-bla-bla-blablablablablablalbalbalbalblalblsal"
+
+[node name="p_back" type="TextureRect" parent="Skill_panel/Skills" unique_id=989942787]
+custom_minimum_size = Vector2(75, 150)
+layout_mode = 2
+texture = ExtResource("20_tyi47")
+expand_mode = 1
+
+[node name="q_icon" type="TextureRect" parent="Skill_panel/Skills/p_back" unique_id=751446206]
+layout_mode = 0
+offset_left = 60.0
+offset_top = 36.0
+offset_right = 133.0
+offset_bottom = 109.0
+texture = ExtResource("21_w318r")
+expand_mode = 1
+
+[node name="RichTextLabel" type="RichTextLabel" parent="Skill_panel/Skills/p_back" unique_id=341547310]
+layout_mode = 0
+offset_left = 147.0
+offset_top = 37.0
+offset_right = 347.0
+offset_bottom = 108.0
+text = "bla-bla-bla-bla-bla-bla-bla-blablablablablablalbalbalbalblalblsal"
+
+[node name="lore" type="Control" parent="Skill_panel" unique_id=1523821269]
+anchors_preset = 0
+offset_right = 912.0
+offset_bottom = 699.0
+
+[node name="ward_portrait" type="TextureRect" parent="Skill_panel/lore" unique_id=1388814601]
+layout_mode = 0
+offset_left = 443.0
+offset_top = 1.0
+offset_right = 916.0
+offset_bottom = 699.0
+texture = ExtResource("22_jprfe")
+expand_mode = 1
+
+[node name="ColorRect" type="ColorRect" parent="Skill_panel/lore/ward_portrait" unique_id=588481670]
+layout_mode = 1
+anchors_preset = 11
+anchor_left = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -472.0
+offset_top = -1.0
+offset_right = 5.0
+offset_bottom = -1.0
+grow_horizontal = 0
+grow_vertical = 2
+color = Color(0, 0, 0.039215688, 0.7490196)
+
+[node name="name" type="Label" parent="Skill_panel/lore/ward_portrait" unique_id=947458871]
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -106.0
+offset_top = 9.0
+offset_right = 106.0
+offset_bottom = 97.0
+grow_horizontal = 2
+theme_override_colors/font_color = Color(0.59044087, 0.5904412, 0.5904411, 1)
+theme_override_colors/font_outline_color = Color(1, 1, 1, 1)
+theme_override_fonts/font = ExtResource("26_m8a06")
+theme_override_font_sizes/font_size = 65
+text = "LIAH"
+horizontal_alignment = 1
+
+[node name="TextureRect" type="TextureRect" parent="Skill_panel/lore/ward_portrait" unique_id=1102254522]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_top = 70.0
+offset_bottom = -17.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("27_m8a06")
+expand_mode = 1
+
+[node name="lore" type="RichTextLabel" parent="Skill_panel/lore/ward_portrait/TextureRect" unique_id=938221011]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 39.0
+offset_top = 45.0
+offset_right = -43.0
+offset_bottom = -51.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/default_color = Color(0, 0, 0, 0.70980394)
+theme_override_constants/line_separation = -9
+theme_override_constants/paragraph_separation = 11
+theme_override_fonts/normal_font = ExtResource("28_o6ifj")
+theme_override_font_sizes/normal_font_size = 24
+text = "тут буде піздувати йобаний лор в єбануто промишдених масштабах, я ж бля єбобо, мені нехуй чим зайнятися, я буду єбашити кожному зустрічному обсосу передісторію і трьохаркову структуру сюжету. Графоманія моя буде бля лікувати, від 
+    такого прикола, просто бля, буду стирати до ебені матері злоєбучу клавіатуру. А саме прикольне що цю поєбень в основному ніхто й не буде читати навіть. Хоча для повного занурення ніби і прикольно виглядає, і один хуй тут пів екрану нехуй чим зайняти, тому використвуємо акценти уваги і засмічуємо фон, що ключова 
+    інформація здававлсь більш значущою. А ще прикольно, що якщо прибрати звідси матюки, то дай боже половина тексту виживе. графоманія це зло йобане. Амінь. А і ще, зверху це імя лія. Шрифт канешно разйобчік, але шось він блять какой то слегонца хуйово читабельний, треба подумати, чи залишим, чи пошукати шось стилізоване але не на стільки змінене, чи хочемо ми залишати таку стилізацію, я б звернув увагу на якісь готік фонтс. Хоча вони всі, чесно кажучи, або нудні, або важко читабельні. 
+    А нас і єбати це не повинно, як ніби то блять. Похуй мені, тому що. І тобі похуй. І всім похуй, це ж шрифт блять,  який на панелі з лором, хто сюди взагалі загляне, ти чьо, ебобо? "

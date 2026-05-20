@@ -9,6 +9,7 @@
 [ext_resource type="Texture2D" uid="uid://d5tacve37cas" path="res://Основа/char/Вода/Лія/Liah.png" id="6_suxjl"]
 [ext_resource type="Texture2D" uid="uid://ccusj82vd0uds" path="res://Основа/visual/Skill_list/Skill_background.png" id="6_x76d4"]
 [ext_resource type="FontFile" uid="uid://cjitafj21pcqf" path="res://Основа/Шрифти/WeissGotnitials.ttf" id="7_wy2mt"]
+[ext_resource type="FontFile" uid="uid://bymkrthni0vye" path="res://Основа/Шрифти/silvus__.ttf" id="8_r2yls"]
 [ext_resource type="Texture2D" uid="uid://n0k0achm7fq2" path="res://Основа/char/Вогонь/МайстерОічі/Q.png" id="9_vsfrs"]
 [ext_resource type="Texture2D" uid="uid://df2efl5qw3v8v" path="res://Основа/char/Повітря/Шопей/shopey_q.png" id="10_suxjl"]
 [ext_resource type="Texture2D" uid="uid://dgyo7cggywhbb" path="res://Основа/char/Вогонь/МайстерОічі/W.png" id="11_r2yls"]
@@ -261,14 +262,13 @@ texture = ExtResource("4_m1vkf")
 
 [node name="Ward_name" type="Label" parent="SkillPanel" unique_id=1998496987]
 layout_mode = 0
-offset_left = 12.0
-offset_top = 62.975
-offset_right = 388.0
-offset_bottom = 112.97506
+offset_top = 61.975
+offset_right = 412.0
+offset_bottom = 132.975
 theme_override_colors/font_color = Color(0, 0, 0, 1)
-theme_override_fonts/font = ExtResource("7_wy2mt")
-theme_override_font_sizes/font_size = 36
-text = "Master Oichi"
+theme_override_fonts/font = ExtResource("8_r2yls")
+theme_override_font_sizes/font_size = 39
+text = "MASTER OICHI"
 horizontal_alignment = 1
 
 [node name="Content" type="VBoxContainer" parent="SkillPanel" unique_id=1739547981]
@@ -593,6 +593,7 @@ randomness = 0.9
 process_material = SubResource("ParticleProcessMaterial_0p0ur")
 
 [node name="DefeatAsh" type="GPUParticles2D" parent="EndGameOverlay/CenterContainer" unique_id=1926021135]
+visible = false
 z_index = 10
 material = SubResource("CanvasItemMaterial_7h64b")
 position = Vector2(965, 449)
