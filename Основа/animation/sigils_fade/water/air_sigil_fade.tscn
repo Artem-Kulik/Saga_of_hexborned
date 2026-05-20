@@ -1,0 +1,55 @@
+[gd_scene format=3 uid="uid://babhs763kygb5"]
+
+[ext_resource type="Texture2D" uid="uid://ewqvud4vmnfm" path="res://Основа/animation/sigils_fade/air/sigil_air/0.PNG" id="1_ander"]
+[ext_resource type="Texture2D" uid="uid://b45h5ngcom40u" path="res://Основа/animation/sigils_fade/air/sigil_air/1.PNG" id="2_mpyki"]
+[ext_resource type="Texture2D" uid="uid://casvptdaswtg0" path="res://Основа/animation/sigils_fade/air/sigil_air/2.PNG" id="3_185rr"]
+[ext_resource type="Texture2D" uid="uid://gs6bfo34o4jj" path="res://Основа/animation/sigils_fade/air/sigil_air/3.PNG" id="4_0bwdl"]
+[ext_resource type="Texture2D" uid="uid://bejem4ombosap" path="res://Основа/animation/sigils_fade/air/sigil_air/4.PNG" id="5_frf40"]
+[ext_resource type="Texture2D" uid="uid://cs0gdcskanhi7" path="res://Основа/animation/sigils_fade/air/sigil_air/5.PNG" id="6_wx6yb"]
+[ext_resource type="Texture2D" uid="uid://c6mcpipn4wpn4" path="res://Основа/animation/sigils_fade/air/sigil_air/6.PNG" id="7_oiblq"]
+[ext_resource type="Texture2D" uid="uid://c23jkn7p7rlqw" path="res://Основа/animation/sigils_fade/air/sigil_air/7.PNG" id="8_3kqgq"]
+[ext_resource type="Texture2D" uid="uid://bkmbnqkwj4mbv" path="res://Основа/animation/sigils_fade/air/sigil_air/8.PNG" id="9_1a5iu"]
+[ext_resource type="Texture2D" uid="uid://civouyeoklxrv" path="res://Основа/animation/sigils_fade/air/sigil_air/9.PNG" id="10_og461"]
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_0qfye"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("1_ander")
+}, {
+"duration": 1.0,
+"texture": ExtResource("2_mpyki")
+}, {
+"duration": 1.0,
+"texture": ExtResource("3_185rr")
+}, {
+"duration": 1.0,
+"texture": ExtResource("4_0bwdl")
+}, {
+"duration": 1.0,
+"texture": ExtResource("5_frf40")
+}, {
+"duration": 1.0,
+"texture": ExtResource("6_wx6yb")
+}, {
+"duration": 1.0,
+"texture": ExtResource("7_oiblq")
+}, {
+"duration": 1.0,
+"texture": ExtResource("8_3kqgq")
+}, {
+"duration": 1.0,
+"texture": ExtResource("9_1a5iu")
+}, {
+"duration": 1.0,
+"texture": ExtResource("10_og461")
+}],
+"loop": true,
+"name": &"default",
+"speed": 5.0
+}]
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" unique_id=1106579780]
+sprite_frames = SubResource("SpriteFrames_0qfye")
+frame_progress = 0.32974163
+speed_scale = 3.0

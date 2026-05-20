@@ -18,6 +18,7 @@ config/icon="uid://5vw8fk0gxtfe"
 [autoload]
 
 AnimationCode="*uid://huf25e10h1kb"
+UiSignalBus="*uid://d3vfge0q8lo5e"
 
 [display]
 

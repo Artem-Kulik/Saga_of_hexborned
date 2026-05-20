@@ -1,0 +1,68 @@
+[gd_scene format=3 uid="uid://e5g3wchev881"]
+
+[ext_resource type="Texture2D" uid="uid://v6qjwek62byd" path="res://Основа/animation/sigils_fade/water/0.png" id="1_7vxpv"]
+[ext_resource type="Texture2D" uid="uid://dfle16heeh2qv" path="res://Основа/animation/sigils_fade/water/1.png" id="2_d5ewt"]
+[ext_resource type="Texture2D" uid="uid://cc8v8cyhgs8sy" path="res://Основа/animation/sigils_fade/water/2.png" id="3_mp35r"]
+[ext_resource type="Texture2D" uid="uid://cxowle0mr8t8c" path="res://Основа/animation/sigils_fade/water/3.png" id="4_rcrfl"]
+[ext_resource type="Texture2D" uid="uid://bsc1ryao4esfe" path="res://Основа/animation/sigils_fade/water/4.png" id="5_cskjw"]
+[ext_resource type="Texture2D" uid="uid://dkg1ovrlmp0yx" path="res://Основа/animation/sigils_fade/water/5.png" id="6_wimcp"]
+[ext_resource type="Texture2D" uid="uid://cwh0l80k0564x" path="res://Основа/animation/sigils_fade/water/6.png" id="7_sxr1q"]
+[ext_resource type="Texture2D" uid="uid://dcghaoo5vkrs5" path="res://Основа/animation/sigils_fade/water/7.png" id="8_p18j3"]
+[ext_resource type="Texture2D" uid="uid://eaxrfedxb0ab" path="res://Основа/animation/sigils_fade/water/8.png" id="9_ib233"]
+[ext_resource type="Texture2D" uid="uid://doltilrlwphjy" path="res://Основа/animation/sigils_fade/water/9.png" id="10_vithy"]
+[ext_resource type="Texture2D" uid="uid://35mupmb36lc2" path="res://Основа/animation/sigils_fade/water/10.png" id="11_8u2xa"]
+[ext_resource type="Texture2D" uid="uid://bm7qlim4bb61e" path="res://Основа/animation/sigils_fade/water/11.png" id="12_d7ke2"]
+[ext_resource type="Texture2D" uid="uid://dx7jgo7d1dnsn" path="res://Основа/animation/sigils_fade/water/12.png" id="13_g54iy"]
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_crvm6"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("1_7vxpv")
+}, {
+"duration": 1.0,
+"texture": ExtResource("2_d5ewt")
+}, {
+"duration": 1.0,
+"texture": ExtResource("3_mp35r")
+}, {
+"duration": 1.0,
+"texture": ExtResource("4_rcrfl")
+}, {
+"duration": 1.0,
+"texture": ExtResource("5_cskjw")
+}, {
+"duration": 1.0,
+"texture": ExtResource("6_wimcp")
+}, {
+"duration": 1.0,
+"texture": ExtResource("7_sxr1q")
+}, {
+"duration": 1.0,
+"texture": ExtResource("8_p18j3")
+}, {
+"duration": 1.0,
+"texture": ExtResource("9_ib233")
+}, {
+"duration": 1.0,
+"texture": ExtResource("10_vithy")
+}, {
+"duration": 1.0,
+"texture": ExtResource("11_8u2xa")
+}, {
+"duration": 1.0,
+"texture": ExtResource("12_d7ke2")
+}, {
+"duration": 1.0,
+"texture": ExtResource("13_g54iy")
+}],
+"loop": true,
+"name": &"default",
+"speed": 5.0
+}]
+
+[node name="water_sigil_fade" type="AnimatedSprite2D" unique_id=649140389]
+sprite_frames = SubResource("SpriteFrames_crvm6")
+frame = 3
+frame_progress = 0.8565581
+speed_scale = 3.0
