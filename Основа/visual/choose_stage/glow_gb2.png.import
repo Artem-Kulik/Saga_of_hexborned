@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://di34xc4kk7lfs"
-path="res://.godot/imported/bg.png-f3c0e1ece02f7669f4d9d3c187190662.ctex"
+uid="uid://cyp6p53tdjiqi"
+path="res://.godot/imported/glow_gb2.png-24f0741d556602dfaf9a91933e0488ac.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://Основа/visual/choose_stage/bg.png"
-dest_files=["res://.godot/imported/bg.png-f3c0e1ece02f7669f4d9d3c187190662.ctex"]
+source_file="res://Основа/visual/choose_stage/glow_gb2.png"
+dest_files=["res://.godot/imported/glow_gb2.png-24f0741d556602dfaf9a91933e0488ac.ctex"]
 
 [params]
 
