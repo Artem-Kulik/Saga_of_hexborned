@@ -1,16 +1,18 @@
 [gd_scene format=3 uid="uid://ddnh02ix83qq1"]
 
-[ext_resource type="Script" uid="uid://pmglc34io1xn" path="res://choose_wards_stage.gd" id="1_k366w"]
+[ext_resource type="Script" uid="uid://ccknfm0va0cfu" path="res://background_box.gd" id="1_u6my1"]
+[ext_resource type="Texture2D" uid="uid://cxg5sgy07a2tf" path="res://Основа/visual/choose_stage/chose_parralax/bg_gradient.png" id="2_j4eup"]
 [ext_resource type="Texture2D" uid="uid://ccmi1jrtt83kk" path="res://Основа/visual/green_highlight.png" id="2_jejem"]
-[ext_resource type="Texture2D" uid="uid://di34xc4kk7lfs" path="res://Основа/visual/choose_stage/bg.png" id="2_k366w"]
-[ext_resource type="Texture2D" uid="uid://cvd8bbjfjry67" path="res://Основа/visual/choose_stage/glow_gb.png" id="3_0mrmj"]
 [ext_resource type="Texture2D" uid="uid://cgjmqk6t3yfop" path="res://Основа/visual/element_cards/card_reverse.png" id="3_bd0us"]
+[ext_resource type="Texture2D" uid="uid://fkf00yfsm0qy" path="res://Основа/visual/choose_stage/chose_parralax/bg_sky1.png" id="3_pe5nw"]
 [ext_resource type="Texture2D" uid="uid://5vw8fk0gxtfe" path="res://Основа/visual/logo.png" id="4_inqys"]
 [ext_resource type="Texture2D" uid="uid://dtk30cvnsyt2h" path="res://Основа/visual/choose_stage/chosebg_earth.png" id="4_va5r4"]
 [ext_resource type="Texture2D" uid="uid://8tqnsoshtyu1" path="res://Основа/visual/choose_stage/ward_collection_button_HL.png" id="4_w318r"]
+[ext_resource type="Texture2D" uid="uid://cw6avwib7n2cl" path="res://Основа/visual/choose_stage/chose_parralax/bg_sky_firstplan.png" id="5_53voj"]
 [ext_resource type="Texture2D" uid="uid://c1t4m1k4uqqbi" path="res://Основа/visual/choose_stage/emoframe.png" id="5_k242r"]
 [ext_resource type="Texture2D" uid="uid://ddh0w7a12yiix" path="res://Основа/visual/choose_stage/peregorodka.png" id="5_wo8qs"]
 [ext_resource type="Texture2D" uid="uid://blfre7t4lg51q" path="res://Основа/visual/sigils/sigil_earth.png" id="6_d5pi6"]
+[ext_resource type="Texture2D" uid="uid://1cp2uma371sp" path="res://Основа/visual/choose_stage/chose_parralax/bg.png" id="6_lhsxr"]
 [ext_resource type="Texture2D" uid="uid://c4yu41oavmkcn" path="res://Основа/visual/choose_stage/chosebg_water.png" id="7_bxopt"]
 [ext_resource type="Texture2D" uid="uid://bm5lx7b1hlwyk" path="res://Основа/visual/sigils/sigil_water.png" id="8_18k0n"]
 [ext_resource type="Texture2D" uid="uid://px7nwec8w2ov" path="res://Основа/visual/choose_stage/chosebg_red.png" id="9_eo2re"]
@@ -45,30 +47,51 @@ layout_mode = 3
 anchors_preset = 0
 offset_right = 1920.0
 offset_bottom = 1080.0
-script = ExtResource("1_k366w")
 
 [node name="Background_box" type="Control" parent="." unique_id=1126096078]
 anchors_preset = 0
 offset_right = 1920.0
 offset_bottom = 1080.0
+script = ExtResource("1_u6my1")
 
-[node name="sky" type="TextureRect" parent="Background_box" unique_id=2109736333]
+[node name="gradient" type="TextureRect" parent="Background_box" unique_id=372126473]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-texture = ExtResource("2_k366w")
+texture = ExtResource("2_j4eup")
 
-[node name="glow" type="TextureRect" parent="Background_box" unique_id=1298462229]
+[node name="cloud" type="TextureRect" parent="Background_box" unique_id=2066658395]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
+offset_top = -419.0
+offset_bottom = -475.0
 grow_horizontal = 2
 grow_vertical = 2
-texture = ExtResource("3_0mrmj")
+texture = ExtResource("5_53voj")
+
+[node name="glow" type="TextureRect" parent="Background_box/cloud" unique_id=1487887992]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -37.0
+offset_top = 282.0
+offset_right = -37.0
+offset_bottom = 282.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("3_pe5nw")
+
+[node name="BackGround" type="TextureRect" parent="Background_box" unique_id=3008379]
+layout_mode = 0
+offset_right = 1920.0
+offset_bottom = 1080.0
+texture = ExtResource("6_lhsxr")
 
 [node name="PickedWards" type="Control" parent="." unique_id=1605878584]
 layout_mode = 1
