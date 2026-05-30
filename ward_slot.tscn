@@ -257,7 +257,7 @@ offset_right = -11.0
 offset_bottom = 194.0
 scale = Vector2(1.925, 1.925)
 
-[node name="SkillButton_Q" parent="WardSkillButtons" unique_id=994800476 instance=ExtResource("13_ahwtq")]
+[node name="SkillButton_E" parent="WardSkillButtons" unique_id=994800476 instance=ExtResource("13_ahwtq")]
 layout_mode = 0
 anchors_preset = 0
 anchor_left = 0.0
@@ -268,6 +268,7 @@ offset_left = -45.0
 offset_top = 328.312
 offset_right = -6.558445
 offset_bottom = 372.98737
+skill_key = "E"
 
 [node name="SkillButton_W" parent="WardSkillButtons" unique_id=871740919 instance=ExtResource("13_ahwtq")]
 layout_mode = 1
@@ -277,13 +278,12 @@ offset_right = -6.0966244
 offset_bottom = 288.6771
 skill_key = "W"
 
-[node name="SkillButton_E" parent="WardSkillButtons" unique_id=1500702002 instance=ExtResource("13_ahwtq")]
+[node name="SkillButton_Q" parent="WardSkillButtons" unique_id=1500702002 instance=ExtResource("13_ahwtq")]
 layout_mode = 1
 offset_left = -44.370388
 offset_top = 185.01793
 offset_right = -6.138857
 offset_bottom = 213.10556
-skill_key = "E"
 
 [node name="DeathSound" type="AudioStreamPlayer" parent="." unique_id=2119096426]
 stream = ExtResource("19_wub2q")

@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://bvjk0xxkcm08d"
-path="res://.godot/imported/Іскоріс.png-525efc6c524ef2efdc8f16989f60c403.ctex"
+uid="uid://cmw6ibnqvippr"
+path="res://.godot/imported/Shopey.png-d4b652f87a0c45a858a4e9529f8834a6.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://Основа/char/Повітря/Іскоріс/Іскоріс.png"
-dest_files=["res://.godot/imported/Іскоріс.png-525efc6c524ef2efdc8f16989f60c403.ctex"]
+source_file="res://Основа/char/Повітря/Шопей/Shopey.png"
+dest_files=["res://.godot/imported/Shopey.png-d4b652f87a0c45a858a4e9529f8834a6.ctex"]
 
 [params]
 

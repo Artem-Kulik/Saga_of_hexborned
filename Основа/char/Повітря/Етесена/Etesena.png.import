@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://c8gilur0s53iy"
-path="res://.godot/imported/Етесена.png-3173c1fe6664d29602a3381694434024.ctex"
+uid="uid://hgl6w6ffgwwo"
+path="res://.godot/imported/Etesena.png-295d83bd0e2e541dbe8a16abc0282035.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://Основа/char/Повітря/Етесена/Етесена.png"
-dest_files=["res://.godot/imported/Етесена.png-3173c1fe6664d29602a3381694434024.ctex"]
+source_file="res://Основа/char/Повітря/Етесена/Etesena.png"
+dest_files=["res://.godot/imported/Etesena.png-295d83bd0e2e541dbe8a16abc0282035.ctex"]
 
 [params]
 
