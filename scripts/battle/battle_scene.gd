@@ -63,12 +63,29 @@ var battle_started: bool = false
 
 
 func _ready() -> void:
+	_apply_ward_data()
 	_create_battle_systems()
 	_connect_wards()
 	_setup_end_game_overlay()
 	_roll_first_turn()
 	play_random_track()
 	music_player.finished.connect(_on_music_finished)
+
+
+func _apply_ward_data() -> void:
+	if GameState.ally_ward_ids.is_empty():
+		return
+
+	for i in range(mini(GameState.ally_ward_ids.size(), ally_wards.size())):
+		ally_wards[i].setup_ward(GameState.ally_ward_ids[i])
+
+	var enemy_pool: Array = WardDatabase.get_all_ids().filter(
+		func(id: String) -> bool: return not GameState.ally_ward_ids.has(id)
+	)
+	enemy_pool.shuffle()
+
+	for i in range(mini(enemy_wards.size(), enemy_pool.size())):
+		enemy_wards[i].setup_ward(enemy_pool[i])
 func _fade_in_end_screen() -> void:
 	end_game_overlay.visible = true
 	end_game_overlay.modulate.a = 0.0

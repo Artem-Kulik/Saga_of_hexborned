@@ -19,6 +19,8 @@ config/icon="uid://5vw8fk0gxtfe"
 
 AnimationCode="*uid://huf25e10h1kb"
 UiSignalBus="*uid://d3vfge0q8lo5e"
+GameState="*res://scripts/game_state.gd"
+WardDatabase="*res://scripts/ward_database.gd"
 
 [display]
 

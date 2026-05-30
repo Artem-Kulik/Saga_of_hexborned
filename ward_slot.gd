@@ -15,6 +15,8 @@ signal ward_drag_started(ward)
 @export var start_hp: int = 80
 @export var skill_damage: int = 50
 
+@export var ward_id: String = ""
+
 @export var debug_draw_oval: bool = false
 @export var debug_oval_color: Color = Color.RED
 @export var debug_oval_width: float = 3.0
@@ -192,6 +194,21 @@ func _on_skill_selected(skill_key: String) -> void:
 		return
 
 	skill_clicked.emit(self, skill_key)
+
+func setup_ward(id: String) -> void:
+	ward_id = id
+	var data := WardDatabase.get_data(id)
+	if data.is_empty():
+		return
+
+	name = data["name"]
+
+	var portrait_node := get_node_or_null("WardVisual/Portrait") as TextureRect
+	if portrait_node != null:
+		var path: String = data.get("portrait", "")
+		if path != "" and ResourceLoader.exists(path):
+			portrait_node.texture = load(path)
+
 
 func take_damage(amount: int, attacker = null, skill_key: String = "") -> void:
 	if is_dead:
