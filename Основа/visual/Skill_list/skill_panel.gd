@@ -54,7 +54,7 @@ func populate(ward_id: String) -> void:
 	var sigil_path: String = _SIGIL_TEXTURES.get(element, "")
 	if sigil_frame and sigil_path != "" and ResourceLoader.exists(sigil_path):
 		sigil_frame.texture = load(sigil_path)
-		sigil_frame.modulate = Color(0.55, 0.55, 0.55, 0.45)
+		sigil_frame.modulate = Color(0.70, 0.70, 0.70, 0.60)
 
 	var skills: Dictionary = data.get("skills", {})
 	_fill(icon_q, name_q, cooldown_q, desc_q, skills.get("Q", {}), portrait_path)
