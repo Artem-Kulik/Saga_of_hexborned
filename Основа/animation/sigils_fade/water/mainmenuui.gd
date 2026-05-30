@@ -2,6 +2,10 @@ extends Control
 
 @export var hover_time := 0.12
 @export var hover_scale := 1.03
+@export_file("*.tscn") var earth_scene_path: String
+@export_file("*.tscn") var air_scene_path: String
+@export_file("*.tscn") var water_scene_path: String
+@export_file("*.tscn") var fire_scene_path: String
 
 @onready var earth_root: Control = $earth
 @onready var earth_visual: Control = $earth/earth_but
@@ -122,3 +126,24 @@ func _on_button_mouse_exited(button: Button, highlight: CanvasItem) -> void:
 
 func _on_button_pressed(button_name: String) -> void:
 	print("Натиснута кнопка: ", button_name)
+
+	var scene_path := ""
+
+	match button_name:
+		"earth":
+			scene_path = earth_scene_path
+		"air":
+			scene_path = air_scene_path
+		"water":
+			scene_path = water_scene_path
+		"fire":
+			scene_path = fire_scene_path
+		_:
+			push_warning("Невідома кнопка: " + button_name)
+			return
+
+	if scene_path == "":
+		push_warning("Для кнопки " + button_name + " не вказано сцену")
+		return
+
+	get_tree().change_scene_to_file(scene_path)

@@ -8,11 +8,10 @@
 [ext_resource type="Texture2D" uid="uid://c0na1t1vhl70d" path="res://Основа/animation/death/death_2.png" id="4_jsfmg"]
 [ext_resource type="Shader" uid="uid://bq4ums7tmq24a" path="res://new_shader.gdshader" id="4_p8tk1"]
 [ext_resource type="Texture2D" uid="uid://ykkdcq6r4x7i" path="res://Основа/animation/death/death_3.png" id="5_pu4rq"]
-[ext_resource type="Texture2D" uid="uid://d1oqk5ocx1cpf" path="res://Основа/char/Вогонь/Майстер Оічі/Майстер Оічі Скіли.png" id="5_ta4al"]
+[ext_resource type="Texture2D" uid="uid://d1oqk5ocx1cpf" path="res://Основа/char/Вогонь/МайстерОічі/Майстер Оічі Скіли.png" id="5_ta4al"]
 [ext_resource type="Texture2D" uid="uid://b53nwl1614kbs" path="res://Основа/Frame_1.png" id="6_1hm6i"]
 [ext_resource type="Texture2D" uid="uid://b1e7ar1v3ipfq" path="res://Основа/animation/death/death_4.png" id="6_qqi5i"]
 [ext_resource type="Texture2D" uid="uid://dro6jw54ufppa" path="res://Основа/animation/death/death_5.png" id="7_io57c"]
-[ext_resource type="Texture2D" uid="uid://cn0c7lgws2l18" path="res://Основа/visual/status/горіння.png" id="7_wjgmy"]
 [ext_resource type="Texture2D" uid="uid://b0gsup6se3cjl" path="res://Основа/animation/death/death_6.png" id="8_e1i0d"]
 [ext_resource type="Texture2D" uid="uid://dv8u1vpuawkcr" path="res://Основа/visual/element_cards/status_card_frame.png" id="8_p8tk1"]
 [ext_resource type="Texture2D" uid="uid://dyw46ofgmp6a2" path="res://Основа/visual/element_cards/card_water.png" id="9_6y6oh"]
@@ -123,69 +122,6 @@ offset_top = 227.685
 offset_right = 478.20502
 offset_bottom = 372.68494
 columns = 4
-
-[node name="status_burn" type="TextureRect" parent="StatusContainer" unique_id=812267857]
-custom_minimum_size = Vector2(58, 38)
-layout_mode = 2
-texture = ExtResource("7_wjgmy")
-expand_mode = 1
-stretch_mode = 5
-
-[node name="status_burn2" type="TextureRect" parent="StatusContainer" unique_id=921254430]
-custom_minimum_size = Vector2(58, 38)
-layout_mode = 2
-texture = ExtResource("7_wjgmy")
-expand_mode = 1
-stretch_mode = 5
-
-[node name="status_burn3" type="TextureRect" parent="StatusContainer" unique_id=1010197477]
-custom_minimum_size = Vector2(58, 38)
-layout_mode = 2
-texture = ExtResource("7_wjgmy")
-expand_mode = 1
-stretch_mode = 5
-
-[node name="status_burn4" type="TextureRect" parent="StatusContainer" unique_id=548839456]
-custom_minimum_size = Vector2(58, 38)
-layout_mode = 2
-texture = ExtResource("7_wjgmy")
-expand_mode = 1
-stretch_mode = 5
-
-[node name="status_burn5" type="TextureRect" parent="StatusContainer" unique_id=1243186222]
-custom_minimum_size = Vector2(58, 38)
-layout_mode = 2
-texture = ExtResource("7_wjgmy")
-expand_mode = 1
-stretch_mode = 5
-
-[node name="status_burn6" type="TextureRect" parent="StatusContainer" unique_id=1937517130]
-custom_minimum_size = Vector2(58, 38)
-layout_mode = 2
-texture = ExtResource("7_wjgmy")
-expand_mode = 1
-stretch_mode = 5
-
-[node name="status_burn7" type="TextureRect" parent="StatusContainer" unique_id=1676270066]
-custom_minimum_size = Vector2(58, 38)
-layout_mode = 2
-texture = ExtResource("7_wjgmy")
-expand_mode = 1
-stretch_mode = 5
-
-[node name="status_burn8" type="TextureRect" parent="StatusContainer" unique_id=2092148663]
-custom_minimum_size = Vector2(58, 38)
-layout_mode = 2
-texture = ExtResource("7_wjgmy")
-expand_mode = 1
-stretch_mode = 5
-
-[node name="status_burn9" type="TextureRect" parent="StatusContainer" unique_id=1660879435]
-custom_minimum_size = Vector2(58, 38)
-layout_mode = 2
-texture = ExtResource("7_wjgmy")
-expand_mode = 1
-stretch_mode = 5
 
 [node name="WardSkillButtons" type="Control" parent="." unique_id=1188095056]
 anchors_preset = 0

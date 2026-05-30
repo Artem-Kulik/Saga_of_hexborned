@@ -18,12 +18,7 @@
 [ext_resource type="Texture2D" uid="uid://vngklobv78sc" path="res://Основа/visual/element_cards/card_earth.png" id="9_im77c"]
 [ext_resource type="Texture2D" uid="uid://ccmi1jrtt83kk" path="res://Основа/visual/green_highlight.png" id="12_6bynp"]
 [ext_resource type="PackedScene" uid="uid://3urukl8qraml" path="res://skill_button.tscn" id="13_ahwtq"]
-[ext_resource type="Texture2D" uid="uid://0xyn0ug6pqcm" path="res://Основа/visual/status/frame_status.png" id="18_8wsb0"]
-[ext_resource type="Texture2D" uid="uid://4kwuq5cujhkt" path="res://Основа/visual/status/f/burning.PNG" id="18_y6ipq"]
-[ext_resource type="Texture2D" uid="uid://65enbat158av" path="res://Основа/visual/status/f/regeneration.PNG" id="19_8wsb0"]
 [ext_resource type="AudioStream" uid="uid://bnbb1hlnor0i5" path="res://Основа/audio/audio_effects/death_effect.mp3" id="19_wub2q"]
-[ext_resource type="Texture2D" uid="uid://bmpyinnv3bsvj" path="res://Основа/visual/status/f/stunned.PNG" id="20_1ssrp"]
-[ext_resource type="Texture2D" uid="uid://dc1ed8edbunan" path="res://Основа/visual/status/f/taunted.PNG" id="21_4i13c"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_bibww"]
 shader = ExtResource("2_jnv6q")
@@ -135,120 +130,6 @@ theme_override_constants/h_separation = 11
 theme_override_constants/v_separation = 15
 columns = 4
 
-[node name="status_burn11" type="TextureRect" parent="StatusContainer" unique_id=681375682]
-custom_minimum_size = Vector2(58, 38)
-layout_mode = 2
-texture = ExtResource("19_8wsb0")
-expand_mode = 3
-stretch_mode = 5
-
-[node name="status_burn10" type="TextureRect" parent="StatusContainer/status_burn11" unique_id=948328977]
-custom_minimum_size = Vector2(46.965, 47.64)
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-texture = ExtResource("18_8wsb0")
-expand_mode = 3
-stretch_mode = 5
-
-[node name="status_burn12" type="TextureRect" parent="StatusContainer" unique_id=1931744065]
-custom_minimum_size = Vector2(58, 38)
-layout_mode = 2
-texture = ExtResource("18_y6ipq")
-expand_mode = 3
-stretch_mode = 5
-
-[node name="status_burn10" type="TextureRect" parent="StatusContainer/status_burn12" unique_id=1943037877]
-custom_minimum_size = Vector2(46.965, 47.64)
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-texture = ExtResource("18_8wsb0")
-expand_mode = 3
-stretch_mode = 5
-
-[node name="status_burn13" type="TextureRect" parent="StatusContainer" unique_id=710898596]
-custom_minimum_size = Vector2(58, 38)
-layout_mode = 2
-texture = ExtResource("20_1ssrp")
-expand_mode = 3
-stretch_mode = 5
-
-[node name="status_burn10" type="TextureRect" parent="StatusContainer/status_burn13" unique_id=1706555713]
-custom_minimum_size = Vector2(46.965, 47.64)
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-texture = ExtResource("18_8wsb0")
-expand_mode = 3
-stretch_mode = 5
-
-[node name="status_burn14" type="TextureRect" parent="StatusContainer" unique_id=965730209]
-custom_minimum_size = Vector2(58, 38)
-layout_mode = 2
-texture = ExtResource("19_8wsb0")
-expand_mode = 3
-stretch_mode = 5
-
-[node name="status_burn10" type="TextureRect" parent="StatusContainer/status_burn14" unique_id=1146151359]
-custom_minimum_size = Vector2(46.965, 47.64)
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-texture = ExtResource("18_8wsb0")
-expand_mode = 3
-stretch_mode = 5
-
-[node name="status_burn15" type="TextureRect" parent="StatusContainer" unique_id=673788654]
-custom_minimum_size = Vector2(58, 38)
-layout_mode = 2
-texture = ExtResource("21_4i13c")
-expand_mode = 3
-stretch_mode = 5
-
-[node name="status_burn10" type="TextureRect" parent="StatusContainer/status_burn15" unique_id=1240993551]
-custom_minimum_size = Vector2(46.965, 47.64)
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-texture = ExtResource("18_8wsb0")
-expand_mode = 3
-stretch_mode = 5
-
-[node name="status_burn16" type="TextureRect" parent="StatusContainer" unique_id=436634769]
-custom_minimum_size = Vector2(58, 38)
-layout_mode = 2
-texture = ExtResource("19_8wsb0")
-expand_mode = 3
-stretch_mode = 5
-
-[node name="status_burn10" type="TextureRect" parent="StatusContainer/status_burn16" unique_id=1832216007]
-custom_minimum_size = Vector2(46.965, 47.64)
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-texture = ExtResource("18_8wsb0")
-expand_mode = 3
-stretch_mode = 5
-
 [node name="WardSkillButtons" type="Control" parent="." unique_id=329551444]
 anchors_preset = 0
 offset_left = -11.0
@@ -257,7 +138,7 @@ offset_right = -11.0
 offset_bottom = 194.0
 scale = Vector2(1.925, 1.925)
 
-[node name="SkillButton_Q" parent="WardSkillButtons" unique_id=994800476 instance=ExtResource("13_ahwtq")]
+[node name="SkillButton_E" parent="WardSkillButtons" unique_id=994800476 instance=ExtResource("13_ahwtq")]
 layout_mode = 0
 anchors_preset = 0
 anchor_left = 0.0
@@ -268,6 +149,7 @@ offset_left = -45.0
 offset_top = 328.312
 offset_right = -6.558445
 offset_bottom = 372.98737
+skill_key = "E"
 
 [node name="SkillButton_W" parent="WardSkillButtons" unique_id=871740919 instance=ExtResource("13_ahwtq")]
 layout_mode = 1
@@ -277,13 +159,12 @@ offset_right = -6.0966244
 offset_bottom = 288.6771
 skill_key = "W"
 
-[node name="SkillButton_E" parent="WardSkillButtons" unique_id=1500702002 instance=ExtResource("13_ahwtq")]
+[node name="SkillButton_Q" parent="WardSkillButtons" unique_id=1500702002 instance=ExtResource("13_ahwtq")]
 layout_mode = 1
 offset_left = -44.370388
 offset_top = 185.01793
 offset_right = -6.138857
 offset_bottom = 213.10556
-skill_key = "E"
 
 [node name="DeathSound" type="AudioStreamPlayer" parent="." unique_id=2119096426]
 stream = ExtResource("19_wub2q")
