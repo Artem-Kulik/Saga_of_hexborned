@@ -6,11 +6,12 @@ var WARDS: Dictionary = {
 		"element": "fire",
 		"portrait": "res://Основа/char/Вогонь/МайстерОічі/Майстер Оічі Скіли.png",
 		"short_desc_file": "res://Основа/char/Вогонь/МайстерОічі/skills_short.txt",
+		"full_desc_file":  "res://Основа/char/Вогонь/МайстерОічі/skills_full.txt",
 		"skills": {
-			"P": { "name": "Раж",            "icon": "res://Основа/char/Вогонь/МайстерОічі/P.png", "desc": "" },
-			"Q": { "name": "Випад",          "icon": "res://Основа/char/Вогонь/МайстерОічі/Q.png", "desc": "" },
-			"W": { "name": "Жар",            "icon": "res://Основа/char/Вогонь/МайстерОічі/W.png", "desc": "" },
-			"E": { "name": "Чесний бій",     "icon": "res://Основа/char/Вогонь/МайстерОічі/E.png", "desc": "" },
+			"P": { "name": "Раж",         "cd": 0, "icon": "res://Основа/char/Вогонь/МайстерОічі/P.png", "desc": "", "desc_full": "" },
+			"Q": { "name": "Випад",       "cd": 0, "icon": "res://Основа/char/Вогонь/МайстерОічі/Q.png", "desc": "", "desc_full": "" },
+			"W": { "name": "Жар",         "cd": 2, "icon": "res://Основа/char/Вогонь/МайстерОічі/W.png", "desc": "", "desc_full": "" },
+			"E": { "name": "Чесний бій",  "cd": 5, "icon": "res://Основа/char/Вогонь/МайстерОічі/E.png", "desc": "", "desc_full": "" },
 		}
 	},
 	"zhnets": {
@@ -18,11 +19,12 @@ var WARDS: Dictionary = {
 		"element": "fire",
 		"portrait": "res://Основа/char/Вогонь/Жнець/Жнець.png",
 		"short_desc_file": "res://Основа/char/Вогонь/Жнець/skills_short.txt",
+		"full_desc_file":  "res://Основа/char/Вогонь/Жнець/skills_full.txt",
 		"skills": {
-			"P": { "name": "Присутність",        "icon": "", "desc": "" },
-			"Q": { "name": "Прокляття жнеця",    "icon": "", "desc": "" },
-			"W": { "name": "Маска горгони",       "icon": "", "desc": "" },
-			"E": { "name": "Жнива",               "icon": "", "desc": "" },
+			"P": { "name": "Присутність",     "cd": 0, "icon": "", "desc": "", "desc_full": "" },
+			"Q": { "name": "Прокляття жнеця", "cd": 0, "icon": "", "desc": "", "desc_full": "" },
+			"W": { "name": "Маска горгони",   "cd": 4, "icon": "", "desc": "", "desc_full": "" },
+			"E": { "name": "Жнива",           "cd": 3, "icon": "", "desc": "", "desc_full": "" },
 		}
 	},
 	"otsii": {
@@ -30,11 +32,12 @@ var WARDS: Dictionary = {
 		"element": "fire",
 		"portrait": "res://Основа/char/Вогонь/Оцій/Оцій.png",
 		"short_desc_file": "res://Основа/char/Вогонь/Оцій/skills_short.txt",
+		"full_desc_file":  "res://Основа/char/Вогонь/Оцій/skills_full.txt",
 		"skills": {
-			"P": { "name": "Пасивна",                  "icon": "", "desc": "" },
-			"Q": { "name": "Вигорання",                "icon": "", "desc": "" },
-			"W": { "name": "Коло пекельного вогню",    "icon": "", "desc": "" },
-			"E": { "name": "Рик",                      "icon": "", "desc": "" },
+			"P": { "name": "Пасивна",               "cd": 0, "icon": "", "desc": "", "desc_full": "" },
+			"Q": { "name": "Вигорання",             "cd": 0, "icon": "", "desc": "", "desc_full": "" },
+			"W": { "name": "Коло пекельного вогню", "cd": 4, "icon": "", "desc": "", "desc_full": "" },
+			"E": { "name": "Рик",                   "cd": 4, "icon": "", "desc": "", "desc_full": "" },
 		}
 	},
 	"siomyi": {
@@ -42,11 +45,12 @@ var WARDS: Dictionary = {
 		"element": "fire",
 		"portrait": "res://Основа/char/Вогонь/Сьомийслуга/Сьомий слуга.png",
 		"short_desc_file": "res://Основа/char/Вогонь/Сьомийслуга/skills_short.txt",
+		"full_desc_file":  "res://Основа/char/Вогонь/Сьомийслуга/skills_full.txt",
 		"skills": {
-			"P": { "name": "З пилу жару",      "icon": "", "desc": "" },
-			"Q": { "name": "Покарання",        "icon": "", "desc": "" },
-			"W": { "name": "Бар'єр",           "icon": "", "desc": "" },
-			"E": { "name": "Вогонь сьомого",   "icon": "", "desc": "" },
+			"P": { "name": "З пилу жару",    "cd": 0, "icon": "", "desc": "", "desc_full": "" },
+			"Q": { "name": "Покарання",      "cd": 0, "icon": "", "desc": "", "desc_full": "" },
+			"W": { "name": "Бар'єр",         "cd": 3, "icon": "", "desc": "", "desc_full": "" },
+			"E": { "name": "Вогонь сьомого", "cd": 7, "icon": "", "desc": "", "desc_full": "" },
 		}
 	},
 	"liah": {
@@ -54,11 +58,12 @@ var WARDS: Dictionary = {
 		"element": "water",
 		"portrait": "res://Основа/char/Вода/Лія/Liah.png",
 		"short_desc_file": "res://Основа/char/Вода/Лія/skills_short.txt",
+		"full_desc_file":  "res://Основа/char/Вода/Лія/skills_full.txt",
 		"skills": {
-			"P": { "name": "Спокій",                     "icon": "res://Основа/char/Вода/Лія/liah_p.png", "desc": "" },
-			"Q": { "name": "Течія",                      "icon": "res://Основа/char/Вода/Лія/liah_q.png", "desc": "" },
-			"W": { "name": "Кола на воді",               "icon": "res://Основа/char/Вода/Лія/liah_w.png", "desc": "" },
-			"E": { "name": "Загороджуючий водопад",      "icon": "res://Основа/char/Вода/Лія/liah_e.png", "desc": "" },
+			"P": { "name": "Спокій",                "cd": 0, "icon": "res://Основа/char/Вода/Лія/liah_p.png", "desc": "", "desc_full": "" },
+			"Q": { "name": "Течія",                 "cd": 0, "icon": "res://Основа/char/Вода/Лія/liah_q.png", "desc": "", "desc_full": "" },
+			"W": { "name": "Кола на воді",          "cd": 2, "icon": "res://Основа/char/Вода/Лія/liah_w.png", "desc": "", "desc_full": "" },
+			"E": { "name": "Загороджуючий водопад", "cd": 3, "icon": "res://Основа/char/Вода/Лія/liah_e.png", "desc": "", "desc_full": "" },
 		}
 	},
 	"riker": {
@@ -66,11 +71,12 @@ var WARDS: Dictionary = {
 		"element": "water",
 		"portrait": "res://Основа/char/Вода/Рікер/Рікер.png",
 		"short_desc_file": "res://Основа/char/Вода/Рікер/skills_short.txt",
+		"full_desc_file":  "res://Основа/char/Вода/Рікер/skills_full.txt",
 		"skills": {
-			"P": { "name": "На волосині",       "icon": "", "desc": "" },
-			"Q": { "name": "Роздирання",        "icon": "", "desc": "" },
-			"W": { "name": "Стиль Доломедес",  "icon": "", "desc": "" },
-			"E": { "name": "Кігті",             "icon": "", "desc": "" },
+			"P": { "name": "На волосині",    "cd": 0, "icon": "", "desc": "", "desc_full": "" },
+			"Q": { "name": "Роздирання",     "cd": 0, "icon": "", "desc": "", "desc_full": "" },
+			"W": { "name": "Стиль Доломедес","cd": 2, "icon": "", "desc": "", "desc_full": "" },
+			"E": { "name": "Кігті",          "cd": 0, "icon": "", "desc": "", "desc_full": "" },
 		}
 	},
 	"adoneia": {
@@ -78,11 +84,12 @@ var WARDS: Dictionary = {
 		"element": "earth",
 		"portrait": "res://Основа/char/Земля/Адонея/Адонея.png",
 		"short_desc_file": "res://Основа/char/Земля/Адонея/skills_short.txt",
+		"full_desc_file":  "res://Основа/char/Земля/Адонея/skills_full.txt",
 		"skills": {
-			"P": { "name": "Пасивна",                  "icon": "", "desc": "" },
-			"Q": { "name": "Пролом",                   "icon": "", "desc": "" },
-			"W": { "name": "Майстер кулачного бою",    "icon": "", "desc": "" },
-			"E": { "name": "Голем",                    "icon": "", "desc": "" },
+			"P": { "name": "Пасивна",               "cd": 0, "icon": "", "desc": "", "desc_full": "" },
+			"Q": { "name": "Пролом",                "cd": 0, "icon": "", "desc": "", "desc_full": "" },
+			"W": { "name": "Майстер кулачного бою", "cd": 4, "icon": "", "desc": "", "desc_full": "" },
+			"E": { "name": "Голем",                 "cd": 8, "icon": "", "desc": "", "desc_full": "" },
 		}
 	},
 	"grump": {
@@ -90,11 +97,12 @@ var WARDS: Dictionary = {
 		"element": "earth",
 		"portrait": "res://Основа/char/Земля/Грумп/Грумп.png",
 		"short_desc_file": "res://Основа/char/Земля/Грумп/skills_short.txt",
+		"full_desc_file":  "res://Основа/char/Земля/Грумп/skills_full.txt",
 		"skills": {
-			"P": { "name": "Наростання породи",  "icon": "", "desc": "" },
-			"Q": { "name": "Клятва Варда",        "icon": "", "desc": "" },
-			"W": { "name": "Борозда",             "icon": "", "desc": "" },
-			"E": { "name": "Вибух породи",        "icon": "", "desc": "" },
+			"P": { "name": "Наростання породи", "cd": 0, "icon": "", "desc": "", "desc_full": "" },
+			"Q": { "name": "Клятва Варда",       "cd": 0, "icon": "", "desc": "", "desc_full": "" },
+			"W": { "name": "Борозда",            "cd": 3, "icon": "", "desc": "", "desc_full": "" },
+			"E": { "name": "Вибух породи",       "cd": 2, "icon": "", "desc": "", "desc_full": "" },
 		}
 	},
 	"kromius": {
@@ -102,11 +110,12 @@ var WARDS: Dictionary = {
 		"element": "earth",
 		"portrait": "res://Основа/char/Земля/Кроміус/Кроміус.png",
 		"short_desc_file": "res://Основа/char/Земля/Кроміус/skills_short.txt",
+		"full_desc_file":  "res://Основа/char/Земля/Кроміус/skills_full.txt",
 		"skills": {
-			"P": { "name": "Пасивна",           "icon": "", "desc": "" },
-			"Q": { "name": "Роздирання",        "icon": "", "desc": "" },
-			"W": { "name": "Відступ",           "icon": "", "desc": "" },
-			"E": { "name": "Інстинкт вожака",   "icon": "", "desc": "" },
+			"P": { "name": "Пасивна",         "cd": 0, "icon": "", "desc": "", "desc_full": "" },
+			"Q": { "name": "Роздирання",      "cd": 0, "icon": "", "desc": "", "desc_full": "" },
+			"W": { "name": "Відступ",         "cd": 3, "icon": "", "desc": "", "desc_full": "" },
+			"E": { "name": "Інстинкт вожака", "cd": 2, "icon": "", "desc": "", "desc_full": "" },
 		}
 	},
 	"parasyt": {
@@ -114,11 +123,12 @@ var WARDS: Dictionary = {
 		"element": "earth",
 		"portrait": "res://Основа/char/Земля/Паразит/Земля Паразит.png",
 		"short_desc_file": "res://Основа/char/Земля/Паразит/skills_short.txt",
+		"full_desc_file":  "res://Основа/char/Земля/Паразит/skills_full.txt",
 		"skills": {
-			"P": { "name": "Паразитування",  "icon": "", "desc": "" },
-			"Q": { "name": "Укол",           "icon": "", "desc": "" },
-			"W": { "name": "Асиміляція",     "icon": "", "desc": "" },
-			"E": { "name": "Плач чаші",      "icon": "", "desc": "" },
+			"P": { "name": "Паразитування", "cd": 0, "icon": "", "desc": "", "desc_full": "" },
+			"Q": { "name": "Укол",          "cd": 0, "icon": "", "desc": "", "desc_full": "" },
+			"W": { "name": "Асиміляція",    "cd": 2, "icon": "", "desc": "", "desc_full": "" },
+			"E": { "name": "Плач чаші",     "cd": 2, "icon": "", "desc": "", "desc_full": "" },
 		}
 	},
 	"fizita": {
@@ -126,11 +136,12 @@ var WARDS: Dictionary = {
 		"element": "earth",
 		"portrait": "res://Основа/char/Земля/Фізіта/Фізіта.png",
 		"short_desc_file": "res://Основа/char/Земля/Фізіта/skills_short.txt",
+		"full_desc_file":  "res://Основа/char/Земля/Фізіта/skills_full.txt",
 		"skills": {
-			"P": { "name": "Тяжіння",    "icon": "", "desc": "" },
-			"Q": { "name": "Шквал",      "icon": "", "desc": "" },
-			"W": { "name": "Стіна",      "icon": "", "desc": "" },
-			"E": { "name": "Смятіння",   "icon": "", "desc": "" },
+			"P": { "name": "Тяжіння",  "cd": 0, "icon": "", "desc": "", "desc_full": "" },
+			"Q": { "name": "Шквал",    "cd": 0, "icon": "", "desc": "", "desc_full": "" },
+			"W": { "name": "Стіна",    "cd": 1, "icon": "", "desc": "", "desc_full": "" },
+			"E": { "name": "Смятіння", "cd": 0, "icon": "", "desc": "", "desc_full": "" },
 		}
 	},
 	"shusima": {
@@ -138,11 +149,12 @@ var WARDS: Dictionary = {
 		"element": "earth",
 		"portrait": "res://Основа/char/Земля/Шусіма/Шусіма.png",
 		"short_desc_file": "res://Основа/char/Земля/Шусіма/skills_short.txt",
+		"full_desc_file":  "res://Основа/char/Земля/Шусіма/skills_full.txt",
 		"skills": {
-			"P": { "name": "Розсипання",  "icon": "", "desc": "" },
-			"Q": { "name": "Висушення",   "icon": "", "desc": "" },
-			"W": { "name": "Зибучі піски","icon": "", "desc": "" },
-			"E": { "name": "Розпад",      "icon": "", "desc": "" },
+			"P": { "name": "Розсипання",   "cd": 0, "icon": "", "desc": "", "desc_full": "" },
+			"Q": { "name": "Висушення",    "cd": 0, "icon": "", "desc": "", "desc_full": "" },
+			"W": { "name": "Зибучі піски", "cd": 0, "icon": "", "desc": "", "desc_full": "" },
+			"E": { "name": "Розпад",       "cd": 3, "icon": "", "desc": "", "desc_full": "" },
 		}
 	},
 	"iskoris": {
@@ -150,11 +162,12 @@ var WARDS: Dictionary = {
 		"element": "air",
 		"portrait": "res://Основа/char/Повітря/Іскоріс/Iskoris.png",
 		"short_desc_file": "res://Основа/char/Повітря/Іскоріс/skills_short.txt",
+		"full_desc_file":  "res://Основа/char/Повітря/Іскоріс/skills_full.txt",
 		"skills": {
-			"P": { "name": "Тисяча порізів",  "icon": "", "desc": "" },
-			"Q": { "name": "Укус",            "icon": "", "desc": "" },
-			"W": { "name": "Пісня мерця",     "icon": "", "desc": "" },
-			"E": { "name": "Ріжучий смерч",   "icon": "", "desc": "" },
+			"P": { "name": "Тисяча порізів", "cd": 0, "icon": "", "desc": "", "desc_full": "" },
+			"Q": { "name": "Укус",           "cd": 0, "icon": "", "desc": "", "desc_full": "" },
+			"W": { "name": "Пісня мерця",    "cd": 4, "icon": "", "desc": "", "desc_full": "" },
+			"E": { "name": "Ріжучий смерч",  "cd": 4, "icon": "", "desc": "", "desc_full": "" },
 		}
 	},
 	"etesena": {
@@ -162,11 +175,12 @@ var WARDS: Dictionary = {
 		"element": "air",
 		"portrait": "res://Основа/char/Повітря/Етесена/Etesena.png",
 		"short_desc_file": "res://Основа/char/Повітря/Етесена/skills_short.txt",
+		"full_desc_file":  "res://Основа/char/Повітря/Етесена/skills_full.txt",
 		"skills": {
-			"P": { "name": "Пасивна",        "icon": "", "desc": "" },
-			"Q": { "name": "Укол",           "icon": "", "desc": "" },
-			"W": { "name": "Танець",         "icon": "", "desc": "" },
-			"E": { "name": "Північні вітри", "icon": "", "desc": "" },
+			"P": { "name": "Пасивна",        "cd": 0, "icon": "", "desc": "", "desc_full": "" },
+			"Q": { "name": "Укол",           "cd": 0, "icon": "", "desc": "", "desc_full": "" },
+			"W": { "name": "Танець",         "cd": 3, "icon": "", "desc": "", "desc_full": "" },
+			"E": { "name": "Північні вітри", "cd": 5, "icon": "", "desc": "", "desc_full": "" },
 		}
 	},
 	"shopey": {
@@ -174,23 +188,25 @@ var WARDS: Dictionary = {
 		"element": "air",
 		"portrait": "res://Основа/char/Повітря/Шопей/Shopey.png",
 		"short_desc_file": "res://Основа/char/Повітря/Шопей/skills_short.txt",
+		"full_desc_file":  "res://Основа/char/Повітря/Шопей/skills_full.txt",
 		"skills": {
-			"P": { "name": "Відсічена гідра",    "icon": "res://Основа/char/Повітря/Шопей/shopey_p.png", "desc": "" },
-			"Q": { "name": "Поривистий випад",   "icon": "res://Основа/char/Повітря/Шопей/shopey_q.png", "desc": "" },
-			"W": { "name": "Ріжуча гідра",       "icon": "res://Основа/char/Повітря/Шопей/shopey_w.png", "desc": "" },
-			"E": { "name": "Наскок",             "icon": "res://Основа/char/Повітря/Шопей/shopey_e.png", "desc": "" },
+			"P": { "name": "Відсічена гідра",  "cd": 0, "icon": "res://Основа/char/Повітря/Шопей/shopey_p.png", "desc": "", "desc_full": "" },
+			"Q": { "name": "Поривистий випад", "cd": 0, "icon": "res://Основа/char/Повітря/Шопей/shopey_q.png", "desc": "", "desc_full": "" },
+			"W": { "name": "Ріжуча гідра",    "cd": 3, "icon": "res://Основа/char/Повітря/Шопей/shopey_w.png", "desc": "", "desc_full": "" },
+			"E": { "name": "Наскок",          "cd": 3, "icon": "res://Основа/char/Повітря/Шопей/shopey_e.png", "desc": "", "desc_full": "" },
 		}
 	},
 }
 
 
 func _ready() -> void:
-	_load_short_descs()
+	_load_descs("short_desc_file", "desc")
+	_load_descs("full_desc_file",  "desc_full")
 
 
-func _load_short_descs() -> void:
+func _load_descs(file_key: String, target_field: String) -> void:
 	for id in WARDS:
-		var path: String = WARDS[id].get("short_desc_file", "")
+		var path: String = WARDS[id].get(file_key, "")
 		if path.is_empty() or not FileAccess.file_exists(path):
 			continue
 		var file := FileAccess.open(path, FileAccess.READ)
@@ -206,7 +222,7 @@ func _load_short_descs() -> void:
 			var key := line.substr(0, sep).strip_edges().to_upper()
 			var val := line.substr(sep + 1).strip_edges()
 			if key in WARDS[id]["skills"]:
-				WARDS[id]["skills"][key]["desc"] = val
+				WARDS[id]["skills"][key][target_field] = val
 		file.close()
 
 

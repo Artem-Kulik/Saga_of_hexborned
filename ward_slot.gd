@@ -177,7 +177,9 @@ func _on_hover_entered() -> void:
 		visual.set_hovered(true)
 
 	var skill_panel = get_tree().get_first_node_in_group("skill_panel")
-	if skill_panel and skill_panel.has_method("show_panel"):
+	if skill_panel and skill_panel.has_method("populate") and ward_id != "":
+		skill_panel.populate(ward_id)
+	elif skill_panel and skill_panel.has_method("show_panel"):
 		skill_panel.show_panel()
 
 
