@@ -5,6 +5,19 @@ const WardVisualScript = preload("res://scripts/wards/ward_visual.gd")
 const WardInputScript = preload("res://scripts/wards/ward_input.gd")
 const WardSkillControllerScript = preload("res://scripts/wards/ward_skill_controller.gd")
 
+const _STATUS_TYPES = preload("res://Основа/visual/status/status_types.tscn")
+
+# Відповідність ключа статусу → імені вузла в status_types.tscn
+const _STATUS_NODE: Dictionary = {
+	"burning":     "burning",
+	"taunt":       "taunted",
+	"rage":        "razh",
+	"armor":       "armor",
+	"stun":        "stunned",
+	"regen":       "regeneration",
+	"fire_shield": "oichi_flame_shield",
+}
+
 signal ward_clicked(ward)
 signal skill_clicked(ward, skill_key: String)
 signal ward_drag_started(ward)
@@ -67,10 +80,11 @@ var status_effects: Dictionary = {}
 var taunted_by: String = "" # ID варда, який спровокував
 
 # ====== COOLDOWN SYSTEM ======
-# Поточний КД на кожен скіл (0 = готовий)
 var _current_cd: Dictionary = {"Q": 0, "W": 0, "E": 0}
-# Максимальні значення КД з БД (запісуються при setup_ward)
 var _max_cd: Dictionary = {"Q": 0, "W": 0, "E": 0}
+
+# Скидається на початку власного ходу — захист від двох стаків ражу за хід
+var _rage_gained_this_turn: bool = false
 
 
 func _ready() -> void:
@@ -207,48 +221,59 @@ func update_armor_status(armor_value: int) -> void:
 
 func _update_status_visuals() -> void:
 	var container = get_node_or_null("StatusContainer")
-	if container == null: return
-	
+	if container == null:
+		return
+
 	for child in container.get_children():
 		child.queue_free()
-		
-	var icons = {
-		"burning": "res://Основа/visual/status/f/burning.PNG",
-		"taunt": "res://Основа/visual/status/f/taunted.PNG",
-		"rage": "res://Основа/visual/status/f/stunned.PNG",
-		"armor": "res://Основа/visual/status/f/regeneration.PNG"
-	}
-	
+
+	var lib := _STATUS_TYPES.instantiate()
+
 	for effect in status_effects.keys():
-		var count = status_effects[effect]
-		var draw_count = count if effect != "armor" else 1
+		var count: int = status_effects[effect]
+		var draw_count: int = 1 if effect == "armor" else count
+		var node_name: String = _STATUS_NODE.get(effect, "")
+		if node_name == "":
+			continue
 		for i in range(draw_count):
-			var icon_tex = TextureRect.new()
-			icon_tex.texture = load("res://Основа/visual/status/frame_status.png")
-			icon_tex.custom_minimum_size = Vector2(25, 25)
-			icon_tex.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
-			icon_tex.mouse_filter = Control.MOUSE_FILTER_PASS # Додано для роботи tooltip
-			
-			var inner_tex = TextureRect.new()
-			if icons.has(effect):
-				inner_tex.texture = load(icons[effect])
-			inner_tex.set_anchors_preset(Control.PRESET_FULL_RECT)
-			inner_tex.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
-			
-			if effect == "rage":
-				inner_tex.modulate = Color(1, 0.5, 0.5)
-				icon_tex.tooltip_text = "Раж (Стаків: " + str(count) + ")\nКожен стак додає +15 вогняної шкоди до наступного застосування навички Q.\nСтаки накопичуються при отриманні шкоди."
-			elif effect == "armor":
-				inner_tex.modulate = Color(0.5, 0.5, 1.0) # Синюватий колір для броні
-				var armor_val = health.current_armor if health else 0
-				icon_tex.tooltip_text = "Броня/Щит: " + str(armor_val) + " ХП\nПоглинає шкоду до того, як вона зменшить здоров'я."
-			elif effect == "burning":
-				icon_tex.tooltip_text = "Горіння (Стаків: " + str(count) + ")\nНа початку вашого ходу нанесе " + str(50 * count) + " вогняної шкоди та зникне."
-			elif effect == "taunt":
-				icon_tex.tooltip_text = "Провокація\nВимушує атакувати ворога, який застосував цей ефект.\nЗабороняє використання навичок по площі та на себе."
-				
-			icon_tex.add_child(inner_tex)
-			container.add_child(icon_tex)
+			_add_status_icon(container, lib, node_name, effect, count)
+
+	# fire_shield зберігається як meta — відображаємо окремо
+	if has_meta("fire_shield") and get_meta("fire_shield"):
+		_add_status_icon(container, lib, "oichi_flame_shield", "fire_shield", 1)
+
+	lib.queue_free()
+
+
+func _add_status_icon(container: Node, lib: Node, node_name: String, effect: String, count: int) -> void:
+	var source := lib.get_node_or_null(node_name)
+	if source == null:
+		return
+	var icon := source.duplicate()
+	icon.custom_minimum_size = Vector2(32, 32)
+	icon.mouse_filter = Control.MOUSE_FILTER_PASS
+	icon.tooltip_text = _get_status_tooltip(effect, count)
+	container.add_child(icon)
+
+
+func _get_status_tooltip(effect: String, count: int) -> String:
+	match effect:
+		"burning":
+			return "Горіння (%d стаків)\nНа початку ходу: %d вогняної шкоди." % [count, 50 * count]
+		"taunt":
+			return "Провокація\nМусить атакувати того, хто спровокував.\nЗабороняє AoE та self-скіли."
+		"rage":
+			return "Раж (%d стаків)\nQ Оічі: +%d вогню за стак." % [count, 15 * count]
+		"armor":
+			var val: int = health.current_armor if health else 0
+			return "Броня: %d HP\nПоглинає шкоду до HP." % val
+		"stun":
+			return "Оглушення (%d ходів)\nПропускає хід." % count
+		"regen":
+			return "Регенерація (%d ходів)" % count
+		"fire_shield":
+			return "Вогняний щит\nАтакуючий отримує 2 стаки горіння, щит зникає."
+	return ""
 
 
 func _on_died() -> void:
@@ -461,6 +486,7 @@ func tick_cooldowns() -> void:
 	for key in _current_cd:
 		if _current_cd[key] > 0:
 			_current_cd[key] -= 1
+	_rage_gained_this_turn = false
 	_sync_cd_buttons()
 
 

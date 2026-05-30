@@ -170,7 +170,8 @@ func apply_damage(
 func _check_fire_shield(attacker, target) -> void:
 	if attacker == null or target == null: return
 	if target.has_meta("fire_shield") and target.get_meta("fire_shield"):
-		target.set_meta("fire_shield", false) # Зникає після удару
+		target.set_meta("fire_shield", false)
+		target._update_status_visuals()
 		attacker.add_status("burning", 2)
 		if battle_log:
 			battle_log.add_entry("Вогняний щит відбиває атаку! " + attacker.name + " отримує 2 стаки Горіння.")

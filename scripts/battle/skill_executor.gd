@@ -88,12 +88,15 @@ static func check_liah_passive(resolver, attacker, target_died: bool) -> void:
 			ally.health.heal(50)
 			if resolver.battle_log:
 				resolver.battle_log.add_heal(ally.name, ally.team, hp_before, ally.current_hp, ally.max_hp)
-			# Можна додати візуал лікування тут
 
 static func check_rage_passive(resolver, target) -> void:
-	if target.ward_id == "mais_oichi":
-		target.add_status("rage", 1)
-		resolver.battle_log.add_entry("Майстер Оічі отримує стак Ражу!")
+	if target.ward_id != "mais_oichi":
+		return
+	if target._rage_gained_this_turn:
+		return
+	target._rage_gained_this_turn = true
+	target.add_status("rage", 1)
+	resolver.battle_log.add_entry("Майстер Оічі отримує стак Ражу!")
 
 static func _execute_mais_oichi(resolver, attacker, target, skill_key: String, base_damage: int) -> void:
 	match skill_key:
@@ -120,6 +123,7 @@ static func _execute_mais_oichi(resolver, attacker, target, skill_key: String, b
 			resolver.battle_log.add_entry("Майстер Оічі застосовує Жар: +30 броні")
 			attacker.health.add_armor(30)
 			attacker.set_meta("fire_shield", true)
+			attacker._update_status_visuals()
 			if resolver.battle_log:
 				resolver.battle_log.add_effect(attacker.name, attacker.team, "Вогняний щит (+30 броні)")
 				
