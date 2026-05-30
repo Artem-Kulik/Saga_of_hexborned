@@ -1,7 +1,15 @@
 extends Control
 
-@onready var ward_name: Label        = $Ward_name
+const _SIGIL_TEXTURES: Dictionary = {
+	"fire":  "res://Основа/visual/sigils/sigil_fire.png",
+	"water": "res://Основа/visual/sigils/sigil_water.png",
+	"earth": "res://Основа/visual/sigils/sigil_earth.png",
+	"air":   "res://Основа/visual/sigils/sigil_air.png",
+}
+
+@onready var ward_name: Label             = $Ward_name
 @onready var ward_background: TextureRect = $Ward_background
+@onready var sigil_frame: TextureRect     = $Content/SkillList/Skill_P/Frame_pas
 
 @onready var icon_q: TextureRect     = $Content/SkillList/Skill_Q/Icon_q
 @onready var name_q: Label           = $Content/SkillList/Skill_Q/Name_q
@@ -41,6 +49,11 @@ func populate(ward_id: String) -> void:
 	var portrait_path: String = data.get("portrait", "")
 	if portrait_path != "" and ResourceLoader.exists(portrait_path):
 		ward_background.texture = load(portrait_path)
+
+	var element: String = data.get("element", "")
+	var sigil_path: String = _SIGIL_TEXTURES.get(element, "")
+	if sigil_frame and sigil_path != "" and ResourceLoader.exists(sigil_path):
+		sigil_frame.texture = load(sigil_path)
 
 	var skills: Dictionary = data.get("skills", {})
 	_fill(icon_q, name_q, cooldown_q, desc_q, skills.get("Q", {}), portrait_path)

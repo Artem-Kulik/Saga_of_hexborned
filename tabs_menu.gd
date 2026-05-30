@@ -1,6 +1,7 @@
 extends Control
 
 signal ward_card_clicked(ward_id: String)
+signal ward_card_hovered(ward_id: String)
 
 @export var slot_size: Vector2 = Vector2(120, 170)
 
@@ -122,6 +123,8 @@ func _create_ward_card(ward_id: String) -> Control:
 				and event.pressed:
 			ward_card_clicked.emit(ward_id)
 	)
+
+	card.mouse_entered.connect(func(): ward_card_hovered.emit(ward_id))
 
 	return card
 

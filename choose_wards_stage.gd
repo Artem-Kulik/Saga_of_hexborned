@@ -115,6 +115,7 @@ func _ready() -> void:
 		_slot_click_overlays.append(overlay)
 
 	_tabs_menu.ward_card_clicked.connect(_on_ward_card_clicked)
+	_tabs_menu.ward_card_hovered.connect(_show_skill_panel)
 	_setup_confirm_button()
 	_clear_skill_panel()
 
