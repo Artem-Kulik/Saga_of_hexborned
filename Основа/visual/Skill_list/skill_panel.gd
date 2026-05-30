@@ -61,11 +61,11 @@ func _fill(
 		return
 
 	name_label.text = skill.get("name", "")
+	cd_label.text = ""  # не використовуємо — ховаємо щоб не налазило
 
 	var cd: int = skill.get("cd", 0)
-	cd_label.text = "КД: " + str(cd) if cd > 0 else "-"
-
-	desc_label.text = skill.get("desc_full", skill.get("desc", ""))
+	var cd_line: String = "КД: " + str(cd) + " ходи\n" if cd > 0 else ""
+	desc_label.text = cd_line + skill.get("desc_full", skill.get("desc", ""))
 
 	var icon_path: String = skill.get("icon", "")
 	if icon_path == "":
