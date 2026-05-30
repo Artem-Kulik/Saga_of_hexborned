@@ -12,11 +12,6 @@ var t := 0.0
 var selected_ids: Array[String] = []
 
 # --- PickedWards refs ---
-@onready var _picked_wards: Array[Control] = [
-	$PickedWards/ward_1,
-	$PickedWards/ward_2,
-	$PickedWards/ward_3,
-]
 @onready var _reverse_nodes: Array[TextureRect] = [
 	$PickedWards/ward_1/reverse1,
 	$PickedWards/ward_2/reverse2,
@@ -27,40 +22,58 @@ var selected_ids: Array[String] = []
 	$PickedWards/ward_2/highlight_2,
 	$PickedWards/ward_3/highlight_3,
 ]
+@onready var _picked_wards: Array[Control] = [
+	$PickedWards/ward_1,
+	$PickedWards/ward_2,
+	$PickedWards/ward_3,
+]
 
 @onready var _tabs_menu: Control = $Wards_collection/chose_zone/TabsMenu
 
 var _original_reverse_textures: Array = []
 var _slot_borders: Array = []
+var _slot_click_overlays: Array = []
 var _confirm_button: Button
+
+# Точні екранні позиції верхніх слотів (розраховані з tscn)
+# reverse_N: anchor 0.5 на ward (40px) → base 20px + offset
+const SLOT_RECTS: Array = [
+	[645.0, 50.0, 200.0, 275.0],
+	[862.0, 50.0, 200.0, 275.0],
+	[1079.0, 50.0, 200.0, 275.0],
+]
 
 
 func _ready() -> void:
 	_setup_glow(glow_1)
 
-	# Зберігаємо оригінальні текстури карток-рубашок
 	for r in _reverse_nodes:
 		_original_reverse_textures.append(r.texture)
-		r.mouse_filter = Control.MOUSE_FILTER_IGNORE
 
-	# Ховаємо вбудовану підсвітку — використовуємо власну рамку
 	for h in _highlight_nodes:
 		h.visible = false
 
-	# Створюємо золоті рамки для кожного слоту
 	for i in range(3):
 		_slot_borders.append(_create_slot_border(i))
 
-	# Підключаємо кліки на верхні слоти для скидання вибору
+	# Click overlays додаємо на ROOT (вище за Wards_collection) —
+	# це єдиний надійний спосіб перехопити кліки поверх full-screen Control
 	for i in range(3):
 		var idx := i
-		_reverse_nodes[i].gui_input.connect(func(event: InputEvent) -> void:
+		var r: Array = SLOT_RECTS[i]
+		var overlay := Control.new()
+		overlay.position = Vector2(r[0], r[1])
+		overlay.size     = Vector2(r[2], r[3])
+		overlay.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		overlay.gui_input.connect(func(event: InputEvent) -> void:
 			if event is InputEventMouseButton \
 					and event.button_index == MOUSE_BUTTON_LEFT \
 					and event.pressed \
 					and idx < selected_ids.size():
 				_deselect_ward(selected_ids[idx])
 		)
+		add_child(overlay)
+		_slot_click_overlays.append(overlay)
 
 	_tabs_menu.ward_card_clicked.connect(_on_ward_card_clicked)
 	_setup_confirm_button()
@@ -92,22 +105,22 @@ func _create_slot_border(slot_idx: int) -> Panel:
 	var style := StyleBoxFlat.new()
 	style.draw_center = false
 	style.border_color = Color(0.92, 0.72, 0.18, 1.0)
-	style.border_width_left = 3
-	style.border_width_right = 3
-	style.border_width_top = 3
+	style.border_width_left   = 3
+	style.border_width_right  = 3
+	style.border_width_top    = 3
 	style.border_width_bottom = 3
-	style.corner_radius_top_left = 4
-	style.corner_radius_top_right = 4
-	style.corner_radius_bottom_left = 4
+	style.corner_radius_top_left     = 4
+	style.corner_radius_top_right    = 4
+	style.corner_radius_bottom_left  = 4
 	style.corner_radius_bottom_right = 4
 	border.add_theme_stylebox_override("panel", style)
 
 	border.layout_mode = 1
-	border.anchor_left = r.anchor_left
+	border.anchor_left  = r.anchor_left
 	border.anchor_right = r.anchor_right
-	border.offset_left = r.offset_left - 4
-	border.offset_top = r.offset_top - 4
-	border.offset_right = r.offset_right + 4
+	border.offset_left   = r.offset_left   - 4
+	border.offset_top    = r.offset_top    - 4
+	border.offset_right  = r.offset_right  + 4
 	border.offset_bottom = r.offset_bottom + 4
 	border.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	border.visible = false
@@ -124,7 +137,6 @@ func _setup_confirm_button() -> void:
 	_confirm_button.text = "▶  Підтвердити"
 	_confirm_button.visible = false
 	_confirm_button.custom_minimum_size = Vector2(240, 58)
-	# Праворуч від 3-го слоту, по центру висоти карток
 	_confirm_button.position = Vector2(1340, 158)
 	_confirm_button.add_theme_font_size_override("font_size", 17)
 
@@ -193,13 +205,13 @@ func _refresh_picked_slots() -> void:
 			if portrait_path != "" and ResourceLoader.exists(portrait_path):
 				_reverse_nodes[i].texture = load(portrait_path)
 				_reverse_nodes[i].stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_COVERED
-			_reverse_nodes[i].mouse_filter = Control.MOUSE_FILTER_STOP
 			_slot_borders[i].visible = true
+			_slot_click_overlays[i].mouse_filter = Control.MOUSE_FILTER_STOP
 		else:
 			_reverse_nodes[i].texture = _original_reverse_textures[i]
 			_reverse_nodes[i].stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
-			_reverse_nodes[i].mouse_filter = Control.MOUSE_FILTER_IGNORE
 			_slot_borders[i].visible = false
+			_slot_click_overlays[i].mouse_filter = Control.MOUSE_FILTER_IGNORE
 
 
 func _refresh_confirm_button() -> void:
