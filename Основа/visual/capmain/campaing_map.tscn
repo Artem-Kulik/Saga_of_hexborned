@@ -1,0 +1,137 @@
+[gd_scene format=3 uid="uid://dnwj213txq57i"]
+
+[ext_resource type="Texture2D" uid="uid://cpit1ml18b32e" path="res://Основа/visual/capmain/карта.png" id="1_ea6bx"]
+[ext_resource type="Script" uid="uid://cj2sgvgjn0xj5" path="res://Основа/visual/capmain/campaing_map.gd" id="1_ltu8p"]
+[ext_resource type="Script" uid="uid://da4fabeh0mwhp" path="res://Основа/visual/capmain/stage_1.gd" id="2_ltu8p"]
+[ext_resource type="Texture2D" uid="uid://e4oyep30jle4" path="res://Основа/visual/capmain/стейдж компанії.png" id="3_j1s78"]
+
+[node name="campaing_map" type="Control" unique_id=2117562609]
+layout_mode = 3
+anchor_right = 22.490002
+anchor_bottom = 22.375002
+offset_right = -0.8046875
+offset_bottom = -0.001953125
+size_flags_horizontal = 4
+script = ExtResource("1_ltu8p")
+
+[node name="map" type="TextureRect" parent="." unique_id=1578554412]
+layout_mode = 0
+offset_right = 43052.668
+offset_bottom = 24230.0
+texture = ExtResource("1_ea6bx")
+
+[node name="camera" type="Camera2D" parent="." unique_id=1108354178]
+zoom = Vector2(-0.085, -0.085)
+
+[node name="stages" type="Control" parent="." unique_id=109743237]
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="stage_1" type="Control" parent="stages" unique_id=1511891055]
+anchors_preset = 0
+offset_left = 10953.0
+offset_top = 5134.0
+offset_right = 11527.0
+offset_bottom = 5719.007
+
+[node name="stage_1" type="Button" parent="stages/stage_1" unique_id=1786776595]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+flat = true
+script = ExtResource("2_ltu8p")
+focus_zoom = Vector2(0.15, 0.15)
+
+[node name="sprite" type="TextureRect" parent="stages/stage_1/stage_1" unique_id=857983907]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("3_j1s78")
+
+[node name="stage_2" type="Control" parent="stages" unique_id=2045346644]
+anchors_preset = 0
+offset_left = 11900.0
+offset_top = 6929.0
+offset_right = 12474.0
+offset_bottom = 7518.752
+
+[node name="stage_2" type="Button" parent="stages/stage_2" unique_id=324215746]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+flat = true
+script = ExtResource("2_ltu8p")
+focus_zoom = Vector2(0.15, 0.15)
+
+[node name="sprite" type="TextureRect" parent="stages/stage_2/stage_2" unique_id=969237515]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("3_j1s78")
+
+[node name="stage_3" type="Control" parent="stages" unique_id=1423483327]
+anchors_preset = 0
+offset_left = 12685.0
+offset_top = 10216.0
+offset_right = 13259.0
+offset_bottom = 10801.007
+
+[node name="stage_3" type="Button" parent="stages/stage_3" unique_id=1500683148]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+flat = true
+script = ExtResource("2_ltu8p")
+focus_zoom = Vector2(0.15, 0.15)
+
+[node name="sprite" type="TextureRect" parent="stages/stage_3/stage_3" unique_id=1221547051]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("3_j1s78")
+
+[node name="stage_4" type="Control" parent="stages" unique_id=1815606128]
+anchors_preset = 0
+offset_left = 13010.0
+offset_top = 12659.0
+offset_right = 13584.0
+offset_bottom = 13244.007
+
+[node name="stage_4" type="Button" parent="stages/stage_4" unique_id=813018755]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+flat = true
+script = ExtResource("2_ltu8p")
+focus_zoom = Vector2(0.15, 0.15)
+
+[node name="sprite" type="TextureRect" parent="stages/stage_4/stage_4" unique_id=1054141120]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("3_j1s78")
