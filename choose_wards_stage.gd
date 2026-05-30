@@ -32,8 +32,11 @@ var selected_ids: Array[String] = []
 
 var _original_reverse_textures: Array = []
 var _slot_borders: Array = []
+var _slot_frames: Array = []
 var _slot_click_overlays: Array = []
 var _confirm_button: Button
+
+const SLOT_FRAME_TEXTURE = "res://Основа/visual/choose_stage/epmty_slot_frame.png"
 
 # Точні екранні позиції верхніх слотів (розраховані з tscn)
 # reverse_N: anchor 0.5 на ward (40px) → base 20px + offset
@@ -55,6 +58,7 @@ func _ready() -> void:
 
 	for i in range(3):
 		_slot_borders.append(_create_slot_border(i))
+		_slot_frames.append(_create_slot_frame(i))
 
 	# Click overlays додаємо на ROOT (вище за Wards_collection) —
 	# це єдиний надійний спосіб перехопити кліки поверх full-screen Control
@@ -128,6 +132,33 @@ func _create_slot_border(slot_idx: int) -> Panel:
 	ward_node.add_child(border)
 	ward_node.move_child(border, 0)
 	return border
+
+
+# --- Рамка з empty_slots поверх портрету ---
+
+func _create_slot_frame(slot_idx: int) -> TextureRect:
+	var r := _reverse_nodes[slot_idx]
+	var ward_node := _picked_wards[slot_idx]
+
+	var frame := TextureRect.new()
+	frame.layout_mode = 1
+	frame.anchor_left  = r.anchor_left
+	frame.anchor_right = r.anchor_right
+	# Рамка трохи більша за портрет (як у empty_slots: offset ±7)
+	frame.offset_left   = r.offset_left   - 7
+	frame.offset_top    = r.offset_top    - 7
+	frame.offset_right  = r.offset_right  + 7
+	frame.offset_bottom = r.offset_bottom + 7
+	frame.expand_mode = TextureRect.EXPAND_FIT_WIDTH_PROPORTIONAL
+	frame.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_COVERED
+	frame.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	frame.visible = false
+
+	if ResourceLoader.exists(SLOT_FRAME_TEXTURE):
+		frame.texture = load(SLOT_FRAME_TEXTURE)
+
+	ward_node.add_child(frame)
+	return frame
 
 
 # --- Кнопка підтвердження ---
@@ -206,11 +237,13 @@ func _refresh_picked_slots() -> void:
 				_reverse_nodes[i].texture = load(portrait_path)
 				_reverse_nodes[i].stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_COVERED
 			_slot_borders[i].visible = true
+			_slot_frames[i].visible = true
 			_slot_click_overlays[i].mouse_filter = Control.MOUSE_FILTER_STOP
 		else:
 			_reverse_nodes[i].texture = _original_reverse_textures[i]
 			_reverse_nodes[i].stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
 			_slot_borders[i].visible = false
+			_slot_frames[i].visible = false
 			_slot_click_overlays[i].mouse_filter = Control.MOUSE_FILTER_IGNORE
 
 
