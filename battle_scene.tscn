@@ -418,7 +418,6 @@ offset_right = 301.0
 offset_bottom = 55.0
 
 [node name="Description_e" type="RichTextLabel" parent="SkillPanel/Content/SkillList/Skill_E" unique_id=1609344716]
-z_index = 436
 layout_mode = 0
 offset_left = 7.0
 offset_top = 100.0

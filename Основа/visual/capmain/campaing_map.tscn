@@ -4,36 +4,54 @@
 [ext_resource type="Script" uid="uid://cj2sgvgjn0xj5" path="res://Основа/visual/capmain/campaing_map.gd" id="1_ltu8p"]
 [ext_resource type="Script" uid="uid://da4fabeh0mwhp" path="res://Основа/visual/capmain/stage_1.gd" id="2_ltu8p"]
 [ext_resource type="Texture2D" uid="uid://e4oyep30jle4" path="res://Основа/visual/capmain/стейдж компанії.png" id="3_j1s78"]
+[ext_resource type="Script" uid="uid://ce6cst3vp82r6" path="res://Основа/visual/capmain/back_button.gd" id="5_xhhxl"]
+[ext_resource type="Texture2D" uid="uid://ccmi1jrtt83kk" path="res://Основа/visual/green_highlight.png" id="6_eo5oy"]
+[ext_resource type="Texture2D" uid="uid://dv8u1vpuawkcr" path="res://Основа/visual/element_cards/status_card_frame.png" id="7_xh2qr"]
+[ext_resource type="FontFile" uid="uid://sin06uqgfb8o" path="res://Основа/Шрифти/Brock_Script_D.ttf" id="8_lpony"]
+[ext_resource type="Texture2D" uid="uid://7urn3d6wh5a4" path="res://Основа/visual/capmain/bg.png" id="9_lpony"]
+[ext_resource type="Texture2D" uid="uid://d5tacve37cas" path="res://Основа/char/Вода/Лія/Liah.png" id="10_j88cn"]
+[ext_resource type="Texture2D" uid="uid://oym6a1atnd2l" path="res://Основа/visual/choose_stage/page_lor_bg.png" id="11_hs0u1"]
+[ext_resource type="Script" uid="uid://cwcdeesql10ki" path="res://Основа/visual/capmain/play.gd" id="12_hs0u1"]
+[ext_resource type="FontFile" uid="uid://bymkrthni0vye" path="res://Основа/Шрифти/silvus__.ttf" id="13_6chye"]
+
+[sub_resource type="CanvasItemMaterial" id="CanvasItemMaterial_j88cn"]
+blend_mode = 1
 
 [node name="campaing_map" type="Control" unique_id=2117562609]
 layout_mode = 3
 anchor_right = 22.490002
 anchor_bottom = 22.375002
-offset_right = -0.8046875
-offset_bottom = -0.001953125
+offset_right = -41263.805
+offset_bottom = -23086.002
 size_flags_horizontal = 4
 script = ExtResource("1_ltu8p")
 
 [node name="map" type="TextureRect" parent="." unique_id=1578554412]
-layout_mode = 0
-offset_right = 43052.668
-offset_bottom = 24230.0
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
 texture = ExtResource("1_ea6bx")
 
 [node name="camera" type="Camera2D" parent="." unique_id=1108354178]
-zoom = Vector2(-0.085, -0.085)
 
 [node name="stages" type="Control" parent="." unique_id=109743237]
-anchors_preset = 0
-offset_right = 40.0
-offset_bottom = 40.0
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
 
 [node name="stage_1" type="Control" parent="stages" unique_id=1511891055]
+layout_mode = 1
 anchors_preset = 0
-offset_left = 10953.0
-offset_top = 5134.0
-offset_right = 11527.0
-offset_bottom = 5719.007
+offset_left = 486.0
+offset_top = 226.0
+offset_right = 513.0
+offset_bottom = 253.0
 
 [node name="stage_1" type="Button" parent="stages/stage_1" unique_id=1786776595]
 layout_mode = 1
@@ -44,7 +62,6 @@ grow_horizontal = 2
 grow_vertical = 2
 flat = true
 script = ExtResource("2_ltu8p")
-focus_zoom = Vector2(0.15, 0.15)
 
 [node name="sprite" type="TextureRect" parent="stages/stage_1/stage_1" unique_id=857983907]
 layout_mode = 1
@@ -54,15 +71,16 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 texture = ExtResource("3_j1s78")
+expand_mode = 1
 
-[node name="stage_2" type="Control" parent="stages" unique_id=2045346644]
+[node name="stage_2" type="Control" parent="stages" unique_id=483030066]
 anchors_preset = 0
-offset_left = 11900.0
-offset_top = 6929.0
-offset_right = 12474.0
-offset_bottom = 7518.752
+offset_left = 530.0
+offset_top = 301.0
+offset_right = 557.0
+offset_bottom = 327.99994
 
-[node name="stage_2" type="Button" parent="stages/stage_2" unique_id=324215746]
+[node name="stage_2" type="Button" parent="stages/stage_2" unique_id=239409147]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -71,9 +89,8 @@ grow_horizontal = 2
 grow_vertical = 2
 flat = true
 script = ExtResource("2_ltu8p")
-focus_zoom = Vector2(0.15, 0.15)
 
-[node name="sprite" type="TextureRect" parent="stages/stage_2/stage_2" unique_id=969237515]
+[node name="sprite" type="TextureRect" parent="stages/stage_2/stage_2" unique_id=828400668]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -81,15 +98,16 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 texture = ExtResource("3_j1s78")
+expand_mode = 1
 
-[node name="stage_3" type="Control" parent="stages" unique_id=1423483327]
+[node name="stage_3" type="Control" parent="stages" unique_id=1749661473]
 anchors_preset = 0
-offset_left = 12685.0
-offset_top = 10216.0
-offset_right = 13259.0
-offset_bottom = 10801.007
+offset_left = 482.0
+offset_top = 421.0
+offset_right = 509.0
+offset_bottom = 448.0
 
-[node name="stage_3" type="Button" parent="stages/stage_3" unique_id=1500683148]
+[node name="stage_3" type="Button" parent="stages/stage_3" unique_id=1061203879]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -98,9 +116,8 @@ grow_horizontal = 2
 grow_vertical = 2
 flat = true
 script = ExtResource("2_ltu8p")
-focus_zoom = Vector2(0.15, 0.15)
 
-[node name="sprite" type="TextureRect" parent="stages/stage_3/stage_3" unique_id=1221547051]
+[node name="sprite" type="TextureRect" parent="stages/stage_3/stage_3" unique_id=1465276043]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -108,15 +125,16 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 texture = ExtResource("3_j1s78")
+expand_mode = 1
 
-[node name="stage_4" type="Control" parent="stages" unique_id=1815606128]
+[node name="stage_4" type="Control" parent="stages" unique_id=787822539]
 anchors_preset = 0
-offset_left = 13010.0
-offset_top = 12659.0
-offset_right = 13584.0
-offset_bottom = 13244.007
+offset_left = 578.0
+offset_top = 456.0
+offset_right = 605.0
+offset_bottom = 483.0
 
-[node name="stage_4" type="Button" parent="stages/stage_4" unique_id=813018755]
+[node name="stage_3" type="Button" parent="stages/stage_4" unique_id=1108515950]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -125,9 +143,8 @@ grow_horizontal = 2
 grow_vertical = 2
 flat = true
 script = ExtResource("2_ltu8p")
-focus_zoom = Vector2(0.15, 0.15)
 
-[node name="sprite" type="TextureRect" parent="stages/stage_4/stage_4" unique_id=1054141120]
+[node name="sprite" type="TextureRect" parent="stages/stage_4/stage_3" unique_id=248966255]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -135,3 +152,301 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 texture = ExtResource("3_j1s78")
+expand_mode = 1
+
+[node name="main_overlay" type="CanvasLayer" parent="." unique_id=303374864]
+layer = 3
+
+[node name="static_ui" type="Control" parent="main_overlay" unique_id=1008679371]
+layout_mode = 3
+anchor_right = 11.762
+anchor_bottom = 11.7630005
+offset_right = 0.9589844
+offset_bottom = -0.041015625
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="buttons" type="Control" parent="main_overlay/static_ui" unique_id=2138072794]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="back_button" type="Control" parent="main_overlay/static_ui/buttons" unique_id=1919645340]
+anchors_preset = 0
+offset_left = 10.0
+offset_top = 10.0
+offset_right = 262.14288
+offset_bottom = 95.0
+mouse_filter = 2
+script = ExtResource("5_xhhxl")
+scene_to_load = "uid://ctkidkrp0lhrm"
+screen_position = Vector2(0, 0)
+
+[node name="highlight" type="TextureRect" parent="main_overlay/static_ui/buttons/back_button" unique_id=1894336803]
+material = SubResource("CanvasItemMaterial_j88cn")
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -26.0
+offset_top = -70.0
+offset_right = 12.857117
+offset_bottom = 64.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("6_eo5oy")
+expand_mode = 1
+
+[node name="texture" type="TextureRect" parent="main_overlay/static_ui/buttons/back_button" unique_id=2028842327]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("7_xh2qr")
+expand_mode = 1
+
+[node name="Button" type="Button" parent="main_overlay/static_ui/buttons/back_button" unique_id=1213485090]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+flat = true
+
+[node name="name" type="Label" parent="main_overlay/static_ui/buttons/back_button" unique_id=1178244540]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -87.30881
+offset_top = -28.5
+offset_right = 87.30881
+offset_bottom = 28.5
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_fonts/font = ExtResource("8_lpony")
+theme_override_font_sizes/font_size = 36
+text = "BACK"
+
+[node name="ui_lvl_info" type="Control" parent="main_overlay/static_ui" unique_id=658009348]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_right = -11290.0
+offset_bottom = -6351.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="lvl_info" type="CanvasLayer" parent="." unique_id=1622695812]
+
+[node name="info_page" type="Control" parent="lvl_info" unique_id=972715605]
+layout_mode = 3
+anchors_preset = 11
+anchor_left = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -568.0
+grow_horizontal = 0
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="color_bg" type="ColorRect" parent="lvl_info/info_page" unique_id=1752699760]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+color = Color(0, 0, 0, 0.654902)
+
+[node name="art" type="TextureRect" parent="lvl_info/info_page" unique_id=931643478]
+layout_mode = 1
+anchors_preset = 12
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_top = -477.0
+grow_horizontal = 2
+grow_vertical = 0
+mouse_filter = 2
+texture = ExtResource("9_lpony")
+expand_mode = 5
+
+[node name="lvl_info_zone" type="Control" parent="lvl_info/info_page" unique_id=656394566]
+layout_mode = 1
+anchors_preset = 10
+anchor_right = 1.0
+offset_bottom = 379.0
+grow_horizontal = 2
+mouse_filter = 2
+
+[node name="book" type="TextureRect" parent="lvl_info/info_page/lvl_info_zone" unique_id=870035754]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("11_hs0u1")
+expand_mode = 1
+
+[node name="text" type="RichTextLabel" parent="lvl_info/info_page/lvl_info_zone/book" unique_id=531574089]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.075
+anchor_top = 0.053000003
+anchor_right = 0.93200004
+anchor_bottom = 0.92700005
+offset_left = 0.14999771
+offset_top = -0.03800106
+offset_right = -0.21600342
+offset_bottom = -0.042007446
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_fonts/normal_font = ExtResource("8_lpony")
+text = "тут буде піздувати йобаний лор в єбануто промишдених масштабах, я ж бля єбобо, мені нехуй чим зайнятися, я буду єбашити кожному зустрічному обсосу передісторію і трьохаркову структуру сюжету. Графоманія моя буде бля лікувати, від 
+    такого прикола, просто бля, буду стирати до ебені матері злоєбучу клавіатуру. А саме прикольне що цю поєбень в основному ніхто й не буде читати навіть. Хоча для повного занурення ніби і прикольно виглядає, і один хуй тут пів екрану нехуй чим зайняти, тому використвуємо акценти уваги і засмічуємо фон, що ключова 
+    інформація здававлсь більш значущою. А ще прикольно, що якщо прибрати звідси матюки, то дай боже половина тексту виживе. графоманія це зло йобане. Амінь. А і ще, зверху це імя лія. Шрифт канешно разйобчік, але шось він блять какой то слегонца хуйово читабельний, треба подумати, чи залишим, чи пошукати шось стилізоване але не на стільки змінене, чи хочемо ми залишати таку стилізацію, я б звернув увагу на якісь готік фонтс. Хоча вони всі, чесно кажучи, або нудні, або важко читабельні. 
+    А нас і єбати це не повинно, як ніби то блять. Похуй мені, тому що. І тобі похуй. І всім похуй, це ж шрифт блять,  який на панелі з лором, хто сюди взагалі загляне, ти чьо, ебобо? "
+
+[node name="ColorRect" type="ColorRect" parent="lvl_info/info_page" unique_id=397073293]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_top = 402.0
+offset_bottom = -483.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+color = Color(1, 1, 0, 0.40392157)
+
+[node name="GridContainer" type="HBoxContainer" parent="lvl_info/info_page/ColorRect" unique_id=1395413285]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -208.0
+offset_top = -50.0
+offset_right = 208.0
+offset_bottom = 50.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+theme_override_constants/separation = 19
+alignment = 1
+
+[node name="en1" type="TextureRect" parent="lvl_info/info_page/ColorRect/GridContainer" unique_id=2135009097]
+custom_minimum_size = Vector2(68.845, 100)
+layout_mode = 2
+texture = ExtResource("10_j88cn")
+expand_mode = 1
+
+[node name="en2" type="TextureRect" parent="lvl_info/info_page/ColorRect/GridContainer" unique_id=30835997]
+custom_minimum_size = Vector2(68.845, 100)
+layout_mode = 2
+texture = ExtResource("10_j88cn")
+expand_mode = 1
+
+[node name="en3" type="TextureRect" parent="lvl_info/info_page/ColorRect/GridContainer" unique_id=148777482]
+custom_minimum_size = Vector2(68.845, 100)
+layout_mode = 2
+texture = ExtResource("10_j88cn")
+expand_mode = 1
+
+[node name="en4" type="TextureRect" parent="lvl_info/info_page/ColorRect/GridContainer" unique_id=1177143450]
+custom_minimum_size = Vector2(68.845, 100)
+layout_mode = 2
+texture = ExtResource("10_j88cn")
+expand_mode = 1
+
+[node name="en5" type="TextureRect" parent="lvl_info/info_page/ColorRect/GridContainer" unique_id=701554028]
+custom_minimum_size = Vector2(68.845, 100)
+layout_mode = 2
+texture = ExtResource("10_j88cn")
+expand_mode = 1
+
+[node name="buttons" type="Control" parent="lvl_info" unique_id=533002971]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="play" type="Control" parent="lvl_info/buttons" unique_id=1594197531]
+layout_mode = 1
+anchors_preset = 4
+anchor_top = 0.5
+anchor_bottom = 0.5
+offset_left = 214.0
+offset_top = 109.0
+offset_right = 486.0
+offset_bottom = 193.0
+grow_vertical = 2
+mouse_filter = 2
+script = ExtResource("12_hs0u1")
+scene_to_load = "uid://coy1ijtk34uup"
+
+[node name="highlight" type="TextureRect" parent="lvl_info/buttons/play" unique_id=818297959]
+layout_mode = 0
+offset_left = -41.0
+offset_top = -54.0
+offset_right = 314.0
+offset_bottom = 143.0
+mouse_filter = 2
+texture = ExtResource("6_eo5oy")
+expand_mode = 1
+
+[node name="bg" type="TextureRect" parent="lvl_info/buttons/play" unique_id=1024435358]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+texture = ExtResource("7_xh2qr")
+expand_mode = 1
+
+[node name="Label" type="Label" parent="lvl_info/buttons/play" unique_id=606812744]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -20.0
+offset_top = -11.5
+offset_right = 20.0
+offset_bottom = 11.5
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_fonts/font = ExtResource("13_6chye")
+theme_override_font_sizes/font_size = 42
+text = "PLAY"
+
+[node name="play" type="Button" parent="lvl_info/buttons/play" unique_id=1306085382]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+flat = true

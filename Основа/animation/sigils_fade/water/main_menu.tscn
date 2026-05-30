@@ -229,6 +229,8 @@ anchor_bottom = 0.5
 grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("11_0o1eg")
+earth_scene_path = "uid://dnwj213txq57i"
+fire_scene_path = "uid://coy1ijtk34uup"
 
 [node name="TextureRect" type="TextureRect" parent="ui" unique_id=1241336470]
 layout_mode = 1
