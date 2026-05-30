@@ -3,15 +3,15 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://bl6vp32j84awr"
-path="res://.godot/imported/Земля Паразит.png-d73785397d7f18f38e0e87ae6bb4d88b.ctex"
+path="res://.godot/imported/Земля Паразит.png-75320f71120f574a9c8463f2600fd739.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://Основа/char/Земля/Паразит/Земля Паразит.png"
-dest_files=["res://.godot/imported/Земля Паразит.png-d73785397d7f18f38e0e87ae6bb4d88b.ctex"]
+source_file="res://Основа/char/Земля/Parazyte/Земля Паразит.png"
+dest_files=["res://.godot/imported/Земля Паразит.png-75320f71120f574a9c8463f2600fd739.ctex"]
 
 [params]
 

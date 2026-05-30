@@ -3,15 +3,15 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://dx0d1mkbfodb4"
-path="res://.godot/imported/Фізіта.png-95d804a9f0a9f41a8d89dec180fdea4b.ctex"
+path="res://.godot/imported/Фізіта.png-213466ac8b964296a9f903a9d713cbcc.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://Основа/char/Земля/Фізіта/Фізіта.png"
-dest_files=["res://.godot/imported/Фізіта.png-95d804a9f0a9f41a8d89dec180fdea4b.ctex"]
+source_file="res://Основа/char/Земля/Phisita/Фізіта.png"
+dest_files=["res://.godot/imported/Фізіта.png-213466ac8b964296a9f903a9d713cbcc.ctex"]
 
 [params]
 

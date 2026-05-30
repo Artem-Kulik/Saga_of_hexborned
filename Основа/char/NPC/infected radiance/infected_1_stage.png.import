@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://dr25w4uiou36b"
-path="res://.godot/imported/Грумп.png-f352e4708116995c38815c8f6d95627a.ctex"
+uid="uid://sn0na7x3x3o"
+path="res://.godot/imported/infected_1_stage.png-90dc51a8924d804d4e0c8706766fa69f.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://Основа/char/Земля/Groomp/Грумп.png"
-dest_files=["res://.godot/imported/Грумп.png-f352e4708116995c38815c8f6d95627a.ctex"]
+source_file="res://Основа/char/NPC/infected radiance/infected_1_stage.png"
+dest_files=["res://.godot/imported/infected_1_stage.png-90dc51a8924d804d4e0c8706766fa69f.ctex"]
 
 [params]
 

@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://dr25w4uiou36b"
-path="res://.godot/imported/Грумп.png-f352e4708116995c38815c8f6d95627a.ctex"
+uid="uid://che2jrr1s6s7q"
+path="res://.godot/imported/P.png-b216ead35e1fa3bd4bf8f9f4ec8bb1f3.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://Основа/char/Земля/Groomp/Грумп.png"
-dest_files=["res://.godot/imported/Грумп.png-f352e4708116995c38815c8f6d95627a.ctex"]
+source_file="res://Основа/char/Земля/Groomp/P.png"
+dest_files=["res://.godot/imported/P.png-b216ead35e1fa3bd4bf8f9f4ec8bb1f3.ctex"]
 
 [params]
 
