@@ -86,6 +86,9 @@ var _max_cd: Dictionary = {"Q": 0, "W": 0, "E": 0}
 # Скидається на початку власного ходу — захист від двох стаків ражу за хід
 var _rage_gained_this_turn: bool = false
 
+var _status_tooltip: PanelContainer = null
+var _status_container_top: GridContainer = null
+
 
 func _ready() -> void:
 	current_hp = clamp(start_hp, 0, max_hp)
@@ -96,7 +99,7 @@ func _ready() -> void:
 
 	if crack_overlay:
 		crack_overlay.visible = false
-		
+
 	var status_container = get_node_or_null("StatusContainer")
 	if status_container:
 		for child in status_container.get_children():
@@ -104,9 +107,74 @@ func _ready() -> void:
 
 	_setup_mouse_filters()
 	_create_systems()
+	_create_status_tooltip()
+	_create_status_container_top()
 
 	base_ward_modulate = ward_visual.modulate
 	base_ward_scale = ward_visual.scale
+
+
+func _exit_tree() -> void:
+	if _status_tooltip and is_instance_valid(_status_tooltip):
+		_status_tooltip.queue_free()
+
+
+func _create_status_tooltip() -> void:
+	_status_tooltip = PanelContainer.new()
+	var style := StyleBoxFlat.new()
+	style.bg_color = Color("#120d08", 0.96)
+	style.border_color = Color("#9b6a35", 0.9)
+	style.set_border_width_all(1)
+	style.set_corner_radius_all(5)
+	style.content_margin_left = 10
+	style.content_margin_right = 10
+	style.content_margin_top = 6
+	style.content_margin_bottom = 6
+	_status_tooltip.add_theme_stylebox_override("panel", style)
+
+	var lbl := Label.new()
+	lbl.name = "Lbl"
+	lbl.add_theme_color_override("font_color", Color("#d8caa0"))
+	lbl.add_theme_font_size_override("font_size", 13)
+	lbl.autowrap_mode = TextServer.AUTOWRAP_WORD_ONLY
+	lbl.custom_minimum_size = Vector2(200, 0)
+	_status_tooltip.add_child(lbl)
+
+	_status_tooltip.visible = false
+	_status_tooltip.z_index = 300
+	_status_tooltip.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	get_viewport().add_child(_status_tooltip)
+
+
+func _create_status_container_top() -> void:
+	_status_container_top = GridContainer.new()
+	_status_container_top.columns = 4
+	_status_container_top.add_theme_constant_override("h_separation", 11)
+	_status_container_top.add_theme_constant_override("v_separation", 8)
+	_status_container_top.layout_mode = 0
+	_status_container_top.offset_left = -17.5
+	_status_container_top.offset_top = 18.0
+	_status_container_top.offset_right = 250.5
+	_status_container_top.offset_bottom = 120.0
+	add_child(_status_container_top)
+
+
+func _show_status_tooltip(text: String, icon: Control) -> void:
+	if _status_tooltip == null or not is_instance_valid(_status_tooltip):
+		return
+	_status_tooltip.get_node("Lbl").text = text
+	_status_tooltip.visible = true
+	await get_tree().process_frame
+	var icon_rect := icon.get_global_rect()
+	_status_tooltip.global_position = Vector2(
+		icon_rect.position.x,
+		icon_rect.position.y - _status_tooltip.size.y - 6
+	)
+
+
+func _hide_status_tooltip() -> void:
+	if _status_tooltip and is_instance_valid(_status_tooltip):
+		_status_tooltip.visible = false
 
 
 func _process(_delta: float) -> void:
@@ -220,12 +288,15 @@ func update_armor_status(armor_value: int) -> void:
 	_update_status_visuals()
 
 func _update_status_visuals() -> void:
-	var container = get_node_or_null("StatusContainer")
+	var container := get_node_or_null("StatusContainer")
 	if container == null:
 		return
 
 	for child in container.get_children():
 		child.queue_free()
+	if _status_container_top:
+		for child in _status_container_top.get_children():
+			child.queue_free()
 
 	var lib := _STATUS_TYPES.instantiate()
 
@@ -237,10 +308,13 @@ func _update_status_visuals() -> void:
 			continue
 		for i in range(draw_count):
 			_add_status_icon(container, lib, node_name, effect, count)
+			if _status_container_top:
+				_add_status_icon(_status_container_top, lib, node_name, effect, count)
 
-	# fire_shield зберігається як meta — відображаємо окремо
 	if has_meta("fire_shield") and get_meta("fire_shield"):
 		_add_status_icon(container, lib, "oichi_flame_shield", "fire_shield", 1)
+		if _status_container_top:
+			_add_status_icon(_status_container_top, lib, "oichi_flame_shield", "fire_shield", 1)
 
 	lib.queue_free()
 
@@ -251,8 +325,10 @@ func _add_status_icon(container: Node, lib: Node, node_name: String, effect: Str
 		return
 	var icon := source.duplicate()
 	icon.custom_minimum_size = Vector2(32, 32)
-	icon.mouse_filter = Control.MOUSE_FILTER_PASS
-	icon.tooltip_text = _get_status_tooltip(effect, count)
+	icon.mouse_filter = Control.MOUSE_FILTER_STOP
+	var tooltip_text := _get_status_tooltip(effect, count)
+	icon.mouse_entered.connect(func(): _show_status_tooltip(tooltip_text, icon))
+	icon.mouse_exited.connect(_hide_status_tooltip)
 	container.add_child(icon)
 
 
