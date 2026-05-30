@@ -82,9 +82,9 @@ var WARDS: Dictionary = {
 	"adoneia": {
 		"name": "Адонея",
 		"element": "earth",
-		"portrait": "res://Основа/char/Земля/Адонея/Адонея.png",
-		"short_desc_file": "res://Основа/char/Земля/Адонея/skills_short.txt",
-		"full_desc_file":  "res://Основа/char/Земля/Адонея/skills_full.txt",
+		"portrait": "res://Основа/char/Земля/Adoneya/Адонея.png",
+		"short_desc_file": "res://Основа/char/Земля/Adoneya/skills_short.txt",
+		"full_desc_file":  "res://Основа/char/Земля/Adoneya/skills_full.txt",
 		"skills": {
 			"P": { "damage_type": "passive", "name": "Пасивна",               "cd": 0, "icon": "", "desc": "", "desc_full": "" },
 			"Q": { "damage_type": "phys", "name": "Пролом",                "cd": 0, "icon": "", "desc": "", "desc_full": "" },
@@ -95,9 +95,9 @@ var WARDS: Dictionary = {
 	"grump": {
 		"name": "Грумп",
 		"element": "earth",
-		"portrait": "res://Основа/char/Земля/Грумп/Грумп.png",
-		"short_desc_file": "res://Основа/char/Земля/Грумп/skills_short.txt",
-		"full_desc_file":  "res://Основа/char/Земля/Грумп/skills_full.txt",
+		"portrait": "res://Основа/char/Земля/Groomp/Грумп.png",
+		"short_desc_file": "res://Основа/char/Земля/Groomp/skills_short.txt",
+		"full_desc_file":  "res://Основа/char/Земля/Groomp/skills_full.txt",
 		"skills": {
 			"P": { "damage_type": "passive", "name": "Наростання породи", "cd": 0, "icon": "", "desc": "", "desc_full": "" },
 			"Q": { "damage_type": "earth", "name": "Клятва Варда",       "cd": 0, "icon": "", "desc": "", "desc_full": "" },
@@ -108,9 +108,9 @@ var WARDS: Dictionary = {
 	"kromius": {
 		"name": "Кроміус",
 		"element": "earth",
-		"portrait": "res://Основа/char/Земля/Кроміус/Кроміус.png",
-		"short_desc_file": "res://Основа/char/Земля/Кроміус/skills_short.txt",
-		"full_desc_file":  "res://Основа/char/Земля/Кроміус/skills_full.txt",
+		"portrait": "res://Основа/char/Земля/Chromius/Кроміус.png",
+		"short_desc_file": "res://Основа/char/Земля/Chromius/skills_short.txt",
+		"full_desc_file":  "res://Основа/char/Земля/Chromius/skills_full.txt",
 		"skills": {
 			"P": { "damage_type": "passive", "name": "Пасивна",         "cd": 0, "icon": "", "desc": "", "desc_full": "" },
 			"Q": { "damage_type": "phys", "name": "Роздирання",      "cd": 0, "icon": "", "desc": "", "desc_full": "" },
@@ -121,9 +121,9 @@ var WARDS: Dictionary = {
 	"parasyt": {
 		"name": "Паразит",
 		"element": "earth",
-		"portrait": "res://Основа/char/Земля/Паразит/Земля Паразит.png",
-		"short_desc_file": "res://Основа/char/Земля/Паразит/skills_short.txt",
-		"full_desc_file":  "res://Основа/char/Земля/Паразит/skills_full.txt",
+		"portrait": "res://Основа/char/Земля/Parazyte/Земля Паразит.png",
+		"short_desc_file": "res://Основа/char/Земля/Parazyte/skills_short.txt",
+		"full_desc_file":  "res://Основа/char/Земля/Parazyte/skills_full.txt",
 		"skills": {
 			"P": { "damage_type": "passive", "name": "Паразитування", "cd": 0, "icon": "", "desc": "", "desc_full": "" },
 			"Q": { "damage_type": "phys", "name": "Укол",          "cd": 0, "icon": "", "desc": "", "desc_full": "" },
@@ -134,9 +134,9 @@ var WARDS: Dictionary = {
 	"fizita": {
 		"name": "Фізіта",
 		"element": "earth",
-		"portrait": "res://Основа/char/Земля/Фізіта/Фізіта.png",
-		"short_desc_file": "res://Основа/char/Земля/Фізіта/skills_short.txt",
-		"full_desc_file":  "res://Основа/char/Земля/Фізіта/skills_full.txt",
+		"portrait": "res://Основа/char/Земля/Phisita/Фізіта.png",
+		"short_desc_file": "res://Основа/char/Земля/Phisita/skills_short.txt",
+		"full_desc_file":  "res://Основа/char/Земля/Phisita/skills_full.txt",
 		"skills": {
 			"P": { "damage_type": "passive", "name": "Тяжіння",  "cd": 0, "icon": "", "desc": "", "desc_full": "" },
 			"Q": { "damage_type": "earth", "name": "Шквал",    "cd": 0, "icon": "", "desc": "", "desc_full": "" },
@@ -147,9 +147,9 @@ var WARDS: Dictionary = {
 	"shusima": {
 		"name": "Шусіма",
 		"element": "earth",
-		"portrait": "res://Основа/char/Земля/Шусіма/Шусіма.png",
-		"short_desc_file": "res://Основа/char/Земля/Шусіма/skills_short.txt",
-		"full_desc_file":  "res://Основа/char/Земля/Шусіма/skills_full.txt",
+		"portrait": "res://Основа/char/Земля/ShuSima/Шусіма.png",
+		"short_desc_file": "res://Основа/char/Земля/ShuSima/skills_short.txt",
+		"full_desc_file":  "res://Основа/char/Земля/ShuSima/skills_full.txt",
 		"skills": {
 			"P": { "damage_type": "passive", "name": "Розсипання",   "cd": 0, "icon": "", "desc": "", "desc_full": "" },
 			"Q": { "damage_type": "earth", "name": "Висушення",    "cd": 0, "icon": "", "desc": "", "desc_full": "" },
