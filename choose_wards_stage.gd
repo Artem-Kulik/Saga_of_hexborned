@@ -49,6 +49,20 @@ var _slot_click_overlays: Array = []
 var _confirm_button: Button
 
 const SLOT_FRAME_TEXTURE = "res://Основа/visual/choose_stage/epmty_slot_frame.png"
+const CARD_ANIM_SCENE = preload("res://Основа/animation/particles/fire_card_start.tscn")
+
+const _ELEMENT_CARD_NODE: Dictionary = {
+	"fire":  "Fire_card",
+	"water": "Water_card",
+	"air":   "Air_card",
+	"earth": "Earth_card",
+}
+const _ELEMENT_SPRITE_PATH: Dictionary = {
+	"fire":  "Fire_card/elemental_card_fire",
+	"water": "Water_card/water_card_start_animation",
+	"air":   "Air_card/air_card_start_animation",
+	"earth": "Earth_card/AnimatedSprite2D",
+}
 
 # Точні екранні позиції верхніх слотів (розраховані з tscn)
 # reverse_N: anchor 0.5 на ward (40px) → base 20px + offset
@@ -287,12 +301,47 @@ func _select_ward(ward_id: String) -> void:
 	_refresh_picked_slots()
 	_refresh_confirm_button()
 
+	var slot_idx := selected_ids.size() - 1
+	var element: String = WardDatabase.get_data(ward_id).get("element", "")
+	_play_card_anim(slot_idx, element)
+
 
 func _deselect_ward(ward_id: String) -> void:
 	selected_ids.erase(ward_id)
 	_tabs_menu.set_card_selected(ward_id, false)
 	_refresh_picked_slots()
 	_refresh_confirm_button()
+
+
+# --- Анімація появи картки ---
+
+func _play_card_anim(slot_idx: int, element: String) -> void:
+	if not element in _ELEMENT_CARD_NODE:
+		return
+
+	var anim = CARD_ANIM_SCENE.instantiate()
+	anim.scale = Vector2(0.32, 0.32)
+
+	var r: Array = SLOT_RECTS[slot_idx]
+	anim.position = Vector2(r[0], r[1])
+
+	add_child(anim)
+
+	# Показуємо лише потрібну стихію
+	for elem in _ELEMENT_CARD_NODE:
+		var card = anim.get_node_or_null(_ELEMENT_CARD_NODE[elem])
+		if card:
+			card.visible = (elem == element)
+
+	# Запускаємо анімацію та видаляємо після завершення
+	var sprite_path: String = _ELEMENT_SPRITE_PATH.get(element, "")
+	var sprite := anim.get_node_or_null(sprite_path) as AnimatedSprite2D
+
+	if sprite:
+		sprite.play()
+		sprite.animation_finished.connect(anim.queue_free)
+	else:
+		get_tree().create_timer(2.0).timeout.connect(anim.queue_free)
 
 
 # --- Оновлення верхніх слотів ---
