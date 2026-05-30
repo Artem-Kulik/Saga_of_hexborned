@@ -79,6 +79,7 @@ func _create_ward_card(ward_id: String) -> Control:
 	var card := Control.new()
 	card.custom_minimum_size = slot_size
 	card.mouse_filter = Control.MOUSE_FILTER_STOP
+	card.clip_contents = true
 
 	var bg := ColorRect.new()
 	bg.color = Color(0.08, 0.06, 0.04, 0.92)
@@ -89,8 +90,8 @@ func _create_ward_card(ward_id: String) -> Control:
 	var portrait_rect := TextureRect.new()
 	portrait_rect.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	portrait_rect.offset_bottom = -26.0
-	portrait_rect.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_COVERED
-	portrait_rect.expand_mode = TextureRect.EXPAND_FIT_WIDTH_PROPORTIONAL
+	portrait_rect.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+	portrait_rect.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
 	portrait_rect.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	var portrait_path: String = data.get("portrait", "")
 	if portrait_path != "" and ResourceLoader.exists(portrait_path):
