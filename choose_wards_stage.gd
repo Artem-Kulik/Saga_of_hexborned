@@ -338,6 +338,11 @@ func _play_card_anim(slot_idx: int, element: String) -> void:
 	var sprite := anim.get_node_or_null(sprite_path) as AnimatedSprite2D
 
 	if sprite:
+		# Дублюємо SpriteFrames щоб не чіпати shared ресурс
+		if sprite.sprite_frames != null:
+			var frames := sprite.sprite_frames.duplicate() as SpriteFrames
+			frames.set_animation_loop(sprite.animation, false)
+			sprite.sprite_frames = frames
 		sprite.play()
 		sprite.animation_finished.connect(anim.queue_free)
 	else:
