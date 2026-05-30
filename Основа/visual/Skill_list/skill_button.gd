@@ -5,6 +5,10 @@ signal skill_pressed(skill_key: String)
 @export var skill_key: String = "Q"
 @export var cooldown: int = 0
 
+# CD overlay nodes (created in _ready)
+var _cd_overlay: ColorRect = null
+var _cd_label: Label = null
+
 @export var oval_width: float = 49.0
 @export var oval_height: float = 54.0
 @export var oval_offset: Vector2 = Vector2.ZERO
@@ -39,6 +43,7 @@ func _ready() -> void:
 			child.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	
 	base_modulate = modulate
+	_create_cd_overlay()
 
 
 func _process(_delta: float) -> void:
@@ -141,4 +146,43 @@ func animate_scale(target_scale: Vector2) -> void:
 
 
 func set_cooldown(value: int) -> void:
-	cooldown = value
+	cooldown = max(value, 0)
+	_refresh_cd_visual()
+
+
+func _create_cd_overlay() -> void:
+	# Напівпрозоре затемнення поверх всього
+	_cd_overlay = ColorRect.new()
+	_cd_overlay.color = Color(0.0, 0.0, 0.0, 0.62)
+	_cd_overlay.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	_cd_overlay.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_cd_overlay.visible = false
+	add_child(_cd_overlay)
+
+	# Число КД по центру
+	_cd_label = Label.new()
+	_cd_label.set_anchors_and_offsets_preset(Control.PRESET_CENTER)
+	_cd_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	_cd_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	_cd_label.add_theme_font_size_override("font_size", 28)
+	_cd_label.add_theme_color_override("font_color", Color(1.0, 0.85, 0.2, 1.0))
+	_cd_label.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_cd_label.visible = false
+	add_child(_cd_label)
+
+
+
+func _refresh_cd_visual() -> void:
+	if _cd_overlay == null or _cd_label == null:
+		return
+
+	if cooldown > 0:
+		_cd_overlay.visible = true
+		_cd_label.visible = true
+		_cd_label.text = str(cooldown)
+		# Не реагуємо на hover коли на КД
+		mouse_filter = Control.MOUSE_FILTER_IGNORE
+	else:
+		_cd_overlay.visible = false
+		_cd_label.visible = false
+		mouse_filter = Control.MOUSE_FILTER_STOP

@@ -3,15 +3,15 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://bh5c0efo67o47"
-path="res://.godot/imported/E.png-b55f028758d72b8049e65c5176701e36.ctex"
+path="res://.godot/imported/E.png-8a3d56d2d08d516c02806a723f51c5b4.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://Основа/char/Вогонь/МайстерОічі/E.png"
-dest_files=["res://.godot/imported/E.png-b55f028758d72b8049e65c5176701e36.ctex"]
+source_file="res://Основа/char/Вогонь/МайстерОічі/E.png"
+dest_files=["res://.godot/imported/E.png-8a3d56d2d08d516c02806a723f51c5b4.ctex"]
 
 [params]
 

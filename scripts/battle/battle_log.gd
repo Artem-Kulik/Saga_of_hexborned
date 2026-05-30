@@ -49,7 +49,9 @@ func add_attack(
 	hp_before: int,
 	hp_after: int,
 	max_hp: int,
-	damage_source: String = "skill"
+	damage_source: String = "skill",
+	base_damage: int = 0,
+	mult: float = 1.0
 ) -> void:
 	var full_text := attacker_name + " -> " + target_name + " | " + str(damage) + " damage"
 	entries.append(full_text)
@@ -66,7 +68,9 @@ func add_attack(
 		hp_before,
 		hp_after,
 		max_hp,
-		damage_source
+		damage_source,
+		base_damage,
+		mult
 	)
 
 	if status_text != "-" and status_text != "":
@@ -110,6 +114,22 @@ func add_heal(ward_name: String, ward_team: String, hp_before: int, hp_after: in
 		Color("#64c850"),
 		"[color=" + _team_name_color(ward_team) + "]" + ward_name + "[/color] [color=#d8caa0]відновив здоров'я[/color]\n" +
 		_make_hp_text(hp_before, hp_after, max_hp)
+	)
+
+func add_cooldown(ward_name: String, ward_team: String, skill_key: String, cd_turns: int) -> void:
+	entries.append(ward_name + " скіл " + skill_key + " на КД " + str(cd_turns))
+	print(ward_name, " → скіл ", skill_key, " на КД: ", cd_turns, " ходів")
+
+	_add_event_block(
+		"⏳",
+		"КД СКІЛУ",
+		Color("#5bbfd4"),
+		"[color=" + _team_name_color(ward_team) + "]" + ward_name + "[/color]" +
+		" [color=#d8caa0]→ скіл[/color] " +
+		"[color=#f0d870][b]" + skill_key + "[/b][/color]" +
+		" [color=#d8caa0]відпочиває[/color] " +
+		"[color=#5bbfd4][b]" + str(cd_turns) + "[/b][/color]" +
+		" [color=#8ab8c2]" + ("хід" if cd_turns == 1 else "ходи" if cd_turns < 5 else "ходів") + "[/color]"
 	)
 
 
@@ -235,7 +255,9 @@ func _add_attack_event(
 	hp_before: int,
 	hp_after: int,
 	max_hp: int,
-	damage_source: String
+	damage_source: String,
+	base_damage: int,
+	mult: float
 ) -> void:
 	var accent := _get_team_accent(attacker_team)
 	var header := "АТАКА ГРАВЦЯ"
@@ -248,7 +270,15 @@ func _add_attack_event(
 	text += "[color=" + _team_name_color(target_team) + "]" + target_name + "[/color]\n"
 
 	text += "[color=" + accent.to_html(false).insert(0, "#") + "]Скіл: " + skill_name + "[/color]  "
-	text += "[color=#e24b3f]Шкода: " + str(damage) + "[/color]  "
+	
+	if mult != 1.0 and base_damage > 0:
+		var mult_str = str(mult)
+		if mult_str.ends_with(".0"):
+			mult_str = str(int(mult))
+		text += "[color=#e24b3f]Шкода: " + str(base_damage) + " (×" + mult_str + ") = " + str(damage) + "[/color]  "
+	else:
+		text += "[color=#e24b3f]Шкода: " + str(damage) + "[/color]  "
+		
 	text += "[color=#aa8755]Джерело: " + damage_source + "[/color]"
 
 	if hp_before != hp_after:

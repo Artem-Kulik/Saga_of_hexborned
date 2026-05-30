@@ -3,15 +3,15 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://df2efl5qw3v8v"
-path="res://.godot/imported/shopey_q.png-9b62d350616c3b2b90234021b24ebac9.ctex"
+path="res://.godot/imported/shopey_q.png-d04dd846b673fd76708732bd56497419.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://Основа/char/Повітря/Шопей/shopey_q.png"
-dest_files=["res://.godot/imported/shopey_q.png-9b62d350616c3b2b90234021b24ebac9.ctex"]
+source_file="res://Основа/char/Повітря/Шопей/shopey_q.png"
+dest_files=["res://.godot/imported/shopey_q.png-d04dd846b673fd76708732bd56497419.ctex"]
 
 [params]
 

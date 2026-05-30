@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://bvjk0xxkcm08d"
-path="res://.godot/imported/Іскоріс.png-525efc6c524ef2efdc8f16989f60c403.ctex"
+uid="uid://c47t7t8ktegnx"
+path="res://.godot/imported/Iskoris.png-688484f3765f8753e1cef57a293e85c5.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://Основа/char/Повітря/Іскоріс/Іскоріс.png"
-dest_files=["res://.godot/imported/Іскоріс.png-525efc6c524ef2efdc8f16989f60c403.ctex"]
+source_file="res://Основа/char/Повітря/Іскоріс/Iskoris.png"
+dest_files=["res://.godot/imported/Iskoris.png-688484f3765f8753e1cef57a293e85c5.ctex"]
 
 [params]
 

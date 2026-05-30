@@ -6,6 +6,7 @@ signal died
 var max_hp: int = 100
 var current_hp: int = 80
 var is_dead: bool = false
+var current_armor: int = 0
 
 var hp_bar = null
 
@@ -27,10 +28,29 @@ func take_damage(amount: int, attacker = null, skill_key: String = "") -> void:
 	if is_dead:
 		return
 
-	set_hp(current_hp - amount)
+	var remaining_damage = amount
+	
+	if current_armor > 0:
+		if remaining_damage <= current_armor:
+			current_armor -= remaining_damage
+			remaining_damage = 0
+		else:
+			remaining_damage -= current_armor
+			current_armor = 0
+		if get_parent() and get_parent().has_method("update_armor_status"):
+			get_parent().update_armor_status(current_armor)
+			
+	if remaining_damage > 0:
+		set_hp(current_hp - remaining_damage)
 
 	if skill_key == "Q" and attacker != null:
-		AnimationCode.play_glass_hit_on_target(attacker, owner)
+		AnimationCode.play_glass_hit_on_target(attacker, get_parent())
+
+func add_armor(amount: int) -> void:
+	if is_dead: return
+	current_armor += amount
+	if get_parent() and get_parent().has_method("update_armor_status"):
+		get_parent().update_armor_status(current_armor)
 
 func heal(amount: int) -> void:
 	if is_dead:

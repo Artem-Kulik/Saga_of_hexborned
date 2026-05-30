@@ -11,8 +11,8 @@ signal ward_drag_started(ward)
 
 @export var team: String = "ally"
 @export var ward_index: int = 0
-@export var max_hp: int = 100
-@export var start_hp: int = 80
+@export var max_hp: int = 250
+@export var start_hp: int = 250
 @export var skill_damage: int = 50
 
 @export var ward_id: String = ""
@@ -62,6 +62,16 @@ var active_turn_tween: Tween
 var base_ward_modulate: Color
 var base_ward_scale: Vector2
 
+# ====== STATUS SYSTEM ======
+var status_effects: Dictionary = {}
+var taunted_by: String = "" # ID варда, який спровокував
+
+# ====== COOLDOWN SYSTEM ======
+# Поточний КД на кожен скіл (0 = готовий)
+var _current_cd: Dictionary = {"Q": 0, "W": 0, "E": 0}
+# Максимальні значення КД з БД (запісуються при setup_ward)
+var _max_cd: Dictionary = {"Q": 0, "W": 0, "E": 0}
+
 
 func _ready() -> void:
 	current_hp = clamp(start_hp, 0, max_hp)
@@ -72,6 +82,11 @@ func _ready() -> void:
 
 	if crack_overlay:
 		crack_overlay.visible = false
+		
+	var status_container = get_node_or_null("StatusContainer")
+	if status_container:
+		for child in status_container.get_children():
+			child.queue_free()
 
 	_setup_mouse_filters()
 	_create_systems()
@@ -156,8 +171,84 @@ func _create_systems() -> void:
 	skill_controller.skill_selected.connect(_on_skill_selected)
 
 
-func _on_hp_changed(new_current_hp: int, _max_hp: int) -> void:
-	current_hp = new_current_hp
+func _on_hp_changed(new_hp: int, _max_hp: int = 0) -> void:
+	current_hp = new_hp
+
+
+# ====== STATUS EFFECTS ======
+func add_status(effect_name: String, count: int = 1) -> void:
+	if not status_effects.has(effect_name):
+		status_effects[effect_name] = 0
+	status_effects[effect_name] += count
+	_update_status_visuals()
+
+func remove_status(effect_name: String, count: int = 1) -> void:
+	if status_effects.has(effect_name):
+		status_effects[effect_name] -= count
+		if status_effects[effect_name] <= 0:
+			status_effects.erase(effect_name)
+	_update_status_visuals()
+
+func get_status(effect_name: String) -> int:
+	return status_effects.get(effect_name, 0)
+
+func clear_statuses() -> void:
+	status_effects.clear()
+	taunted_by = ""
+	_update_status_visuals()
+
+func update_armor_status(armor_value: int) -> void:
+	if armor_value > 0:
+		status_effects["armor"] = 1
+	else:
+		if status_effects.has("armor"):
+			status_effects.erase("armor")
+	_update_status_visuals()
+
+func _update_status_visuals() -> void:
+	var container = get_node_or_null("StatusContainer")
+	if container == null: return
+	
+	for child in container.get_children():
+		child.queue_free()
+		
+	var icons = {
+		"burning": "res://Основа/visual/status/f/burning.PNG",
+		"taunt": "res://Основа/visual/status/f/taunted.PNG",
+		"rage": "res://Основа/visual/status/f/stunned.PNG",
+		"armor": "res://Основа/visual/status/f/regeneration.PNG"
+	}
+	
+	for effect in status_effects.keys():
+		var count = status_effects[effect]
+		var draw_count = count if effect != "armor" else 1
+		for i in range(draw_count):
+			var icon_tex = TextureRect.new()
+			icon_tex.texture = load("res://Основа/visual/status/frame_status.png")
+			icon_tex.custom_minimum_size = Vector2(25, 25)
+			icon_tex.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+			icon_tex.mouse_filter = Control.MOUSE_FILTER_PASS # Додано для роботи tooltip
+			
+			var inner_tex = TextureRect.new()
+			if icons.has(effect):
+				inner_tex.texture = load(icons[effect])
+			inner_tex.set_anchors_preset(Control.PRESET_FULL_RECT)
+			inner_tex.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+			
+			if effect == "rage":
+				inner_tex.modulate = Color(1, 0.5, 0.5)
+				icon_tex.tooltip_text = "Раж (Стаків: " + str(count) + ")\nКожен стак додає +15 вогняної шкоди до наступного застосування навички Q.\nСтаки накопичуються при отриманні шкоди."
+			elif effect == "armor":
+				inner_tex.modulate = Color(0.5, 0.5, 1.0) # Синюватий колір для броні
+				var armor_val = health.current_armor if health else 0
+				icon_tex.tooltip_text = "Броня/Щит: " + str(armor_val) + " ХП\nПоглинає шкоду до того, як вона зменшить здоров'я."
+			elif effect == "burning":
+				icon_tex.tooltip_text = "Горіння (Стаків: " + str(count) + ")\nНа початку вашого ходу нанесе " + str(50 * count) + " вогняної шкоди та зникне."
+			elif effect == "taunt":
+				icon_tex.tooltip_text = "Провокація\nВимушує атакувати ворога, який застосував цей ефект.\nЗабороняє використання навичок по площі та на себе."
+				
+			icon_tex.add_child(inner_tex)
+			container.add_child(icon_tex)
 
 
 func _on_died() -> void:
@@ -213,9 +304,23 @@ func setup_ward(id: String) -> void:
 
 	var skills: Dictionary = data.get("skills", {})
 	var portrait_path: String = data.get("portrait", "")
+	
+	if skill_q: skill_q.skill_key = "Q"
+	if skill_w: skill_w.skill_key = "W"
+	if skill_e: skill_e.skill_key = "E"
+	
 	_set_skill_icon(skill_q, skills.get("Q", {}), portrait_path)
 	_set_skill_icon(skill_w, skills.get("W", {}), portrait_path)
 	_set_skill_icon(skill_e, skills.get("E", {}), portrait_path)
+
+	# Ініціалізуємо максимальні значення КД з БД
+	for key in ["Q", "W", "E"]:
+		var skill_data: Dictionary = skills.get(key, {})
+		var cd_val: int = int(skill_data.get("cd", 0))
+		_max_cd[key] = cd_val
+		_current_cd[key] = 0  # Спочатку всі скіли готові
+
+	_sync_cd_buttons()
 
 
 func _set_skill_icon(skill_button, skill: Dictionary, fallback: String) -> void:
@@ -347,3 +452,39 @@ func set_active_turn(active: bool) -> void:
 
 		ward_visual.modulate = base_ward_modulate
 		ward_visual.scale = base_ward_scale
+
+
+# ====== COOLDOWN METHODS ======
+
+## Зменшує всі КД на 1 — викликати на початку ходу цього варда
+func tick_cooldowns() -> void:
+	for key in _current_cd:
+		if _current_cd[key] > 0:
+			_current_cd[key] -= 1
+	_sync_cd_buttons()
+
+
+## Застосовує КД після використання скілу
+func apply_skill_cooldown(skill_key: String) -> void:
+	if skill_key in _max_cd:
+		_current_cd[skill_key] = _max_cd[skill_key]
+	_sync_cd_buttons()
+
+
+## Повертає true якщо скіл готовий до використання
+func is_skill_ready(skill_key: String) -> bool:
+	return _current_cd.get(skill_key, 0) == 0
+
+
+## Оновлює візуальний стан кнопок відповідно до поточного КД
+func _sync_cd_buttons() -> void:
+	_apply_cd_to_button(skill_q, "Q")
+	_apply_cd_to_button(skill_w, "W")
+	_apply_cd_to_button(skill_e, "E")
+
+
+func _apply_cd_to_button(btn, skill_key: String) -> void:
+	if btn == null:
+		return
+	if btn.has_method("set_cooldown"):
+		btn.set_cooldown(_current_cd.get(skill_key, 0))
