@@ -210,10 +210,39 @@ func _input(event: InputEvent) -> void:
 	if battle_finished:
 		return
 
-	if event is InputEventKey:
-		if event.pressed and not event.echo:
-			if event.keycode == KEY_Z:
+	if event is InputEventKey and event.pressed and not event.echo:
+		match event.keycode:
+			KEY_Z:
 				_surrender()
+			KEY_ESCAPE:
+				_cancel_skill()
+
+	# Drag-to-target: відпустив мишку → атакуємо або скасовуємо
+	if waiting_for_target \
+			and event is InputEventMouseButton \
+			and event.button_index == MOUSE_BUTTON_LEFT \
+			and not event.pressed:
+		var enemy_target = _get_enemy_ward_at_mouse()
+		if enemy_target != null:
+			# Відпустив над живим ворогом → атака
+			hide_target_arrow()
+			waiting_for_target = false
+			await battle_resolver.attack(selected_attacker, enemy_target, selected_skill)
+			if battle_resolver.is_team_dead(enemy_wards):
+				_finish_battle("ПЕРЕМОГА")
+				return
+			if battle_resolver.is_team_dead(ally_wards):
+				_finish_battle("ПОРАЗКА")
+				return
+			_next_turn()
+		else:
+			# Відпустив над кнопкою власного скілу — це просто клік (не скасовуємо)
+			var pressed_button = _get_skill_button(selected_attacker, selected_skill)
+			var mouse_pos := get_viewport().get_mouse_position()
+			if pressed_button != null and pressed_button.get_global_rect().has_point(mouse_pos):
+				pass  # звичайне завершення кліку по кнопці скілу
+			else:
+				_cancel_skill()
 
 
 func _create_battle_systems() -> void:
@@ -440,6 +469,31 @@ func _enemy_attack(enemy_ward) -> void:
 		return
 
 	_next_turn()
+
+
+func _cancel_skill() -> void:
+	if not waiting_for_target:
+		return
+
+	var pressed_button = _get_skill_button(selected_attacker, selected_skill)
+	if pressed_button:
+		AnimationCode.skill_used_animation(pressed_button)
+
+	waiting_for_target = false
+	selected_attacker = null
+	selected_skill = ""
+	hide_target_arrow()
+	battle_log.add_entry("Скіл скасовано")
+
+
+func _get_enemy_ward_at_mouse():
+	var mouse_pos := get_viewport().get_mouse_position()
+	for ward in enemy_wards:
+		if ward.is_dead:
+			continue
+		if ward.get_global_rect().has_point(mouse_pos):
+			return ward
+	return null
 
 
 func _next_turn() -> void:
