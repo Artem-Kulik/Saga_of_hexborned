@@ -144,13 +144,13 @@ func _create_slot_frame(slot_idx: int) -> TextureRect:
 	frame.layout_mode = 1
 	frame.anchor_left  = r.anchor_left
 	frame.anchor_right = r.anchor_right
-	# Рамка трохи більша за портрет (як у empty_slots: offset ±7)
-	frame.offset_left   = r.offset_left   - 7
-	frame.offset_top    = r.offset_top    - 7
-	frame.offset_right  = r.offset_right  + 7
-	frame.offset_bottom = r.offset_bottom + 7
-	frame.expand_mode = TextureRect.EXPAND_FIT_WIDTH_PROPORTIONAL
-	frame.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_COVERED
+	# Рамка рівно по розміру слоту, без виходу за межі
+	frame.offset_left   = r.offset_left
+	frame.offset_top    = r.offset_top
+	frame.offset_right  = r.offset_right
+	frame.offset_bottom = r.offset_bottom
+	frame.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	frame.stretch_mode = TextureRect.STRETCH_SCALE
 	frame.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	frame.visible = false
 
@@ -235,13 +235,15 @@ func _refresh_picked_slots() -> void:
 			var portrait_path: String = data.get("portrait", "")
 			if portrait_path != "" and ResourceLoader.exists(portrait_path):
 				_reverse_nodes[i].texture = load(portrait_path)
-				_reverse_nodes[i].stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_COVERED
+			_reverse_nodes[i].stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_COVERED
+			_reverse_nodes[i].expand_mode  = TextureRect.EXPAND_IGNORE_SIZE
 			_slot_borders[i].visible = true
 			_slot_frames[i].visible = true
 			_slot_click_overlays[i].mouse_filter = Control.MOUSE_FILTER_STOP
 		else:
 			_reverse_nodes[i].texture = _original_reverse_textures[i]
 			_reverse_nodes[i].stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+			_reverse_nodes[i].expand_mode  = TextureRect.EXPAND_FIT_WIDTH_PROPORTIONAL
 			_slot_borders[i].visible = false
 			_slot_frames[i].visible = false
 			_slot_click_overlays[i].mouse_filter = Control.MOUSE_FILTER_IGNORE
