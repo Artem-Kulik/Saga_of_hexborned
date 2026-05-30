@@ -402,7 +402,7 @@ offset_bottom = 193.0
 grow_vertical = 2
 mouse_filter = 2
 script = ExtResource("12_hs0u1")
-scene_to_load = "uid://coy1ijtk34uup"
+scene_to_load = "uid://ddnh02ix83qq1"
 
 [node name="highlight" type="TextureRect" parent="lvl_info/buttons/play" unique_id=818297959]
 layout_mode = 0
