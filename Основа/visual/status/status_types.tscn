@@ -5,8 +5,8 @@
 [ext_resource type="Texture2D" uid="uid://4kwuq5cujhkt" path="res://Основа/visual/status/f/burning.PNG" id="3_u30pv"]
 [ext_resource type="Texture2D" uid="uid://bmpyinnv3bsvj" path="res://Основа/visual/status/f/stunned.PNG" id="4_1v6d6"]
 [ext_resource type="Texture2D" uid="uid://dc1ed8edbunan" path="res://Основа/visual/status/f/taunted.PNG" id="5_e3isv"]
-[ext_resource type="Texture2D" uid="uid://bwftmu2tx2chj" path="res://Основа/char/Вогонь/МайстерОічі/P.png" id="6_o3h5o"]
-[ext_resource type="Texture2D" uid="uid://dgyo7cggywhbb" path="res://Основа/char/Вогонь/МайстерОічі/W.png" id="7_oyhxc"]
+[ext_resource type="Texture2D" uid="uid://dvy8in45hg52q" path="res://Основа/char/fire/MasterOichi/P.png" id="6_o3h5o"]
+[ext_resource type="Texture2D" uid="uid://bwcqcvdlb7r0s" path="res://Основа/char/fire/MasterOichi/W.png" id="7_oyhxc"]
 [ext_resource type="Texture2D" uid="uid://dj3iflrd4826" path="res://Основа/visual/status/armor_status.png" id="8_bji38"]
 
 [node name="status_types" type="Control" unique_id=1469794512]

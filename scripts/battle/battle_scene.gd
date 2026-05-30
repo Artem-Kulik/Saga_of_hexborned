@@ -237,6 +237,15 @@ func _input(event: InputEvent) -> void:
 				_surrender()
 			KEY_ESCAPE:
 				_cancel_skill()
+			KEY_Q:
+				if current_ward != null and turn_manager.current_team == "ally" and not waiting_for_target:
+					_on_skill_clicked(current_ward, "Q")
+			KEY_W:
+				if current_ward != null and turn_manager.current_team == "ally" and not waiting_for_target:
+					_on_skill_clicked(current_ward, "W")
+			KEY_E:
+				if current_ward != null and turn_manager.current_team == "ally" and not waiting_for_target:
+					_on_skill_clicked(current_ward, "E")
 
 	# Drag-to-target: відпустив мишку → атакуємо або скасовуємо
 	if waiting_for_target \

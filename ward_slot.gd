@@ -87,7 +87,6 @@ var _max_cd: Dictionary = {"Q": 0, "W": 0, "E": 0}
 var _rage_gained_this_turn: bool = false
 
 var _status_tooltip: PanelContainer = null
-var _status_container_top: GridContainer = null
 
 
 func _ready() -> void:
@@ -108,7 +107,6 @@ func _ready() -> void:
 	_setup_mouse_filters()
 	_create_systems()
 	_create_status_tooltip()
-	_create_status_container_top()
 
 	base_ward_modulate = ward_visual.modulate
 	base_ward_scale = ward_visual.scale
@@ -145,18 +143,6 @@ func _create_status_tooltip() -> void:
 	_status_tooltip.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	get_viewport().add_child(_status_tooltip)
 
-
-func _create_status_container_top() -> void:
-	_status_container_top = GridContainer.new()
-	_status_container_top.columns = 4
-	_status_container_top.add_theme_constant_override("h_separation", 11)
-	_status_container_top.add_theme_constant_override("v_separation", 8)
-	_status_container_top.layout_mode = 0
-	_status_container_top.offset_left = -17.5
-	_status_container_top.offset_top = 18.0
-	_status_container_top.offset_right = 250.5
-	_status_container_top.offset_bottom = 120.0
-	add_child(_status_container_top)
 
 
 func _show_status_tooltip(text: String, icon: Control) -> void:
@@ -294,9 +280,6 @@ func _update_status_visuals() -> void:
 
 	for child in container.get_children():
 		child.queue_free()
-	if _status_container_top:
-		for child in _status_container_top.get_children():
-			child.queue_free()
 
 	var lib := _STATUS_TYPES.instantiate()
 
@@ -307,27 +290,25 @@ func _update_status_visuals() -> void:
 		if node_name == "":
 			continue
 		for i in range(draw_count):
-			_add_status_icon(container, lib, node_name, effect, count)
-			if _status_container_top:
-				_add_status_icon(_status_container_top, lib, node_name, effect, count)
+			_add_status_icon(container, lib, node_name, _get_status_tooltip(effect, count))
 
 	if has_meta("fire_shield") and get_meta("fire_shield"):
-		_add_status_icon(container, lib, "oichi_flame_shield", "fire_shield", 1)
-		if _status_container_top:
-			_add_status_icon(_status_container_top, lib, "oichi_flame_shield", "fire_shield", 1)
+		_add_status_icon(container, lib, "oichi_flame_shield",
+			"Вогняний щит\nАктивна броня: поглинає наступний удар.")
+		_add_status_icon(container, lib, "oichi_flame_shield",
+			"Контратака вогнем\nАтакуючий отримує 2 стаки горіння, щит зникає.")
 
 	lib.queue_free()
 
 
-func _add_status_icon(container: Node, lib: Node, node_name: String, effect: String, count: int) -> void:
+func _add_status_icon(container: Node, lib: Node, node_name: String, tooltip: String) -> void:
 	var source := lib.get_node_or_null(node_name)
 	if source == null:
 		return
 	var icon := source.duplicate()
 	icon.custom_minimum_size = Vector2(32, 32)
 	icon.mouse_filter = Control.MOUSE_FILTER_STOP
-	var tooltip_text := _get_status_tooltip(effect, count)
-	icon.mouse_entered.connect(func(): _show_status_tooltip(tooltip_text, icon))
+	icon.mouse_entered.connect(func(): _show_status_tooltip(tooltip, icon))
 	icon.mouse_exited.connect(_hide_status_tooltip)
 	container.add_child(icon)
 
