@@ -93,6 +93,7 @@ func _ready() -> void:
 
 	_tabs_menu.ward_card_clicked.connect(_on_ward_card_clicked)
 	_setup_confirm_button()
+	_clear_skill_panel()
 
 
 func _process(delta: float) -> void:
@@ -213,6 +214,19 @@ func _make_button_style(bg: Color, border: Color) -> StyleBoxFlat:
 	s.content_margin_left  = 14
 	s.content_margin_right = 14
 	return s
+
+
+# --- Очищення панелі скілів при старті ---
+
+func _clear_skill_panel() -> void:
+	_sp_name.text = ""
+	_sp_portrait.texture = null
+
+	for node in [_sp_q_text, _sp_w_text, _sp_e_text, _sp_p_text]:
+		node.text = ""
+
+	for node in [_sp_q_icon, _sp_w_icon, _sp_e_icon, _sp_p_icon]:
+		node.texture = null
 
 
 # --- Логіка вибору ---
