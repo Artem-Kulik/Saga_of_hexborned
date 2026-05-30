@@ -136,7 +136,7 @@ func _create_status_tooltip() -> void:
 	lbl.name = "Lbl"
 	lbl.add_theme_color_override("font_color", Color("#d8caa0"))
 	lbl.add_theme_font_size_override("font_size", 13)
-	lbl.autowrap_mode = TextServer.AUTOWRAP_WORD_ONLY
+	lbl.autowrap_mode = TextServer.AUTOWRAP_WORD
 	lbl.custom_minimum_size = Vector2(200, 0)
 	_status_tooltip.add_child(lbl)
 
