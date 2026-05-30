@@ -82,19 +82,4 @@ func _on_skill_pressed(skill_key: String) -> void:
 	if team != "ally":
 		return
 
-	var pressed_button = null
-
-	match skill_key:
-		"Q":
-			pressed_button = skill_q
-			AnimationCode.skill_pressed_animation(skill_q)
-
-		"W":
-			pressed_button = skill_w
-			AnimationCode.skill_pressed_animation(skill_w)
-
-		"E":
-			pressed_button = skill_e
-			AnimationCode.skill_pressed_animation(skill_e)
-
 	skill_selected.emit(skill_key)

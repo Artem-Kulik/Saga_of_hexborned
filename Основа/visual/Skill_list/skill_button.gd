@@ -72,10 +72,6 @@ func _gui_input(event: InputEvent) -> void:
 				accept_event()
 
 
-func _input(event: InputEvent) -> void:
-	if event.is_action_pressed("skill_" + skill_key.to_lower()):
-		try_press()
-
 
 func _notification(what: int) -> void:
 	if what == NOTIFICATION_MOUSE_EXIT:

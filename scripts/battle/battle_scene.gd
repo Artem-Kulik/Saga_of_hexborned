@@ -348,6 +348,7 @@ func _on_skill_clicked(ward, skill_key: String) -> void:
 	var pressed_button = _get_skill_button(ward, skill_key)
 
 	if pressed_button:
+		AnimationCode.skill_pressed_animation(pressed_button)
 		show_target_arrow(
 			pressed_button.global_position + pressed_button.size * 0.5
 		)
