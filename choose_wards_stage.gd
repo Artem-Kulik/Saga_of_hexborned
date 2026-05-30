@@ -264,7 +264,7 @@ func _fill_skill_row(
 
 	var skill_name: String = skill.get("name", "")
 	var skill_desc: String = skill.get("desc", "")
-	text_node.text = "[b]" + skill_name + "[/b]\n" + skill_desc
+	text_node.text = skill_name + "\n" + skill_desc
 
 
 func _select_ward(ward_id: String) -> void:
