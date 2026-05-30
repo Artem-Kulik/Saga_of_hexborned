@@ -542,6 +542,10 @@ func _finish_battle(result_text: String) -> void:
 	_clear_active_ward_visual()
 	_show_battle_result(result_text)
 
+	var sp = get_tree().get_first_node_in_group("skill_panel")
+	if sp:
+		var sp_tween := create_tween()
+		sp_tween.tween_property(sp, "modulate:a", 0.0, 0.45)
 
 	if result_text == "ПЕРЕМОГА":
 		show_victory_screen()
