@@ -211,6 +211,25 @@ func setup_ward(id: String) -> void:
 		if path != "" and ResourceLoader.exists(path):
 			portrait_node.texture = load(path)
 
+	var skills: Dictionary = data.get("skills", {})
+	var portrait_path: String = data.get("portrait", "")
+	_set_skill_icon(skill_q, skills.get("Q", {}), portrait_path)
+	_set_skill_icon(skill_w, skills.get("W", {}), portrait_path)
+	_set_skill_icon(skill_e, skills.get("E", {}), portrait_path)
+
+
+func _set_skill_icon(skill_button, skill: Dictionary, fallback: String) -> void:
+	if skill_button == null or skill.is_empty():
+		return
+	var icon_node := skill_button.get_node_or_null("Icon") as TextureRect
+	if icon_node == null:
+		return
+	var icon_path: String = skill.get("icon", "")
+	if icon_path == "":
+		icon_path = fallback
+	if icon_path != "" and ResourceLoader.exists(icon_path):
+		icon_node.texture = load(icon_path)
+
 
 func take_damage(amount: int, attacker = null, skill_key: String = "") -> void:
 	if is_dead:
