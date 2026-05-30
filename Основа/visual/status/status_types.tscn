@@ -1,0 +1,221 @@
+[gd_scene format=3 uid="uid://brq0xwk4om6s2"]
+
+[ext_resource type="Texture2D" uid="uid://65enbat158av" path="res://Основа/visual/status/f/regeneration.PNG" id="1_wgs6y"]
+[ext_resource type="Texture2D" uid="uid://0xyn0ug6pqcm" path="res://Основа/visual/status/frame_status.png" id="2_a7r01"]
+[ext_resource type="Texture2D" uid="uid://4kwuq5cujhkt" path="res://Основа/visual/status/f/burning.PNG" id="3_u30pv"]
+[ext_resource type="Texture2D" uid="uid://bmpyinnv3bsvj" path="res://Основа/visual/status/f/stunned.PNG" id="4_1v6d6"]
+[ext_resource type="Texture2D" uid="uid://dc1ed8edbunan" path="res://Основа/visual/status/f/taunted.PNG" id="5_e3isv"]
+[ext_resource type="Texture2D" uid="uid://bwftmu2tx2chj" path="res://Основа/char/Вогонь/МайстерОічі/P.png" id="6_o3h5o"]
+[ext_resource type="Texture2D" uid="uid://dgyo7cggywhbb" path="res://Основа/char/Вогонь/МайстерОічі/W.png" id="7_oyhxc"]
+[ext_resource type="Texture2D" uid="uid://dj3iflrd4826" path="res://Основа/visual/status/armor_status.png" id="8_bji38"]
+
+[node name="status_types" type="Control" unique_id=1469794512]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="regeneration" type="Control" parent="." unique_id=862086108]
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="regeneration" type="TextureRect" parent="regeneration" unique_id=1102857501]
+custom_minimum_size = Vector2(58, 38)
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("1_wgs6y")
+expand_mode = 3
+stretch_mode = 5
+
+[node name="frame" type="TextureRect" parent="regeneration/regeneration" unique_id=1476759711]
+custom_minimum_size = Vector2(46.965, 47.64)
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("2_a7r01")
+expand_mode = 3
+stretch_mode = 5
+
+[node name="burning" type="Control" parent="." unique_id=764868550]
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="burning" type="TextureRect" parent="burning" unique_id=416978505]
+custom_minimum_size = Vector2(58, 38)
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("3_u30pv")
+expand_mode = 3
+stretch_mode = 5
+
+[node name="frame" type="TextureRect" parent="burning/burning" unique_id=53514172]
+custom_minimum_size = Vector2(46.965, 47.64)
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("2_a7r01")
+expand_mode = 3
+stretch_mode = 5
+
+[node name="stunned" type="Control" parent="." unique_id=1211244770]
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="stunned" type="TextureRect" parent="stunned" unique_id=1932992201]
+custom_minimum_size = Vector2(58, 38)
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("4_1v6d6")
+expand_mode = 3
+stretch_mode = 5
+
+[node name="frame" type="TextureRect" parent="stunned/stunned" unique_id=1106783657]
+custom_minimum_size = Vector2(46.965, 47.64)
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("2_a7r01")
+expand_mode = 3
+stretch_mode = 5
+
+[node name="taunted" type="Control" parent="." unique_id=946324452]
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="taunted" type="TextureRect" parent="taunted" unique_id=1731687880]
+custom_minimum_size = Vector2(58, 38)
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("5_e3isv")
+expand_mode = 3
+stretch_mode = 5
+
+[node name="frame" type="TextureRect" parent="taunted/taunted" unique_id=1168208436]
+custom_minimum_size = Vector2(46.965, 47.64)
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("2_a7r01")
+expand_mode = 3
+stretch_mode = 5
+
+[node name="razh" type="Control" parent="." unique_id=991842184]
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="razh" type="TextureRect" parent="razh" unique_id=1063075457]
+custom_minimum_size = Vector2(58, 38)
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("6_o3h5o")
+expand_mode = 3
+stretch_mode = 5
+
+[node name="frame" type="TextureRect" parent="razh/razh" unique_id=111491737]
+custom_minimum_size = Vector2(46.965, 47.64)
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("2_a7r01")
+expand_mode = 3
+stretch_mode = 5
+
+[node name="oichi_flame_shield" type="Control" parent="." unique_id=863691216]
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="flame_shield" type="TextureRect" parent="oichi_flame_shield" unique_id=150538088]
+custom_minimum_size = Vector2(58, 38)
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("7_oyhxc")
+expand_mode = 3
+stretch_mode = 5
+
+[node name="frame" type="TextureRect" parent="oichi_flame_shield/flame_shield" unique_id=703672423]
+custom_minimum_size = Vector2(46.965, 47.64)
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("2_a7r01")
+expand_mode = 3
+stretch_mode = 5
+
+[node name="armor" type="Control" parent="." unique_id=630032922]
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="armor" type="TextureRect" parent="armor" unique_id=2057216949]
+custom_minimum_size = Vector2(58, 38)
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("8_bji38")
+expand_mode = 3
+stretch_mode = 5
+
+[node name="frame" type="TextureRect" parent="armor/armor" unique_id=1742278337]
+custom_minimum_size = Vector2(46.965, 47.64)
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("2_a7r01")
+expand_mode = 3
+stretch_mode = 5
