@@ -30,6 +30,18 @@ var selected_ids: Array[String] = []
 
 @onready var _tabs_menu: Control = $Wards_collection/chose_zone/TabsMenu
 
+# --- Skill panel refs ---
+@onready var _sp_q_icon: TextureRect    = $Skill_panel/Skills/q_back/q_icon
+@onready var _sp_q_text: RichTextLabel  = $Skill_panel/Skills/q_back/RichTextLabel
+@onready var _sp_w_icon: TextureRect    = $Skill_panel/Skills/w_back/q_icon
+@onready var _sp_w_text: RichTextLabel  = $Skill_panel/Skills/w_back/RichTextLabel
+@onready var _sp_e_icon: TextureRect    = $Skill_panel/Skills/e_back/q_icon
+@onready var _sp_e_text: RichTextLabel  = $Skill_panel/Skills/e_back/RichTextLabel
+@onready var _sp_p_icon: TextureRect    = $Skill_panel/Skills/p_back/q_icon
+@onready var _sp_p_text: RichTextLabel  = $Skill_panel/Skills/p_back/RichTextLabel
+@onready var _sp_portrait: TextureRect  = $Skill_panel/lore/ward_portrait
+@onready var _sp_name: Label            = $Skill_panel/lore/ward_portrait/name
+
 var _original_reverse_textures: Array = []
 var _slot_borders: Array = []
 var _slot_frames: Array = []
@@ -206,10 +218,53 @@ func _make_button_style(bg: Color, border: Color) -> StyleBoxFlat:
 # --- Логіка вибору ---
 
 func _on_ward_card_clicked(ward_id: String) -> void:
+	_show_skill_panel(ward_id)
 	if selected_ids.has(ward_id):
 		_deselect_ward(ward_id)
 	elif selected_ids.size() < 3:
 		_select_ward(ward_id)
+
+
+# --- Skill panel ---
+
+func _show_skill_panel(ward_id: String) -> void:
+	var data := WardDatabase.get_data(ward_id)
+	if data.is_empty():
+		return
+
+	# Портрет і ім'я
+	var portrait_path: String = data.get("portrait", "")
+	if portrait_path != "" and ResourceLoader.exists(portrait_path):
+		_sp_portrait.texture = load(portrait_path)
+	_sp_name.text = data.get("name", "")
+
+	# Скіли
+	var skills: Dictionary = data.get("skills", {})
+	_fill_skill_row(_sp_p_icon, _sp_p_text, skills.get("P", {}), portrait_path)
+	_fill_skill_row(_sp_q_icon, _sp_q_text, skills.get("Q", {}), portrait_path)
+	_fill_skill_row(_sp_w_icon, _sp_w_text, skills.get("W", {}), portrait_path)
+	_fill_skill_row(_sp_e_icon, _sp_e_text, skills.get("E", {}), portrait_path)
+
+
+func _fill_skill_row(
+	icon_node: TextureRect,
+	text_node: RichTextLabel,
+	skill: Dictionary,
+	fallback_portrait: String
+) -> void:
+	if skill.is_empty():
+		text_node.text = ""
+		return
+
+	var icon_path: String = skill.get("icon", "")
+	if icon_path == "":
+		icon_path = fallback_portrait
+	if icon_path != "" and ResourceLoader.exists(icon_path):
+		icon_node.texture = load(icon_path)
+
+	var skill_name: String = skill.get("name", "")
+	var skill_desc: String = skill.get("desc", "")
+	text_node.text = "[b]" + skill_name + "[/b]\n" + skill_desc
 
 
 func _select_ward(ward_id: String) -> void:
