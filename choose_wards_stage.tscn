@@ -30,7 +30,6 @@
 [ext_resource type="FontFile" uid="uid://bymkrthni0vye" path="res://Основа/Шрифти/silvus__.ttf" id="26_m8a06"]
 [ext_resource type="Texture2D" uid="uid://oym6a1atnd2l" path="res://Основа/visual/choose_stage/page_lor_bg.png" id="27_m8a06"]
 [ext_resource type="FontFile" uid="uid://sin06uqgfb8o" path="res://Основа/Шрифти/Brock_Script_D.ttf" id="28_o6ifj"]
-[ext_resource type="Texture2D" uid="uid://ue8lietc8xdk" path="res://Основа/visual/choose_stage/epmty_slot_frame.png" id="30_frame"]
 
 [sub_resource type="CanvasItemMaterial" id="CanvasItemMaterial_wo8qs"]
 blend_mode = 1
@@ -108,21 +107,20 @@ grow_horizontal = 2
 texture = ExtResource("3_bd0us")
 expand_mode = 1
 
-[node name="frame_1" type="TextureRect" parent="PickedWards/ward_1" unique_id=111111002]
+[node name="portrait_1" type="TextureRect" parent="PickedWards/ward_1" unique_id=111111002]
 layout_mode = 1
 anchors_preset = 5
 anchor_left = 0.5
 anchor_right = 0.5
-offset_left = 625.0
-offset_top = 50.0
-offset_right = 825.0
-offset_bottom = 325.0
+offset_left = 645.0
+offset_top = 70.0
+offset_right = 805.0
+offset_bottom = 305.0
 grow_horizontal = 2
 visible = false
 expand_mode = 1
-stretch_mode = 1
+stretch_mode = 2
 mouse_filter = 2
-texture = ExtResource("30_frame")
 
 [node name="ward_2" type="Control" parent="PickedWards" unique_id=190020635]
 anchors_preset = 0
@@ -156,21 +154,20 @@ size_flags_stretch_ratio = 0.0
 texture = ExtResource("3_bd0us")
 expand_mode = 1
 
-[node name="frame_2" type="TextureRect" parent="PickedWards/ward_2" unique_id=111111004]
+[node name="portrait_2" type="TextureRect" parent="PickedWards/ward_2" unique_id=111111004]
 layout_mode = 1
 anchors_preset = 5
 anchor_left = 0.5
 anchor_right = 0.5
-offset_left = 842.0
-offset_top = 50.0
-offset_right = 1042.0
-offset_bottom = 325.0
+offset_left = 862.0
+offset_top = 70.0
+offset_right = 1022.0
+offset_bottom = 305.0
 grow_horizontal = 2
 visible = false
 expand_mode = 1
-stretch_mode = 1
+stretch_mode = 2
 mouse_filter = 2
-texture = ExtResource("30_frame")
 
 [node name="ward_3" type="Control" parent="PickedWards" unique_id=1910242448]
 anchors_preset = 0
@@ -202,21 +199,20 @@ grow_horizontal = 2
 texture = ExtResource("3_bd0us")
 expand_mode = 1
 
-[node name="frame_3" type="TextureRect" parent="PickedWards/ward_3" unique_id=111111006]
+[node name="portrait_3" type="TextureRect" parent="PickedWards/ward_3" unique_id=111111006]
 layout_mode = 1
 anchors_preset = 5
 anchor_left = 0.5
 anchor_right = 0.5
-offset_left = 1059.0
-offset_top = 50.0
-offset_right = 1258.9996
-offset_bottom = 325.0
+offset_left = 1079.0
+offset_top = 70.0
+offset_right = 1239.0
+offset_bottom = 305.0
 grow_horizontal = 2
 visible = false
 expand_mode = 1
-stretch_mode = 1
+stretch_mode = 2
 mouse_filter = 2
-texture = ExtResource("30_frame")
 
 [node name="Wards_collection" type="Control" parent="." unique_id=82112796]
 anchors_preset = 0

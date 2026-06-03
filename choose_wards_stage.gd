@@ -27,10 +27,10 @@ var selected_ids: Array[String] = []
 	$PickedWards/ward_2,
 	$PickedWards/ward_3,
 ]
-@onready var _frame_nodes: Array[TextureRect] = [
-	$PickedWards/ward_1/frame_1,
-	$PickedWards/ward_2/frame_2,
-	$PickedWards/ward_3/frame_3,
+@onready var _portrait_nodes: Array[TextureRect] = [
+	$PickedWards/ward_1/portrait_1,
+	$PickedWards/ward_2/portrait_2,
+	$PickedWards/ward_3/portrait_3,
 ]
 
 @onready var _tabs_menu: Control = $Wards_collection/chose_zone/TabsMenu
@@ -47,7 +47,6 @@ var selected_ids: Array[String] = []
 @onready var _sp_portrait: TextureRect  = $Skill_panel/lore/ward_portrait
 @onready var _sp_name: Label            = $Skill_panel/lore/ward_portrait/name
 
-var _original_reverse_textures: Array = []
 var _slot_click_overlays: Array = []
 var _confirm_button: Button
 
@@ -77,9 +76,6 @@ const SLOT_RECTS: Array = [
 
 func _ready() -> void:
 	_setup_glow(glow_1)
-
-	for r in _reverse_nodes:
-		_original_reverse_textures.append(r.texture)
 
 	for h in _highlight_nodes:
 		h.visible = false
@@ -294,16 +290,12 @@ func _refresh_picked_slots() -> void:
 			var data := WardDatabase.get_data(selected_ids[i])
 			var portrait_path: String = data.get("portrait", "")
 			if portrait_path != "" and ResourceLoader.exists(portrait_path):
-				_reverse_nodes[i].texture = load(portrait_path)
-			_reverse_nodes[i].stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_COVERED
-			_reverse_nodes[i].expand_mode  = TextureRect.EXPAND_IGNORE_SIZE
-			_frame_nodes[i].visible = true
+				_portrait_nodes[i].texture = load(portrait_path)
+			_portrait_nodes[i].visible = true
 			_slot_click_overlays[i].mouse_filter = Control.MOUSE_FILTER_STOP
 		else:
-			_reverse_nodes[i].texture = _original_reverse_textures[i]
-			_reverse_nodes[i].stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
-			_reverse_nodes[i].expand_mode  = TextureRect.EXPAND_FIT_WIDTH_PROPORTIONAL
-			_frame_nodes[i].visible = false
+			_portrait_nodes[i].texture = null
+			_portrait_nodes[i].visible = false
 			_slot_click_overlays[i].mouse_filter = Control.MOUSE_FILTER_IGNORE
 
 
