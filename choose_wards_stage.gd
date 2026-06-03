@@ -32,6 +32,11 @@ var selected_ids: Array[String] = []
 	$PickedWards/ward_2/portrait_2,
 	$PickedWards/ward_3/portrait_3,
 ]
+@onready var _frame_nodes: Array[TextureRect] = [
+	$PickedWards/ward_1/frame_1,
+	$PickedWards/ward_2/frame_2,
+	$PickedWards/ward_3/frame_3,
+]
 
 @onready var _tabs_menu: Control = $Wards_collection/chose_zone/TabsMenu
 
@@ -291,11 +296,15 @@ func _refresh_picked_slots() -> void:
 			var portrait_path: String = data.get("portrait", "")
 			if portrait_path != "" and ResourceLoader.exists(portrait_path):
 				_portrait_nodes[i].texture = load(portrait_path)
+			_reverse_nodes[i].visible = false
 			_portrait_nodes[i].visible = true
+			_frame_nodes[i].visible = true
 			_slot_click_overlays[i].mouse_filter = Control.MOUSE_FILTER_STOP
 		else:
 			_portrait_nodes[i].texture = null
 			_portrait_nodes[i].visible = false
+			_frame_nodes[i].visible = false
+			_reverse_nodes[i].visible = true
 			_slot_click_overlays[i].mouse_filter = Control.MOUSE_FILTER_IGNORE
 
 
