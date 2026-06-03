@@ -27,6 +27,11 @@ var selected_ids: Array[String] = []
 	$PickedWards/ward_2,
 	$PickedWards/ward_3,
 ]
+@onready var _frame_nodes: Array[TextureRect] = [
+	$PickedWards/ward_1/frame_1,
+	$PickedWards/ward_2/frame_2,
+	$PickedWards/ward_3/frame_3,
+]
 
 @onready var _tabs_menu: Control = $Wards_collection/chose_zone/TabsMenu
 
@@ -43,21 +48,10 @@ var selected_ids: Array[String] = []
 @onready var _sp_name: Label            = $Skill_panel/lore/ward_portrait/name
 
 var _original_reverse_textures: Array = []
-var _slot_borders: Array = []
-var _slot_frames: Array = []
-var _slot_elem_bgs: Array = []
 var _slot_click_overlays: Array = []
 var _confirm_button: Button
 
-const SLOT_FRAME_TEXTURE = "res://Основа/visual/choose_stage/epmty_slot_frame.png"
 const CARD_ANIM_SCENE = preload("res://Основа/animation/particles/fire_card_start.tscn")
-
-const ELEMENT_CARD_TEXTURES: Dictionary = {
-	"fire":  "res://Основа/visual/element_cards/card_fire.png",
-	"water": "res://Основа/visual/element_cards/card_water.png",
-	"earth": "res://Основа/visual/element_cards/card_earth.png",
-	"air":   "res://Основа/visual/element_cards/card_air.png",
-}
 
 const _ELEMENT_CARD_NODE: Dictionary = {
 	"fire":  "Fire_card",
@@ -89,11 +83,6 @@ func _ready() -> void:
 
 	for h in _highlight_nodes:
 		h.visible = false
-
-	for i in range(3):
-		_slot_borders.append(_create_slot_border(i))
-		_slot_elem_bgs.append(_create_slot_elem_bg(i))
-		_slot_frames.append(_create_slot_frame(i))
 
 	# Click overlays додаємо на ROOT (вище за Wards_collection) —
 	# це єдиний надійний спосіб перехопити кліки поверх full-screen Control
@@ -134,94 +123,6 @@ func _setup_glow(glow: TextureRect) -> void:
 	mat.blend_mode = CanvasItemMaterial.BLEND_MODE_ADD
 	glow.material = mat
 	glow.mouse_filter = Control.MOUSE_FILTER_IGNORE
-
-
-# --- Золота рамка навколо слоту ---
-
-func _create_slot_border(slot_idx: int) -> Panel:
-	var r := _reverse_nodes[slot_idx]
-	var ward_node := _picked_wards[slot_idx]
-
-	var border := Panel.new()
-	var style := StyleBoxFlat.new()
-	style.draw_center = false
-	style.border_color = Color(0.92, 0.72, 0.18, 1.0)
-	style.border_width_left   = 3
-	style.border_width_right  = 3
-	style.border_width_top    = 3
-	style.border_width_bottom = 3
-	style.corner_radius_top_left     = 4
-	style.corner_radius_top_right    = 4
-	style.corner_radius_bottom_left  = 4
-	style.corner_radius_bottom_right = 4
-	border.add_theme_stylebox_override("panel", style)
-
-	border.layout_mode = 1
-	border.anchor_left  = r.anchor_left
-	border.anchor_right = r.anchor_right
-	border.offset_left   = r.offset_left   - 4
-	border.offset_top    = r.offset_top    - 4
-	border.offset_right  = r.offset_right  + 4
-	border.offset_bottom = r.offset_bottom + 4
-	border.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	border.visible = false
-
-	ward_node.add_child(border)
-	ward_node.move_child(border, 0)
-	return border
-
-
-# --- Фон стихійної картки (за портретом) ---
-
-func _create_slot_elem_bg(slot_idx: int) -> TextureRect:
-	var r := _reverse_nodes[slot_idx]
-	var ward_node := _picked_wards[slot_idx]
-
-	var bg := TextureRect.new()
-	bg.layout_mode = 1
-	bg.anchor_left  = r.anchor_left
-	bg.anchor_right = r.anchor_right
-	bg.offset_left   = r.offset_left
-	bg.offset_top    = r.offset_top
-	bg.offset_right  = r.offset_right
-	bg.offset_bottom = r.offset_bottom
-	bg.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
-	bg.stretch_mode = TextureRect.STRETCH_SCALE
-	bg.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	bg.visible = false
-
-	ward_node.add_child(bg)
-	# Вставляємо перед reverseN (портретом) щоб бути за ним
-	# Поточний порядок після border: [border(0), highlight(1), reverseN(2)]
-	ward_node.move_child(bg, 2)
-	return bg
-
-
-# --- Рамка з empty_slots поверх портрету ---
-
-func _create_slot_frame(slot_idx: int) -> TextureRect:
-	var r := _reverse_nodes[slot_idx]
-	var ward_node := _picked_wards[slot_idx]
-
-	var frame := TextureRect.new()
-	frame.layout_mode = 1
-	frame.anchor_left  = r.anchor_left
-	frame.anchor_right = r.anchor_right
-	# Рамка рівно по розміру слоту, без виходу за межі
-	frame.offset_left   = r.offset_left
-	frame.offset_top    = r.offset_top
-	frame.offset_right  = r.offset_right
-	frame.offset_bottom = r.offset_bottom
-	frame.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
-	frame.stretch_mode = TextureRect.STRETCH_SCALE
-	frame.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	frame.visible = false
-
-	if ResourceLoader.exists(SLOT_FRAME_TEXTURE):
-		frame.texture = load(SLOT_FRAME_TEXTURE)
-
-	ward_node.add_child(frame)
-	return frame
 
 
 # --- Кнопка підтвердження ---
@@ -396,24 +297,13 @@ func _refresh_picked_slots() -> void:
 				_reverse_nodes[i].texture = load(portrait_path)
 			_reverse_nodes[i].stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_COVERED
 			_reverse_nodes[i].expand_mode  = TextureRect.EXPAND_IGNORE_SIZE
-
-			# Стихійний фон карти
-			var element: String = data.get("element", "")
-			var card_path: String = ELEMENT_CARD_TEXTURES.get(element, "")
-			if card_path != "" and ResourceLoader.exists(card_path):
-				_slot_elem_bgs[i].texture = load(card_path)
-			_slot_elem_bgs[i].visible = true
-
-			_slot_borders[i].visible = true
-			_slot_frames[i].visible = false   # картка стихії має власну рамку
+			_frame_nodes[i].visible = true
 			_slot_click_overlays[i].mouse_filter = Control.MOUSE_FILTER_STOP
 		else:
 			_reverse_nodes[i].texture = _original_reverse_textures[i]
 			_reverse_nodes[i].stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
 			_reverse_nodes[i].expand_mode  = TextureRect.EXPAND_FIT_WIDTH_PROPORTIONAL
-			_slot_elem_bgs[i].visible = false
-			_slot_borders[i].visible = false
-			_slot_frames[i].visible = false
+			_frame_nodes[i].visible = false
 			_slot_click_overlays[i].mouse_filter = Control.MOUSE_FILTER_IGNORE
 
 
