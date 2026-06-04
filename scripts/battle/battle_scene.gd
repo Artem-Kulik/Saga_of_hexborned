@@ -471,7 +471,7 @@ func _on_skill_clicked(ward, skill_key: String) -> void:
 	var pressed_button = _get_skill_button(ward, skill_key)
 
 	var SkillExecutor = preload("res://scripts/battle/skill_executor.gd")
-	var target_type = SkillExecutor.get_skill_target_type(ward.ward_id, skill_key)
+	var target_type = SkillExecutor.get_skill_target_type(ward.ward_id, skill_key, ward)
 
 	if target_type == "single_enemy":
 		waiting_for_target = true
@@ -616,12 +616,12 @@ func _enemy_attack(enemy_ward) -> void:
 			enemy_ward.remove_status("taunt", enemy_ward.get_status("taunt"))
 			enemy_ward.taunted_by = ""
 	if forced_taunter != null:
-		var single_target_skills = available_skills.filter(func(sk): return SkillExecutor.get_skill_target_type(enemy_ward.ward_id, sk) == "single_enemy")
+		var single_target_skills = available_skills.filter(func(sk): return SkillExecutor.get_skill_target_type(enemy_ward.ward_id, sk, enemy_ward) == "single_enemy")
 		if not single_target_skills.is_empty():
 			available_skills = single_target_skills
 
 	var random_skill: String = available_skills.pick_random()
-	var target_type = SkillExecutor.get_skill_target_type(enemy_ward.ward_id, random_skill)
+	var target_type = SkillExecutor.get_skill_target_type(enemy_ward.ward_id, random_skill, enemy_ward)
 	var target = null
 
 	if target_type == "single_enemy":

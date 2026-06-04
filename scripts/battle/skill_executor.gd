@@ -4,7 +4,7 @@ extends Node
 # "single_enemy" - один клік по ворогу
 # "all_enemies" - б'є всіх ворогів одразу (не треба клікати)
 # "self" - застосовується на себе (не треба клікати)
-static func get_skill_target_type(ward_id: String, skill_key: String) -> String:
+static func get_skill_target_type(ward_id: String, skill_key: String, attacker = null) -> String:
 	match ward_id:
 		"liah":
 			if skill_key == "W": return "all_enemies"
@@ -15,6 +15,11 @@ static func get_skill_target_type(ward_id: String, skill_key: String) -> String:
 		"grump":
 			if skill_key == "Q": return "all_enemies"
 			if skill_key == "E": return "all_enemies"
+		"riker":
+			if skill_key == "W":
+				var last = attacker.get_meta("riker_last_skill", "") if attacker != null and attacker.has_meta("riker_last_skill") else ""
+				if last == "E": return "all_enemies"
+				return "single_enemy"
 
 	return "single_enemy"
 
@@ -33,6 +38,8 @@ static func execute_skill(resolver, attacker, target, skill_key: String) -> void
 			await _execute_shopey(resolver, attacker, target, skill_key, base_damage)
 		"grump":
 			await _execute_grump(resolver, attacker, target, skill_key, base_damage)
+		"riker":
+			await _execute_riker(resolver, attacker, target, skill_key)
 		_:
 			# Стандартна атака для всіх інших поки що
 			await _execute_basic_attack(resolver, attacker, target, skill_key, base_damage)
@@ -290,3 +297,75 @@ static func _grump_end_of_turn_passive(resolver, attacker) -> void:
 		resolver.battle_log.add_effect(
 			attacker.name, attacker.team, "Броня +25 (всього: %d)" % attacker.health.current_armor
 		)
+
+
+# =============================================================================
+# RIKER (Рікер)
+# =============================================================================
+# P — На волосині: при смертельному ударі — відміняє його, авто-використовує E, потім вмирає.
+# Q — Роздирання: 2 удари по 35(вода) по одній цілі.
+# W — Стиль Доломедес (КД 2): якщо Q → 3 удари по 45(вода); якщо E → 60(вода) по всіх ворогах.
+# E — Кігті: 60(вода) по цілі + сусідня (центр для крайніх; для центру — рандом з крайніх).
+
+static func _execute_riker(resolver, attacker, target, skill_key: String) -> void:
+	match skill_key:
+		"Q":
+			if target == null: return
+			await resolver.deal_damage_with_modifiers(attacker, target, 35, skill_key, "water")
+			if not target.is_dead:
+				await resolver.deal_damage_with_modifiers(attacker, target, 35, skill_key, "water")
+			attacker.set_meta("riker_last_skill", "Q")
+
+		"W":
+			var last: String = attacker.get_meta("riker_last_skill", "") if attacker.has_meta("riker_last_skill") else ""
+			if last == "Q":
+				if target == null: return
+				if resolver.battle_log:
+					resolver.battle_log.add_entry("Стиль Доломедес: три удари по цілі!")
+				for i in 3:
+					if target.is_dead: break
+					await resolver.deal_damage_with_modifiers(attacker, target, 45, skill_key, "water")
+			elif last == "E":
+				if resolver.battle_log:
+					resolver.battle_log.add_entry("Стиль Доломедес: удар по всіх ворогах!")
+				var enemy_side: Array = resolver.battle_scene.enemy_wards if attacker.team == "ally" else resolver.battle_scene.ally_wards
+				for enemy in resolver.get_alive_wards(enemy_side):
+					await resolver.deal_damage_with_modifiers(attacker, enemy, 60, skill_key, "water")
+			else:
+				if resolver.battle_log:
+					resolver.battle_log.add_entry("Стиль Доломедес: потрібно спочатку використати Q або E!")
+			attacker.set_meta("riker_last_skill", "W")
+
+		"E":
+			if target == null: return
+			await resolver.deal_damage_with_modifiers(attacker, target, 60, skill_key, "water")
+			var neighbor = _riker_get_neighbor(resolver, attacker, target)
+			if neighbor != null and not neighbor.is_dead:
+				await resolver.deal_damage_with_modifiers(attacker, neighbor, 60, skill_key, "water")
+			attacker.set_meta("riker_last_skill", "E")
+
+
+# Повертає сусідній ворожий варт для скіла E Рікера.
+# Крайній (0 або 2) → центр (1); центр (1) → рандом з живих крайніх.
+# Якщо центр мертвий і ціль — крайня → null (немає сусіда).
+static func _riker_get_neighbor(resolver, attacker, target):
+	var enemy_side: Array = resolver.battle_scene.enemy_wards if attacker.team == "ally" else resolver.battle_scene.ally_wards
+	var idx: int = enemy_side.find(target)
+	if idx < 0:
+		return null
+
+	if idx == 1:
+		# Центр → рандом із живих крайніх
+		var candidates: Array = []
+		if not enemy_side[0].is_dead:
+			candidates.append(enemy_side[0])
+		if enemy_side.size() > 2 and not enemy_side[2].is_dead:
+			candidates.append(enemy_side[2])
+		if candidates.is_empty():
+			return null
+		return candidates[randi() % candidates.size()]
+	else:
+		# Крайній (0 або 2) → центр (1)
+		if enemy_side.size() > 1 and not enemy_side[1].is_dead:
+			return enemy_side[1]
+		return null
