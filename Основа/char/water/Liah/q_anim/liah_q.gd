@@ -4,7 +4,6 @@ signal hit_moment
 
 @onready var visual_root: Node2D = $visual_root
 @onready var sprite: AnimatedSprite2D = $visual_root/liah_q_animation
-@onready var particles: GPUParticles2D = $visual_root/water_drop
 
 
 func set_direction(direction: Vector2) -> void:
@@ -12,7 +11,6 @@ func set_direction(direction: Vector2) -> void:
 
 
 func play() -> void:
-	particles.emitting = false
 	sprite.stop()
 	sprite.frame = 0
 	sprite.play("default")
@@ -21,8 +19,22 @@ func play() -> void:
 func _on_animated_sprite_2d_animation_finished() -> void:
 	hit_moment.emit()
 
+	var particles := get_node_or_null("visual_root/water_drop") as GPUParticles2D
+	if particles == null:
+		print("water_drop не знайдено")
+		queue_free()
+		return
+
+	particles.one_shot = true
+	particles.emitting = false
+
+	await get_tree().process_frame
+
 	particles.restart()
 	particles.emitting = true
 
-	var timer := get_tree().create_timer(particles.lifetime)
-	timer.timeout.connect(queue_free)
+	await get_tree().create_timer(
+		particles.lifetime + particles.preprocess
+	).timeout
+
+	queue_free()

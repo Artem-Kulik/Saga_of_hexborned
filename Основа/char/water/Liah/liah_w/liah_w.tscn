@@ -1,0 +1,105 @@
+[gd_scene format=3 uid="uid://bjy5bcio3k8bx"]
+
+[ext_resource type="Script" uid="uid://dm72xtsujdob2" path="res://Основа/char/water/Liah/liah_w/liah_w.gd" id="1_1ftla"]
+[ext_resource type="Texture2D" uid="uid://ctywdiius6x0f" path="res://Основа/char/water/Liah/liah_w/liah_w_10003.png" id="1_jpdt5"]
+[ext_resource type="Texture2D" uid="uid://eliv8evwd2lr" path="res://Основа/char/water/Liah/liah_w/liah_w_10004.png" id="2_1ftla"]
+[ext_resource type="Texture2D" uid="uid://chxfu1ohtkt4a" path="res://Основа/char/water/Liah/liah_w/liah_w_10005.png" id="3_wcpup"]
+[ext_resource type="Texture2D" uid="uid://xbcv5xni2p0l" path="res://Основа/char/water/Liah/liah_w/liah_w_10006.png" id="4_r3n5q"]
+[ext_resource type="Texture2D" uid="uid://qttjcgfr7why" path="res://Основа/char/water/Liah/liah_w/liah_w_10007.png" id="5_7ogsc"]
+[ext_resource type="Texture2D" uid="uid://dnqv806epfjgc" path="res://Основа/char/water/Liah/liah_w/liah_w_10008.png" id="6_wnerh"]
+[ext_resource type="Texture2D" uid="uid://cmyc8ckjjfxox" path="res://Основа/char/water/Liah/liah_w/liah_w_10009.png" id="7_srfql"]
+[ext_resource type="Texture2D" uid="uid://dfnbtl81bv66d" path="res://Основа/char/water/Liah/liah_w/liah_w_10010.png" id="8_vp3fv"]
+[ext_resource type="Texture2D" uid="uid://b02nbg8n3nqw3" path="res://Основа/char/water/Liah/liah_w/liah_w_10011.png" id="9_1c60e"]
+[ext_resource type="Texture2D" uid="uid://gvtwa4ar1cxj" path="res://Основа/char/water/Liah/liah_w/liah_w_10012.png" id="10_64mb4"]
+[ext_resource type="Texture2D" uid="uid://bitl6njevw1su" path="res://Основа/char/water/Liah/liah_w/liah_w_10013.png" id="11_qrual"]
+[ext_resource type="Texture2D" uid="uid://4ccunfkh2agk" path="res://Основа/char/water/Liah/liah_w/liah_w_10014.png" id="12_wuyog"]
+[ext_resource type="Texture2D" uid="uid://g3g02s7o6lia" path="res://Основа/char/water/Liah/liah_w/liah_w_10015.png" id="13_kdy8s"]
+[ext_resource type="Texture2D" uid="uid://bux1f2ufx0a7j" path="res://Основа/animation/particles/drop.png" id="15_wcpup"]
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_buraj"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("1_jpdt5")
+}, {
+"duration": 1.0,
+"texture": ExtResource("2_1ftla")
+}, {
+"duration": 1.0,
+"texture": ExtResource("3_wcpup")
+}, {
+"duration": 1.0,
+"texture": ExtResource("4_r3n5q")
+}, {
+"duration": 1.0,
+"texture": ExtResource("5_7ogsc")
+}, {
+"duration": 1.0,
+"texture": ExtResource("6_wnerh")
+}, {
+"duration": 1.0,
+"texture": ExtResource("7_srfql")
+}, {
+"duration": 1.0,
+"texture": ExtResource("8_vp3fv")
+}, {
+"duration": 1.0,
+"texture": ExtResource("9_1c60e")
+}, {
+"duration": 1.0,
+"texture": ExtResource("10_64mb4")
+}, {
+"duration": 1.0,
+"texture": ExtResource("11_qrual")
+}, {
+"duration": 1.0,
+"texture": ExtResource("12_wuyog")
+}, {
+"duration": 1.0,
+"texture": ExtResource("13_kdy8s")
+}],
+"loop": true,
+"name": &"default",
+"speed": 5.0
+}]
+
+[sub_resource type="Gradient" id="Gradient_wcpup"]
+offsets = PackedFloat32Array(0, 0.49642858, 1)
+colors = PackedColorArray(0, 0.20743671, 0.9999899, 1, 0.2784314, 0.34117648, 1, 0.7254902, 0.32941177, 0.5372549, 1, 0.4392157)
+
+[sub_resource type="GradientTexture1D" id="GradientTexture1D_r3n5q"]
+gradient = SubResource("Gradient_wcpup")
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_r3n5q"]
+particle_flag_disable_z = true
+emission_shape_scale = Vector3(600, 150, 0)
+emission_shape = 3
+emission_box_extents = Vector3(1, 1, 1)
+angle_min = -720.0
+angle_max = 720.0
+direction = Vector3(0, 1, 0)
+spread = 14.318
+gravity = Vector3(0, 300, 0)
+scale_min = 0.049999997
+scale_max = 0.089999996
+color_ramp = SubResource("GradientTexture1D_r3n5q")
+
+[node name="liah_w" type="Node2D" unique_id=753602088]
+script = ExtResource("1_1ftla")
+
+[node name="liah_w" type="AnimatedSprite2D" parent="." unique_id=951074003]
+position = Vector2(7.6293945e-06, 0)
+scale = Vector2(7, 4.711)
+sprite_frames = SubResource("SpriteFrames_buraj")
+frame_progress = 0.4346897
+speed_scale = 3.0
+
+[node name="3" type="GPUParticles2D" parent="." unique_id=955783567]
+amount = 362
+texture = ExtResource("15_wcpup")
+lifetime = 5.67
+preprocess = 8.8
+speed_scale = 6.4
+explosiveness = 0.27
+randomness = 1.0
+process_material = SubResource("ParticleProcessMaterial_r3n5q")

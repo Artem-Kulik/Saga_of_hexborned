@@ -62,7 +62,8 @@ static func play(skill_id: String, attacker, target, on_hit: Callable) -> void:
 
 		# ── LIAH (Лія) ────────────────────────────────────────────────────────
 		# "liah_q": два удари — маршрутизується через play_liah_q(attacker, target, on_hit_first, on_hit_second)
-		# "liah_w": await AnimationCode.anim_liah_w(attacker, target, on_hit)
+		"liah_w":
+			await AnimationCode.anim_liah_w(attacker, target, on_hit)
 		# "liah_e": await AnimationCode.anim_liah_e(attacker, target, on_hit)
 
 		# ── RIKER (Рікер) ─────────────────────────────────────────────────────
