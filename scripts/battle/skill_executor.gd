@@ -26,6 +26,8 @@ static func execute_skill(resolver, attacker, target, skill_key: String) -> void
 			await _execute_liah(resolver, attacker, target, skill_key, base_damage)
 		"mais_oichi":
 			await _execute_mais_oichi(resolver, attacker, target, skill_key, base_damage)
+		"shopey":
+			await _execute_shopey(resolver, attacker, target, skill_key, base_damage)
 		_:
 			# Стандартна атака для всіх інших поки що
 			await _execute_basic_attack(resolver, attacker, target, skill_key, base_damage)
@@ -132,9 +134,91 @@ static func _execute_mais_oichi(resolver, attacker, target, skill_key: String, b
 			if target == null: return
 			resolver.battle_log.add_entry("Майстер Оічі провокує ворога і отримує +100 броні!")
 			attacker.health.add_armor(100)
-			
+
 			target.add_status("taunt", 1)
 			target.taunted_by = attacker.ward_id
-			
+
 			if resolver.battle_log:
 				resolver.battle_log.add_effect(target.name, target.team, "Провокація (мусить атакувати Оічі)")
+
+
+# =============================================================================
+# SHOPEY (Шопей)
+# =============================================================================
+# Пасивка: при ударі 37% — Відсічена Голова б'є випадкового іншого ворога (45 повітря).
+# Якщо живий лише один ворог — жодна гідра не спрацьовує.
+# E встановлює прапорець: наступна здібність гарантовано тригерить гідру.
+
+static func _execute_shopey(resolver, attacker, target, skill_key: String, base_damage: int) -> void:
+	# Перевіряємо та споживаємо прапорець від E до виконання скіла
+	var e_hydra_ready: bool = attacker.has_meta("shopey_hydra_ready") and attacker.get_meta("shopey_hydra_ready")
+	if e_hydra_ready:
+		attacker.set_meta("shopey_hydra_ready", false)
+
+	match skill_key:
+		"Q":
+			# Поривистий випад: 75 фіз
+			if target == null: return
+			await resolver.deal_damage_with_modifiers(attacker, target, 75, skill_key, "phys")
+			if e_hydra_ready:
+				await _shopey_trigger_hydra(resolver, attacker, target)
+			await _shopey_passive_check(resolver, attacker, target)
+
+		"W":
+			# Ріжуча гідра: 90 повітря + гарантована гідра (45 повітря сусідній)
+			if target == null: return
+			await resolver.deal_damage_with_modifiers(attacker, target, 90, skill_key, "air")
+			# Власна гідра W (завжди)
+			await _shopey_trigger_hydra(resolver, attacker, target)
+			# Гідра від E-буфа (якщо був активний)
+			if e_hydra_ready:
+				await _shopey_trigger_hydra(resolver, attacker, target)
+			await _shopey_passive_check(resolver, attacker, target)
+
+		"E":
+			# Наскок: 30 фіз + встановлює прапорець на наступну здібність
+			if target == null: return
+			await resolver.deal_damage_with_modifiers(attacker, target, 30, skill_key, "phys")
+			# Гідра від попереднього E (якщо був активний)
+			if e_hydra_ready:
+				await _shopey_trigger_hydra(resolver, attacker, target)
+			# Встановлюємо прапорець для наступної здібності
+			attacker.set_meta("shopey_hydra_ready", true)
+			if resolver.battle_log:
+				resolver.battle_log.add_entry("Шопей: наступна здібність гарантовано викличе Відсічену Гідру!")
+				resolver.battle_log.add_effect(attacker.name, attacker.team, "Наскок (гарантована гідра)")
+			await _shopey_passive_check(resolver, attacker, target)
+
+
+# Випадковий живий ворог, відмінний від основної цілі.
+# Повертає null якщо таких немає (єдиний ворог або всі інші мертві).
+static func _shopey_get_other_enemy(resolver, attacker, exclude_target):
+	var all_enemies = resolver.battle_scene.enemy_wards if attacker.team == "ally" else resolver.battle_scene.ally_wards
+	var others: Array = resolver.get_alive_wards(all_enemies).filter(
+		func(w): return w != exclude_target
+	)
+	if others.is_empty():
+		return null
+	return others[randi() % others.size()]
+
+
+# Відсічена Голова Гідри: 45 повітря по випадковому іншому ворогу.
+static func _shopey_trigger_hydra(resolver, attacker, exclude_target) -> void:
+	var hydra_target = _shopey_get_other_enemy(resolver, attacker, exclude_target)
+	if hydra_target == null:
+		return
+	if resolver.battle_log:
+		resolver.battle_log.add_entry("Відсічена Голова Гідри атакує " + hydra_target.name + "!")
+	await resolver.deal_damage_with_modifiers(attacker, hydra_target, 45, "P", "air")
+
+
+# Пасивка: 37% шанс тригернути гідру після кожного скіла.
+static func _shopey_passive_check(resolver, attacker, attacked_target) -> void:
+	if randf() >= 0.37:
+		return
+	var hydra_target = _shopey_get_other_enemy(resolver, attacker, attacked_target)
+	if hydra_target == null:
+		return
+	if resolver.battle_log:
+		resolver.battle_log.add_entry("Пасивка Відсічена Гідра: атакує " + hydra_target.name + "!")
+	await resolver.deal_damage_with_modifiers(attacker, hydra_target, 45, "P", "air")
