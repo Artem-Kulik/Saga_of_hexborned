@@ -22,12 +22,6 @@ var selected_ids: Array[String] = []
 	$PickedWards/ward_2/highlight_2,
 	$PickedWards/ward_3/highlight_3,
 ]
-@onready var _picked_wards: Array[Control] = [
-	$PickedWards/ward_1,
-	$PickedWards/ward_2,
-	$PickedWards/ward_3,
-]
-
 @onready var _tabs_menu: Control = $Wards_collection/chose_zone/TabsMenu
 
 # --- Skill panel refs ---

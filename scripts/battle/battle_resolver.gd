@@ -1,7 +1,6 @@
 extends Node
 
-const SkillExecutor            = preload("res://scripts/battle/skill_executor.gd")
-const SkillAnimationDispatcher = preload("res://scripts/battle/skill_animation_dispatcher.gd")
+const SkillExecutor = preload("res://scripts/battle/skill_executor.gd")
 
 var battle_log      = null
 var battle_scene    = null
@@ -41,7 +40,7 @@ func attack(attacker, target, skill_key: String = "Q") -> void:
 	skill_controller.clear()
 
 
-func deal_damage_with_modifiers(attacker, target, base_damage: int, skill_key: String, forced_damage_type: String = "") -> void:
+func deal_damage_with_modifiers(attacker, target, base_damage: int, skill_key: String, forced_damage_type: String = "", is_aoe: bool = false) -> void:
 	if target == null:
 		return
 
@@ -67,7 +66,7 @@ func deal_damage_with_modifiers(attacker, target, base_damage: int, skill_key: S
 			var def_mults = ELEMENT_MULTIPLIERS[target_element]
 			if def_mults.has(damage_type):
 				mult = def_mults[damage_type]
-				
+
 	var armor_dmg = mini(base_damage, armor)
 	var hp_dmg = base_damage - armor_dmg
 	var final_hp_dmg = int(hp_dmg * mult)
@@ -79,7 +78,7 @@ func deal_damage_with_modifiers(attacker, target, base_damage: int, skill_key: S
 		final_damage,
 		skill_key,
 		"-",
-		"skill",
+		"effect" if is_aoe else "skill",
 		base_damage,
 		mult
 	)
@@ -98,6 +97,29 @@ func apply_damage(
 ) -> void:
 	if target == null:
 		return
+
+	# Пасивка Рікера "На волосині": якщо удар смертельний — відміняє його, авто-використовує E, помирає.
+	if target.ward_id == "riker" and damage > 0 and target.current_hp > 0 and skill_key != "passive_death":
+		if not target.has_meta("riker_passive_used"):
+			var armor: int = target.health.current_armor if target.get("health") else 0
+			var hp_damage: int = damage - mini(damage, armor)
+			if hp_damage >= target.current_hp:
+				target.set_meta("riker_passive_used", true)
+				if battle_log:
+					battle_log.add_entry("На волосині: " + target.name + " відміняє смертельний удар!")
+					battle_log.add_effect(target.name, target.team, "На волосині")
+				skill_controller.activate("riker", "E", target)
+				if source != null and not source.is_dead:
+					await SkillExecutor.execute_skill(self, target, source, "E")
+				else:
+					var enemy_side: Array = battle_scene.enemy_wards if target.team == "ally" else battle_scene.ally_wards
+					var alive = get_alive_wards(enemy_side)
+					if not alive.is_empty():
+						await SkillExecutor.execute_skill(self, target, alive[0], "E")
+				skill_controller.clear()
+				# Рікер вмирає після пасивки
+				await apply_damage(null, target, target.current_hp + target.health.current_armor + 1, "passive_death", "-", "effect", 0, 1.0)
+				return
 
 	var source_name: String = "Невідомо"
 	var source_team: String = "-"
@@ -126,7 +148,7 @@ func apply_damage(
 				await target.take_damage(damage, source, skill_key)
 
 				var hp_after_hit: int = target.current_hp
-				var hp_different: int = hp_before_hit - hp_after_hit
+				var _hp_different: int = hp_before_hit - hp_after_hit
 
 				if damage > 0:
 					SkillExecutor.check_rage_passive(self, target)
@@ -145,7 +167,7 @@ func apply_damage(
 		await target.take_damage(damage, source, skill_key)
 
 		var hp_after_hit: int = target.current_hp
-		var hp_different: int = hp_before_hit - hp_after_hit
+		var _hp_different: int = hp_before_hit - hp_after_hit
 
 		if damage > 0:
 			SkillExecutor.check_rage_passive(self, target)

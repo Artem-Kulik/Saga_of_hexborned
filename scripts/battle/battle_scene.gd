@@ -463,6 +463,13 @@ func _on_skill_clicked(ward, skill_key: String) -> void:
 		battle_log.add_entry("Скіл " + skill_key + " на КД ще " + str(cd_left) + " ход.")
 		return
 
+	# Рікер W: лише якщо попередній скіл був Q або E
+	if ward.ward_id == "riker" and skill_key == "W":
+		var last: String = ward.get_meta("riker_last_skill", "") if ward.has_meta("riker_last_skill") else ""
+		if last != "Q" and last != "E":
+			battle_log.add_entry("Стиль Доломедес: спочатку використайте Q або E!")
+			return
+
 	selected_attacker = ward
 	selected_skill = skill_key
 	waiting_for_target = false
@@ -471,7 +478,7 @@ func _on_skill_clicked(ward, skill_key: String) -> void:
 	var pressed_button = _get_skill_button(ward, skill_key)
 
 	var SkillExecutor = preload("res://scripts/battle/skill_executor.gd")
-	var target_type = SkillExecutor.get_skill_target_type(ward.ward_id, skill_key)
+	var target_type = SkillExecutor.get_skill_target_type(ward.ward_id, skill_key, ward)
 
 	if target_type == "single_enemy":
 		waiting_for_target = true
@@ -600,6 +607,11 @@ func _enemy_attack(enemy_ward) -> void:
 	var available_skills = []
 	for sk in ["Q", "W", "E"]:
 		if enemy_ward.has_method("is_skill_ready") and enemy_ward.is_skill_ready(sk):
+			# Рікер W: тільки якщо попередній скіл Q або E
+			if enemy_ward.ward_id == "riker" and sk == "W":
+				var last: String = enemy_ward.get_meta("riker_last_skill", "") if enemy_ward.has_meta("riker_last_skill") else ""
+				if last != "Q" and last != "E":
+					continue
 			available_skills.append(sk)
 	if available_skills.is_empty():
 		available_skills = ["Q"] # Fallback
@@ -616,12 +628,12 @@ func _enemy_attack(enemy_ward) -> void:
 			enemy_ward.remove_status("taunt", enemy_ward.get_status("taunt"))
 			enemy_ward.taunted_by = ""
 	if forced_taunter != null:
-		var single_target_skills = available_skills.filter(func(sk): return SkillExecutor.get_skill_target_type(enemy_ward.ward_id, sk) == "single_enemy")
+		var single_target_skills = available_skills.filter(func(sk): return SkillExecutor.get_skill_target_type(enemy_ward.ward_id, sk, enemy_ward) == "single_enemy")
 		if not single_target_skills.is_empty():
 			available_skills = single_target_skills
 
 	var random_skill: String = available_skills.pick_random()
-	var target_type = SkillExecutor.get_skill_target_type(enemy_ward.ward_id, random_skill)
+	var target_type = SkillExecutor.get_skill_target_type(enemy_ward.ward_id, random_skill, enemy_ward)
 	var target = null
 
 	if target_type == "single_enemy":

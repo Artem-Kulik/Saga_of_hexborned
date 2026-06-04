@@ -249,7 +249,7 @@ func _add_attack_event(
 	attacker_team: String,
 	skill_name: String,
 	damage: int,
-	status_text: String,
+	_status_text: String,
 	target_name: String,
 	target_team: String,
 	hp_before: int,
