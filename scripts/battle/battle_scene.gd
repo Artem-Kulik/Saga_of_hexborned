@@ -751,11 +751,6 @@ func _etesena_w_add_target(ward) -> void:
 			selected_attacker.remove_status("taunt", selected_attacker.get_status("taunt"))
 			selected_attacker.taunted_by = ""
 
-	# Вже обрана ця ціль
-	if ward in _etesena_w_targets:
-		battle_log.add_entry("Ця ціль вже обрана!")
-		return
-
 	_etesena_w_targets.append(ward)
 	var order_num: int = _etesena_w_targets.size()
 
@@ -772,7 +767,10 @@ func _etesena_w_add_target(ward) -> void:
 
 	battle_log.add_entry("Танець: ціль %d — %s" % [order_num, ward.name])
 
-	if _etesena_w_targets.size() >= _etesena_w_required:
+	# Рахуємо required динамічно — захист від несинхронізованого стану
+	var required: int = mini(battle_resolver.get_alive_wards(enemy_wards).size(), 3)
+	if required <= 0: required = 1
+	if _etesena_w_targets.size() >= required:
 		await _etesena_w_execute()
 
 

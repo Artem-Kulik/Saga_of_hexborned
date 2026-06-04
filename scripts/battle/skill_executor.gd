@@ -23,6 +23,7 @@ static func get_skill_target_type(ward_id: String, skill_key: String, attacker =
 		"iskoris":
 			if skill_key == "E": return "all_enemies"
 		"etesena":
+			if skill_key == "Q": return "all_enemies"
 			if skill_key == "W": return "etesena_w"
 
 	return "single_enemy"
@@ -453,7 +454,7 @@ static func _execute_etesena(resolver, attacker, target, skill_key: String) -> v
 				var alive = resolver.get_alive_wards(enemy_side)
 				if alive.is_empty(): break
 				var t = alive[randi() % alive.size()]
-				await resolver.deal_damage_with_modifiers(attacker, t, 25, skill_key, "phys")
+				await resolver.deal_damage_with_modifiers(attacker, t, 25, skill_key, "phys", true)
 				await _etesena_passive_check(resolver, attacker, t, 25, enemy_side)
 
 		"W":
@@ -481,7 +482,7 @@ static func _execute_etesena(resolver, attacker, target, skill_key: String) -> v
 			if target == null: return
 			for i in 5:
 				if target.is_dead: break
-				await resolver.deal_damage_with_modifiers(attacker, target, 25, skill_key, "phys")
+				await resolver.deal_damage_with_modifiers(attacker, target, 25, skill_key, "phys", true)
 				await _etesena_passive_check(resolver, attacker, target, 25, enemy_side)
 			if not target.is_dead and target.get_status("stun") > 0:
 				target.add_status("stun", 1)
