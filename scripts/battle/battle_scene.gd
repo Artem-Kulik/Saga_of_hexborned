@@ -463,6 +463,13 @@ func _on_skill_clicked(ward, skill_key: String) -> void:
 		battle_log.add_entry("Скіл " + skill_key + " на КД ще " + str(cd_left) + " ход.")
 		return
 
+	# Рікер W: лише якщо попередній скіл був Q або E
+	if ward.ward_id == "riker" and skill_key == "W":
+		var last: String = ward.get_meta("riker_last_skill", "") if ward.has_meta("riker_last_skill") else ""
+		if last != "Q" and last != "E":
+			battle_log.add_entry("Стиль Доломедес: спочатку використайте Q або E!")
+			return
+
 	selected_attacker = ward
 	selected_skill = skill_key
 	waiting_for_target = false
@@ -600,6 +607,11 @@ func _enemy_attack(enemy_ward) -> void:
 	var available_skills = []
 	for sk in ["Q", "W", "E"]:
 		if enemy_ward.has_method("is_skill_ready") and enemy_ward.is_skill_ready(sk):
+			# Рікер W: тільки якщо попередній скіл Q або E
+			if enemy_ward.ward_id == "riker" and sk == "W":
+				var last: String = enemy_ward.get_meta("riker_last_skill", "") if enemy_ward.has_meta("riker_last_skill") else ""
+				if last != "Q" and last != "E":
+					continue
 			available_skills.append(sk)
 	if available_skills.is_empty():
 		available_skills = ["Q"] # Fallback
