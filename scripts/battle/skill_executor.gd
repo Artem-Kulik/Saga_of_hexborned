@@ -25,6 +25,22 @@ static func get_skill_target_type(ward_id: String, skill_key: String, attacker =
 		"etesena":
 			if skill_key == "Q": return "all_enemies"
 			if skill_key == "W": return "etesena_w"
+		"otsii":
+			if skill_key == "Q": return "all_enemies"
+			if skill_key == "W": return "single_ally"
+			if skill_key == "E": return "single_enemy"
+		"siomyi":
+			if skill_key == "Q": return "single_any"
+			if skill_key == "W": return "single_ally"
+			if skill_key == "E": return "single_enemy"
+		"zhnets":
+			if skill_key == "Q": return "all_enemies"
+			if skill_key == "W": return "single_enemy"
+			if skill_key == "E": return "single_enemy"
+		"parasyt":
+			if skill_key == "Q": return "single_enemy"
+			if skill_key == "W": return "single_enemy"
+			if skill_key == "E": return "self"
 
 	return "single_enemy"
 
@@ -49,6 +65,14 @@ static func execute_skill(resolver, attacker, target, skill_key: String) -> void
 			await _execute_iskoris(resolver, attacker, target, skill_key)
 		"etesena":
 			await _execute_etesena(resolver, attacker, target, skill_key)
+		"otsii":
+			await _execute_otsii(resolver, attacker, target, skill_key)
+		"siomyi":
+			await _execute_siomyi(resolver, attacker, target, skill_key)
+		"zhnets":
+			await _execute_zhnets(resolver, attacker, target, skill_key)
+		"parasyt":
+			await _execute_parasyt(resolver, attacker, target, skill_key)
 		_:
 			# Стандартна атака для всіх інших поки що
 			await _execute_basic_attack(resolver, attacker, target, skill_key, base_damage)
@@ -150,12 +174,14 @@ static func _execute_mais_oichi(resolver, attacker, target, skill_key: String, _
 				
 		"W":
 			# Жар: Накладає на себе щит з ВОГНЮ, котрий дає 30 броні.
-			resolver.battle_log.add_entry("Майстер Оічі застосовує Жар: +30 броні")
 			attacker.health.add_armor(30)
 			attacker.set_meta("fire_shield", true)
 			attacker._update_status_visuals()
 			if resolver.battle_log:
-				resolver.battle_log.add_effect(attacker.name, attacker.team, "Вогняний щит (+30 броні)")
+				resolver.battle_log.add_entry(
+					"Жар: +30 броні (разом: %d). Вогняний щит активний!" % attacker.health.current_armor
+				)
+				resolver.battle_log.add_effect(attacker.name, attacker.team, "Вогняний щит (+30 броні, разом: %d)" % attacker.health.current_armor)
 				
 		"E":
 			# Чесний бій: Провокує ціль на 1 хід. Збільшує свою броню на 100.
@@ -351,6 +377,8 @@ static func _execute_riker(resolver, attacker, target, skill_key: String) -> voi
 			await resolver.deal_damage_with_modifiers(attacker, target, 60, skill_key, "water")
 			var neighbor = _riker_get_neighbor(resolver, attacker, target)
 			if neighbor != null and not neighbor.is_dead:
+				if resolver.battle_log:
+					resolver.battle_log.add_entry("Кігті: б'є сусідній варт — %s!" % neighbor.name)
 				await resolver.deal_damage_with_modifiers(attacker, neighbor, 60, skill_key, "water")
 			attacker.set_meta("riker_last_skill", "E")
 
@@ -515,3 +543,235 @@ static func _etesena_get_neighbor(enemy_side: Array, target) -> Variant:
 	else:
 		if enemy_side.size() > 1 and not enemy_side[1].is_dead: return enemy_side[1]
 		return null
+
+
+# =============================================================================
+# OTSII (Оцій)
+# =============================================================================
+# P — При смерті союзника: зменшує КД скіла з найбільшим КД на 2 (пріоритет макс.КД).
+#     При власній смерті: дає Коло пекельного вогню випадковому союзнику.
+# Q — Вигорання: 1 стак горіння на випадкового ворога.
+# W — Коло пекельного вогню (КД 4): знімає всі негативні ефекти з союзника,
+#     накладає fire_circle (2 ходи). Атакуючий цей варт отримує 2 стаки горіння.
+# E — Рик (КД 4): Оцій + союзник атакують ціль; союзник використовує Q; +1 горіння.
+
+static func _execute_otsii(resolver, attacker, target, skill_key: String) -> void:
+	var enemy_side: Array = resolver.battle_scene.enemy_wards if attacker.team == "ally" else resolver.battle_scene.ally_wards
+
+	match skill_key:
+		"Q":
+			var alive = resolver.get_alive_wards(enemy_side)
+			if alive.is_empty(): return
+			var t = alive[randi() % alive.size()]
+			t.add_status("burning", 1)
+			t._update_status_visuals()
+			if resolver.battle_log:
+				resolver.battle_log.add_entry("Вигорання: " + t.name + " отримує 1 стак горіння!")
+				resolver.battle_log.add_effect(t.name, t.team, "Горіння (1 стак)")
+
+		"W":
+			if target == null: target = attacker
+			target.remove_negative_effects()
+			target.add_status("fire_circle", 2)
+			target._update_status_visuals()
+			if resolver.battle_log:
+				resolver.battle_log.add_entry("Коло пекельного вогню: %s очищений і захищений на 2 ходи!" % target.name)
+				resolver.battle_log.add_effect(target.name, target.team, "Коло пекельного вогню (2 ходи)")
+
+		"E":
+			if target == null: return
+			target.add_status("burning", 1)
+			target._update_status_visuals()
+			if resolver.battle_log:
+				resolver.battle_log.add_entry("Рик: " + target.name + " отримує 1 стак горіння!")
+			var ally_side: Array = resolver.battle_scene.ally_wards if attacker.team == "ally" else resolver.battle_scene.enemy_wards
+			var alive_allies: Array = resolver.get_alive_wards(ally_side).filter(func(w): return w != attacker)
+			if not alive_allies.is_empty():
+				var ally_helper = alive_allies[randi() % alive_allies.size()]
+				if resolver.battle_log:
+					resolver.battle_log.add_entry("Рик: %s атакує разом з Оцієм!" % ally_helper.name)
+				await execute_skill(resolver, ally_helper, target, "Q")
+
+
+static func check_otsii_passive_death(resolver, dead_ward) -> void:
+	var team_side: Array = resolver.battle_scene.ally_wards if dead_ward.team == "ally" else resolver.battle_scene.enemy_wards
+
+	# Otsii сам помер → Коло пекельного вогню випадковому союзнику
+	if dead_ward.ward_id == "otsii":
+		var alive_allies: Array = team_side.filter(func(w): return not w.is_dead)
+		if not alive_allies.is_empty():
+			var lucky = alive_allies[randi() % alive_allies.size()]
+			lucky.add_status("fire_circle", 2)
+			lucky._update_status_visuals()
+			if resolver.battle_log:
+				resolver.battle_log.add_entry("Оцій: передає Коло пекельного вогню " + lucky.name + "!")
+				resolver.battle_log.add_effect(lucky.name, lucky.team, "Коло пекельного вогню (2 ходи)")
+		return
+
+	# Союзник помер → живий Оцій зменшує КД скіла з найбільшим поточним КД на 2
+	var otsii_ward = null
+	for w in team_side:
+		if w.ward_id == "otsii" and not w.is_dead:
+			otsii_ward = w
+			break
+	if otsii_ward == null:
+		return
+
+	var alive_wards: Array = team_side.filter(func(w): return not w.is_dead)
+	var cd_skills: Array = []
+	for w in alive_wards:
+		for sk in ["Q", "W", "E"]:
+			var cd_val: int = w._current_cd.get(sk, 0)
+			if cd_val > 0:
+				cd_skills.append({"ward": w, "skill": sk, "cd": cd_val})
+
+	if cd_skills.is_empty():
+		if resolver.battle_log:
+			resolver.battle_log.add_entry("Оцій (пасивна): немає скілів на КД.")
+		return
+
+	var max_cd: int = 0
+	for entry in cd_skills:
+		if entry.cd > max_cd:
+			max_cd = entry.cd
+
+	var top_skills: Array = cd_skills.filter(func(e): return e.cd == max_cd)
+	var chosen = top_skills[randi() % top_skills.size()]
+	var new_cd: int = max(0, chosen.cd - 2)
+	chosen.ward._current_cd[chosen.skill] = new_cd
+	if resolver.battle_log:
+		resolver.battle_log.add_entry(
+			"Оцій (пасивна): %s скіл %s — КД -2 (залишок: %d)" % [chosen.ward.name, chosen.skill, new_cd]
+		)
+
+
+# =============================================================================
+# SIOMYI (Сьомий слуга)
+# =============================================================================
+# P — З пилу жару: на початку ходу — 2 стаки горіння рандомному варду (в battle_scene).
+# Q — Покарання: ворог → +N стаків горіння (N=поточні стаки); союзник → -N стаків.
+# W — Бар'єр (КД 3): союзник отримує "barrier" (2 ходи, 30 HP щит). Логіка в battle_resolver.
+# E — Вогонь сьомого (КД 7): якщо >5 горіння → конвертує кожні 5 стаків у 1 "fire_seventh".
+
+static func _execute_siomyi(resolver, attacker, target, skill_key: String) -> void:
+	match skill_key:
+		"Q":
+			if target == null: return
+			var total_burn: int = target.get_status("burning")
+			if total_burn <= 0:
+				if resolver.battle_log:
+					resolver.battle_log.add_entry("Покарання: %s не має стаків горіння." % target.name)
+				return
+			if target.team != attacker.team:
+				target.extend_burning(1)
+				if resolver.battle_log:
+					resolver.battle_log.add_entry("Покарання: %s — тривалість горіння +1 хід!" % target.name)
+			else:
+				target.reduce_burning_turns(1)
+				if resolver.battle_log:
+					resolver.battle_log.add_entry("Покарання: %s — тривалість горіння -1 хід!" % target.name)
+
+		"W":
+			if target == null: target = attacker
+			target.add_status("barrier", 2)
+			target._update_status_visuals()
+			if resolver.battle_log:
+				resolver.battle_log.add_entry("Бар'єр: %s захищений щитом (30 HP, 2 ходи)!" % target.name)
+				resolver.battle_log.add_effect(target.name, target.team, "Бар'єр (2 ходи, 30 HP)")
+
+		"E":
+			if target == null: return
+			var burn_total: int = target.get_status("burning")
+			if burn_total < 5:
+				if resolver.battle_log:
+					resolver.battle_log.add_entry("Вогонь сьомого: потрібно мінімум 5 стаків горіння! (зараз: %d)" % burn_total)
+				return
+			var vos: int      = burn_total / 5
+			var consumed: int = vos * 5
+			target.consume_burning_stacks(consumed)
+			target.add_status("fire_seventh", vos)
+			target._update_status_visuals()
+			if resolver.battle_log:
+				resolver.battle_log.add_entry(
+					"Вогонь сьомого! %s: -%d горіння → +%d стаків Вогню Сьомого!" % [target.name, consumed, vos]
+				)
+				resolver.battle_log.add_effect(target.name, target.team, "Вогонь сьомого (%d стак(и))" % vos)
+
+
+# =============================================================================
+# ZHNETS (Жнець)
+# =============================================================================
+# P — Присутність: коли ворог перетинає поріг 50% HP — 1 горіння (2 ходи) двом рандомним ворогам.
+#     Логіка в battle_resolver._check_zhnets_passive.
+# Q — Прокляття жнеця: 20 вогню по всіх + 1 горіння (2 ходи) кожному.
+# W — Маска горгони (КД 4): 3 горіння (2 ходи) на ціль.
+# E — Жнива (КД 3): позначає ціль "Жнивою". На початку НАСТУПНОГО ходу Жнеця:
+#     активує всі стаки горіння (count×turns×50) + 80 фіз.
+
+static func _execute_zhnets(resolver, attacker, target, skill_key: String) -> void:
+	var enemy_side: Array = resolver.battle_scene.enemy_wards if attacker.team == "ally" else resolver.battle_scene.ally_wards
+
+	match skill_key:
+		"Q":
+			for enemy in resolver.get_alive_wards(enemy_side):
+				await resolver.deal_damage_with_modifiers(attacker, enemy, 20, skill_key, "fire", true)
+				if not enemy.is_dead:
+					enemy.add_burning(1, 2)
+			if resolver.battle_log:
+				resolver.battle_log.add_entry("Прокляття жнеця: всі вороги — 20 вогню + 1 горіння (2 ходи)!")
+
+		"W":
+			if target == null: return
+			target.add_burning(3, 2)
+			if resolver.battle_log:
+				resolver.battle_log.add_entry("Маска горгони: %s — 3 стаки горіння (2 ходи)!" % target.name)
+				resolver.battle_log.add_effect(target.name, target.team, "Горіння (3 стаки, 2 ходи)")
+
+		"E":
+			if target == null: return
+			if attacker.has_meta("zhnets_e_target"):
+				resolver.battle_log.add_entry("Жнива вже активна — дочекайся наступного ходу!")
+				return
+			target.add_status("reaping", 1)
+			target._update_status_visuals()
+			attacker.set_meta("zhnets_e_target", target)
+			if resolver.battle_log:
+				resolver.battle_log.add_entry("Жнива: %s позначений! Атака на наступному ході." % target.name)
+				resolver.battle_log.add_effect(target.name, target.team, "Жнива (наступний хід Жнеця)")
+
+
+# =============================================================================
+# PARASYT (Паразит)
+# =============================================================================
+# P — Паразитування: при смерті ворога хілиться на 75 HP (в battle_resolver).
+# Q — Укол: 75 фіз шкоди.
+# W — Асиміляція (КД 2): -35 самошкоди + накладає "parasitism" ворогу (1 хід).
+#     На початку ходу ворога він б'є випадкового союзника випадковим single_enemy скілом.
+# E — Плач чаші (КД 2): -195 самошкоди + Регенерація 3 ходи (100 HP/хід).
+
+static func _execute_parasyt(resolver, attacker, target, skill_key: String) -> void:
+	match skill_key:
+		"Q":
+			if target == null: return
+			await resolver.deal_damage_with_modifiers(attacker, target, 75, skill_key, "phys")
+
+		"W":
+			if target == null: return
+			if resolver.battle_log:
+				resolver.battle_log.add_entry("Асиміляція: %s вплітається у %s (-35 HP собі)!" % [attacker.name, target.name])
+			await resolver.deal_damage_with_modifiers(null, attacker, 35, "self_damage", "phys")
+			if attacker.is_dead: return
+			target.add_status("parasitism", 1)
+			target._update_status_visuals()
+			if resolver.battle_log:
+				resolver.battle_log.add_effect(target.name, target.team, "Паразитування (1 хід)")
+
+		"E":
+			if resolver.battle_log:
+				resolver.battle_log.add_entry("Плач чаші: %s жертвує 195 HP — набирається сил!" % attacker.name)
+			await resolver.deal_damage_with_modifiers(null, attacker, 195, "self_damage", "phys")
+			if attacker.is_dead: return
+			attacker.add_status("regen", 3)
+			attacker._update_status_visuals()
+			if resolver.battle_log:
+				resolver.battle_log.add_effect(attacker.name, attacker.team, "Регенерація (3 ходи, 100 HP/хід)")

@@ -120,6 +120,7 @@ var WARDS: Dictionary = {
 	},
 	"parasyt": {
 		"name": "Паразит",
+		"hp": 350,
 		"element": "earth",
 		"portrait": "res://Основа/char/earth/Parazyte/Parazyte.png",
 		"short_desc_file": "res://Основа/char/earth/Parazyte/skills_short.txt",

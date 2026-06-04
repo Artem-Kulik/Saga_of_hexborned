@@ -71,6 +71,7 @@ var _etesena_w_labels: Array = []
 var _etesena_w_required: int = 0
 
 
+
 func _ready() -> void:
 	_apply_ward_data()
 	_create_battle_systems()
@@ -286,6 +287,7 @@ func _input(event: InputEvent) -> void:
 			await battle_resolver.attack(selected_attacker, enemy_target, selected_skill)
 			# Застосовуємо КД + логуємо (drag-to-target шлях)
 			_apply_and_log_cd(selected_attacker, selected_skill)
+			_clear_taunt_after_attack(selected_attacker)
 			if battle_resolver.is_team_dead(enemy_wards):
 				_finish_battle("ПЕРЕМОГА")
 				return
@@ -400,6 +402,7 @@ func _start_turn() -> void:
 	if current_ward.has_meta("untargetable") and current_ward.get_meta("untargetable"):
 		current_ward.set_meta("untargetable", false)
 		current_ward.modulate.a = 1.0
+		battle_log.add_entry("%s: Загороджуючий водопад спав — знову доступний як ціль." % current_ward.name)
 
 	# Підсвічуємо поточний Вард ДО перевірки оглушення —
 	# щоб гравець бачив іконку стану на ньому до моменту пропуску
@@ -421,14 +424,44 @@ func _start_turn() -> void:
 	battle_log.add_entry("====== ХІД ======")
 	battle_log.add_entry(current_ward.name)
 	battle_log.add_entry(current_ward.team)
-	
+
+	# === ПАСИВКА СЬОМОГО: 2 стаки горіння рандомному варду ===
+	if current_ward.ward_id == "siomyi":
+		var all_active: Array = []
+		for w in ally_wards + enemy_wards:
+			if not w.is_dead:
+				all_active.append(w)
+		if not all_active.is_empty():
+			var lucky = all_active[randi() % all_active.size()]
+			lucky.add_status("burning", 2)
+			lucky._update_status_visuals()
+			battle_log.add_entry("З пилу жару: %s отримує 2 стаки горіння!" % lucky.name)
+
+	# === ВОГОНЬ СЬОМОГО: шкода всій команді ===
+	var fs_stacks: int = current_ward.get_status("fire_seventh")
+	if fs_stacks > 0:
+		var fs_team: Array = ally_wards if current_ward.team == "ally" else enemy_wards
+		battle_log.add_entry("Вогонь сьомого спалахує! %d стак(и) → %d вогняної шкоди кожному!" % [fs_stacks, 150 * fs_stacks])
+		for w in fs_team:
+			if not w.is_dead:
+				await battle_resolver.deal_damage_with_modifiers(null, w, 150 * fs_stacks, "fire_seventh", "fire")
+		current_ward.remove_status("fire_seventh", fs_stacks)
+		current_ward._update_status_visuals()
+		if battle_resolver.is_team_dead(ally_wards):
+			_finish_battle("ПОРАЗКА")
+			return
+		if battle_resolver.is_team_dead(enemy_wards):
+			_finish_battle("ПЕРЕМОГА")
+			return
+		if current_ward.is_dead:
+			_next_turn()
+			return
+
 	# === ОБРОБКА ГОРІННЯ ===
-	var burn_stacks = current_ward.get_status("burning")
-	if burn_stacks > 0:
-		battle_log.add_entry("Горіння! " + current_ward.name + " отримує шкоду.")
-		var burn_dmg = 50 * burn_stacks
+	if current_ward.get_status("burning") > 0:
+		var burn_dmg: int = current_ward.tick_burning()
+		battle_log.add_entry("Горіння! " + current_ward.name + " отримує %d вогняної шкоди." % burn_dmg)
 		await battle_resolver.deal_damage_with_modifiers(null, current_ward, burn_dmg, "burning", "fire")
-		current_ward.remove_status("burning", burn_stacks)
 		if current_ward.is_dead:
 			_next_turn()
 			return
@@ -436,6 +469,76 @@ func _start_turn() -> void:
 	# Тікаємо КД на початку кожного ходу персонажа
 	if current_ward.has_method("tick_cooldowns"):
 		current_ward.tick_cooldowns()
+
+	# === РЕГЕНЕРАЦІЯ ===
+	if current_ward.get_status("regen") > 0:
+		var regen_hp_before: int = current_ward.current_hp
+		current_ward.health.heal(100)
+		current_ward.remove_status("regen", 1)
+		battle_log.add_heal(current_ward.name, current_ward.team, regen_hp_before, current_ward.current_hp, current_ward.max_hp)
+		if current_ward.get_status("regen") == 0:
+			battle_log.add_entry(current_ward.name + ": регенерація завершилась.")
+
+	# Тік кола пекельного вогню та бар'єру
+	if current_ward.get_status("fire_circle") > 0:
+		current_ward.remove_status("fire_circle", 1)
+		if current_ward.get_status("fire_circle") == 0:
+			battle_log.add_entry(current_ward.name + ": Коло пекельного вогню згасло.")
+	if current_ward.get_status("barrier") > 0:
+		current_ward.remove_status("barrier", 1)
+		if current_ward.get_status("barrier") == 0:
+			battle_log.add_entry(current_ward.name + ": Бар'єр згас.")
+
+	# === ПАРАЗИТУВАННЯ: авто-атака союзника ===
+	if current_ward.get_status("parasitism") > 0:
+		current_ward.remove_status("parasitism", current_ward.get_status("parasitism"))
+		battle_log.add_entry("Паразитування! %s атакує свого союзника!" % current_ward.name)
+		var SkillExecP = preload("res://scripts/battle/skill_executor.gd")
+		var same_team: Array = ally_wards if current_ward.team == "ally" else enemy_wards
+		var alive_allies: Array = battle_resolver.get_alive_wards(same_team).filter(
+			func(w): return w != current_ward
+		)
+		var available_skills: Array = []
+		for sk in ["Q", "W", "E"]:
+			if current_ward._current_cd.get(sk, 0) == 0:
+				var tt: String = SkillExecP.get_skill_target_type(current_ward.ward_id, sk, current_ward)
+				if tt == "single_enemy":
+					available_skills.append(sk)
+		if not available_skills.is_empty() and not alive_allies.is_empty():
+			var chosen_sk: String = available_skills[randi() % available_skills.size()]
+			var target_ally = alive_allies[randi() % alive_allies.size()]
+			battle_log.add_entry("%s застосовує %s проти %s!" % [current_ward.name, chosen_sk, target_ally.name])
+			_turn_locked = true
+			await battle_resolver.attack(current_ward, target_ally, chosen_sk)
+		else:
+			battle_log.add_entry("Паразитування: немає доступних скілів або союзників.")
+		if battle_resolver.is_team_dead(enemy_wards): _finish_battle("ПЕРЕМОГА"); return
+		if battle_resolver.is_team_dead(ally_wards):  _finish_battle("ПОРАЗКА");  return
+		_next_turn()
+		return
+
+	# === ЖНЕЦЬ: авто-Жнива ===
+	if current_ward.ward_id == "zhnets" and current_ward.has_meta("zhnets_e_target"):
+		var harvest_target = current_ward.get_meta("zhnets_e_target")
+		current_ward.remove_meta("zhnets_e_target")
+		if is_instance_valid(harvest_target) and not harvest_target.is_dead:
+			harvest_target.remove_status("reaping", harvest_target.get_status("reaping"))
+			battle_log.add_entry("Жнива! Жнець атакує %s!" % harvest_target.name)
+			_turn_locked = true
+			var burn_dmg: int = harvest_target.activate_all_burning()
+			if burn_dmg > 0:
+				battle_log.add_entry("Жнива: активує горіння — %d вогняної шкоди!" % burn_dmg)
+				await battle_resolver.deal_damage_with_modifiers(current_ward, harvest_target, burn_dmg, "burning", "fire")
+			if is_instance_valid(harvest_target) and not harvest_target.is_dead:
+				await battle_resolver.deal_damage_with_modifiers(current_ward, harvest_target, 80, "zhnets_e", "phys")
+		else:
+			if is_instance_valid(harvest_target):
+				harvest_target.remove_status("reaping", harvest_target.get_status("reaping"))
+			battle_log.add_entry("Жнива: ціль вже мертва.")
+		if battle_resolver.is_team_dead(enemy_wards): _finish_battle("ПЕРЕМОГА"); return
+		if battle_resolver.is_team_dead(ally_wards):  _finish_battle("ПОРАЗКА");  return
+		_next_turn()
+		return
 
 	if turn_manager.current_team == "enemy":
 		await get_tree().create_timer(0.8).timeout
@@ -467,19 +570,34 @@ func _on_skill_clicked(ward, skill_key: String) -> void:
 
 	if ward != current_ward:
 		battle_log.add_entry("Зараз ходить інший Вард")
+		AnimationCode.skill_blocked_animation(_get_skill_button(ward, skill_key))
 		return
 
 	# Перевірка КД
 	if ward.has_method("is_skill_ready") and not ward.is_skill_ready(skill_key):
 		var cd_left: int = ward._current_cd.get(skill_key, 0)
 		battle_log.add_entry("Скіл " + skill_key + " на КД ще " + str(cd_left) + " ход.")
+		AnimationCode.skill_blocked_animation(_get_skill_button(ward, skill_key))
 		return
+
+	# Сьомий E: блок якщо жоден ворог не має 5+ стаків горіння
+	if ward.ward_id == "siomyi" and skill_key == "E":
+		var has_valid_target: bool = false
+		for w in enemy_wards:
+			if not w.is_dead and w.get_status("burning") >= 5:
+				has_valid_target = true
+				break
+		if not has_valid_target:
+			battle_log.add_entry("Вогонь сьомого: жоден ворог не має мінімум 5 стаків горіння!")
+			AnimationCode.skill_blocked_animation(_get_skill_button(ward, skill_key))
+			return
 
 	# Рікер W: лише якщо попередній скіл був Q або E
 	if ward.ward_id == "riker" and skill_key == "W":
 		var last: String = ward.get_meta("riker_last_skill", "") if ward.has_meta("riker_last_skill") else ""
 		if last != "Q" and last != "E":
 			battle_log.add_entry("Стиль Доломедес: спочатку використайте Q або E!")
+			AnimationCode.skill_blocked_animation(_get_skill_button(ward, skill_key))
 			return
 
 	selected_attacker = ward
@@ -501,9 +619,24 @@ func _on_skill_clicked(ward, skill_key: String) -> void:
 			)
 		battle_log.add_entry("Обраний скіл: " + skill_key)
 		battle_log.add_entry("Обери ворога")
+	elif target_type == "single_ally":
+		waiting_for_target = true
+		if pressed_button:
+			AnimationCode.skill_pressed_animation(pressed_button)
+		battle_log.add_entry("Обраний скіл: " + skill_key)
+		battle_log.add_entry("Обери союзника (або себе)")
+	elif target_type == "single_any":
+		waiting_for_target = true
+		if pressed_button:
+			AnimationCode.skill_pressed_animation(pressed_button)
+		battle_log.add_entry("Обраний скіл: " + skill_key)
+		battle_log.add_entry("Обери будь-яку ціль")
 	elif target_type == "etesena_w":
 		var alive_count: int = battle_resolver.get_alive_wards(enemy_wards).size()
-		if alive_count == 0: return
+		if alive_count == 0:
+			battle_log.add_entry("Немає живих цілей!")
+			AnimationCode.skill_blocked_animation(pressed_button)
+			return
 		# Якщо під провокацією — лише 1 ціль (тільки провокатор)
 		if ward.taunted_by != "":
 			var taunter_found = false
@@ -530,6 +663,7 @@ func _on_skill_clicked(ward, skill_key: String) -> void:
 					break
 			if taunter_alive:
 				battle_log.add_entry("Під Провокацією можна використовувати лише направлені атаки!")
+				AnimationCode.skill_blocked_animation(pressed_button)
 				return
 			else:
 				ward.remove_status("taunt", ward.get_status("taunt"))
@@ -541,6 +675,7 @@ func _on_skill_clicked(ward, skill_key: String) -> void:
 		_turn_locked = true
 		await battle_resolver.attack(selected_attacker, null, selected_skill)
 		_apply_and_log_cd(selected_attacker, selected_skill)
+		_clear_taunt_after_attack(selected_attacker)
 		if battle_resolver.is_team_dead(enemy_wards):
 			_finish_battle("ПЕРЕМОГА")
 			return
@@ -559,6 +694,23 @@ func _on_ward_clicked(ward) -> void:
 
 	if not waiting_for_target:
 		return
+
+	# Скіли на союзника (single_ally / single_any)
+	if ward.team == "ally" and selected_attacker != null:
+		var SkillExecW = preload("res://scripts/battle/skill_executor.gd")
+		var w_type = SkillExecW.get_skill_target_type(selected_attacker.ward_id, selected_skill, selected_attacker)
+		if w_type == "single_ally" or w_type == "single_any":
+			if ward.is_dead: return
+			hide_target_arrow()
+			waiting_for_target = false
+			_turn_locked = true
+			await battle_resolver.attack(selected_attacker, ward, selected_skill)
+			_apply_and_log_cd(selected_attacker, selected_skill)
+			_clear_taunt_after_attack(selected_attacker)
+			if battle_resolver.is_team_dead(enemy_wards): _finish_battle("ПЕРЕМОГА"); return
+			if battle_resolver.is_team_dead(ally_wards):  _finish_battle("ПОРАЗКА"); return
+			_next_turn()
+			return
 
 	if ward.team != "enemy":
 		battle_log.add_entry("Це не ворог")
@@ -593,6 +745,13 @@ func _on_ward_clicked(ward) -> void:
 				selected_attacker.remove_status("taunt", selected_attacker.get_status("taunt"))
 				selected_attacker.taunted_by = ""
 
+	# Сьомий E: ціль повинна мати мінімум 5 стаків горіння
+	if selected_attacker.ward_id == "siomyi" and selected_skill == "E":
+		if ward.get_status("burning") < 5:
+			battle_log.add_entry("Вогонь сьомого: у %s лише %d стаків горіння (мінімум 5)!" % [ward.name, ward.get_status("burning")])
+			AnimationCode.skill_blocked_animation(_get_skill_button(selected_attacker, selected_skill))
+			return
+
 	hide_target_arrow()
 
 	waiting_for_target = false
@@ -606,6 +765,7 @@ func _on_ward_clicked(ward) -> void:
 
 	# Застосовуємо КД + логуємо
 	_apply_and_log_cd(selected_attacker, selected_skill)
+	_clear_taunt_after_attack(selected_attacker)
 
 	if battle_resolver.is_team_dead(enemy_wards):
 		_finish_battle("ПЕРЕМОГА")
@@ -679,8 +839,15 @@ func _enemy_attack(enemy_ward) -> void:
 		else:
 			var valid_targets = alive_targets.filter(func(w): return not (w.has_meta("untargetable") and w.get_meta("untargetable")))
 			if valid_targets.is_empty():
-				valid_targets = alive_targets # Fallback if all are untargetable
+				valid_targets = alive_targets
 			target = valid_targets.pick_random()
+	elif target_type == "single_ally":
+		var alive_allies = battle_resolver.get_alive_wards(enemy_wards)
+		target = alive_allies.pick_random() if not alive_allies.is_empty() else enemy_ward
+	elif target_type == "single_any":
+		# AI: атакує ворога (пріоритет — ті з горінням)
+		var burn_targets = alive_targets.filter(func(w): return w.get_status("burning") > 0)
+		target = burn_targets.pick_random() if not burn_targets.is_empty() else alive_targets.pick_random()
 
 	await battle_resolver.attack(
 		enemy_ward,
@@ -690,6 +857,7 @@ func _enemy_attack(enemy_ward) -> void:
 
 	# Застосовуємо КД + логуємо для ворога
 	_apply_and_log_cd(enemy_ward, random_skill)
+	_clear_taunt_after_attack(enemy_ward)
 
 	if battle_finished:
 		return
@@ -788,6 +956,7 @@ func _etesena_w_execute() -> void:
 	_turn_locked = true
 	await battle_resolver.attack(selected_attacker, null, selected_skill)
 	_apply_and_log_cd(selected_attacker, selected_skill)
+	_clear_taunt_after_attack(selected_attacker)
 
 	if battle_resolver.is_team_dead(enemy_wards):
 		_finish_battle("ПЕРЕМОГА")
@@ -859,6 +1028,25 @@ func _finish_battle(result_text: String) -> void:
 
 func _show_battle_result(result_text: String) -> void:
 	battle_log.add_entry("Результат бою: " + result_text)
+
+
+# ── Taunt helpers ────────────────────────────────────────────────────────────
+
+func _clear_taunt_after_attack(attacker) -> void:
+	if attacker == null: return
+	if attacker.taunted_by != "":
+		attacker.remove_status("taunt", attacker.get_status("taunt"))
+		attacker.taunted_by = ""
+		battle_log.add_entry(attacker.name + ": провокацію знято.")
+
+func clear_taunt_on_death(dead_ward) -> void:
+	var all_wards: Array = ally_wards + enemy_wards
+	for w in all_wards:
+		if not w.is_dead and w.taunted_by == dead_ward.ward_id:
+			w.remove_status("taunt", w.get_status("taunt"))
+			w.taunted_by = ""
+			battle_log.add_entry(w.name + ": провокацію знято (провокатор загинув).")
+
 
 
 ## Застосовує КД і логує його, якщо КД > 0

@@ -248,3 +248,90 @@ grow_vertical = 2
 texture = ExtResource("2_a7r01")
 expand_mode = 3
 stretch_mode = 5
+
+[node name="barrier" type="Control" parent="." unique_id=918273651]
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="barrier" type="TextureRect" parent="barrier" unique_id=918273652]
+custom_minimum_size = Vector2(58, 38)
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("8_bji38")
+expand_mode = 3
+stretch_mode = 5
+
+[node name="frame" type="TextureRect" parent="barrier/barrier" unique_id=918273653]
+custom_minimum_size = Vector2(46.965, 47.64)
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("2_a7r01")
+expand_mode = 3
+stretch_mode = 5
+
+[node name="fire_seventh" type="Control" parent="." unique_id=918273654]
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="fire_seventh" type="TextureRect" parent="fire_seventh" unique_id=918273655]
+custom_minimum_size = Vector2(58, 38)
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("3_u30pv")
+expand_mode = 3
+stretch_mode = 5
+
+[node name="frame" type="TextureRect" parent="fire_seventh/fire_seventh" unique_id=918273656]
+custom_minimum_size = Vector2(46.965, 47.64)
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("2_a7r01")
+expand_mode = 3
+stretch_mode = 5
+
+[node name="fire_circle" type="Control" parent="." unique_id=918273648]
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="fire_circle" type="TextureRect" parent="fire_circle" unique_id=918273649]
+custom_minimum_size = Vector2(58, 38)
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("8_bji38")
+expand_mode = 3
+stretch_mode = 5
+
+[node name="frame" type="TextureRect" parent="fire_circle/fire_circle" unique_id=918273650]
+custom_minimum_size = Vector2(46.965, 47.64)
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("2_a7r01")
+expand_mode = 3
+stretch_mode = 5
