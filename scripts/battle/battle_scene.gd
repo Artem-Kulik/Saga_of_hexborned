@@ -370,18 +370,21 @@ func _start_turn() -> void:
 		current_ward.set_meta("untargetable", false)
 		current_ward.modulate.a = 1.0
 
+	# Підсвічуємо поточний Вард ДО перевірки оглушення —
+	# щоб гравець бачив іконку стану на ньому до моменту пропуску
+	_update_active_ward_visual()
+
 	# === ОБРОБКА ОГЛУШЕННЯ ===
 	# Оглушений Вард пропускає хід; хід переходить до наступного Варда ТІЄї ж команди.
 	# Жодна команда не може ходити двічі поспіль.
 	if current_ward.get_status("stun") > 0:
 		battle_log.add_entry(current_ward.name + " оглушений — пропускає хід!")
+		await get_tree().create_timer(0.6).timeout
 		current_ward.remove_status("stun", 1)
 		if current_ward.has_method("tick_cooldowns"):
 			current_ward.tick_cooldowns()
 		_start_turn()  # Та ж команда — наступний Вард, без switch_team()
 		return
-
-	_update_active_ward_visual()
 
 	battle_log.add_empty_line()
 	battle_log.add_entry("====== ХІД ======")
