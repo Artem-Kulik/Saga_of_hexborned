@@ -27,16 +27,6 @@ var selected_ids: Array[String] = []
 	$PickedWards/ward_2,
 	$PickedWards/ward_3,
 ]
-@onready var _portrait_nodes: Array[TextureRect] = [
-	$PickedWards/ward_1/portrait_1,
-	$PickedWards/ward_2/portrait_2,
-	$PickedWards/ward_3/portrait_3,
-]
-@onready var _frame_nodes: Array[TextureRect] = [
-	$PickedWards/ward_1/frame_1,
-	$PickedWards/ward_2/frame_2,
-	$PickedWards/ward_3/frame_3,
-]
 
 @onready var _tabs_menu: Control = $Wards_collection/chose_zone/TabsMenu
 
@@ -289,22 +279,20 @@ func _play_card_anim(slot_idx: int, element: String) -> void:
 
 # --- Оновлення верхніх слотів ---
 
+const _CARD_REVERSE := preload("res://Основа/visual/element_cards/card_reverse.png")
+
 func _refresh_picked_slots() -> void:
 	for i in range(3):
 		if i < selected_ids.size():
 			var data := WardDatabase.get_data(selected_ids[i])
 			var portrait_path: String = data.get("portrait", "")
 			if portrait_path != "" and ResourceLoader.exists(portrait_path):
-				_portrait_nodes[i].texture = load(portrait_path)
-			_reverse_nodes[i].visible = false
-			_portrait_nodes[i].visible = true
-			_frame_nodes[i].visible = true
+				_reverse_nodes[i].texture = load(portrait_path)
+				_reverse_nodes[i].stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_COVERED
 			_slot_click_overlays[i].mouse_filter = Control.MOUSE_FILTER_STOP
 		else:
-			_portrait_nodes[i].texture = null
-			_portrait_nodes[i].visible = false
-			_frame_nodes[i].visible = false
-			_reverse_nodes[i].visible = true
+			_reverse_nodes[i].texture = _CARD_REVERSE
+			_reverse_nodes[i].stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_COVERED
 			_slot_click_overlays[i].mouse_filter = Control.MOUSE_FILTER_IGNORE
 
 
