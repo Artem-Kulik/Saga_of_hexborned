@@ -8,6 +8,13 @@
 [ext_resource type="Texture2D" uid="uid://dvy8in45hg52q" path="res://Основа/char/fire/MasterOichi/P.png" id="6_o3h5o"]
 [ext_resource type="Texture2D" uid="uid://bwcqcvdlb7r0s" path="res://Основа/char/fire/MasterOichi/W.png" id="7_oyhxc"]
 [ext_resource type="Texture2D" uid="uid://dj3iflrd4826" path="res://Основа/visual/status/armor_status.png" id="8_bji38"]
+[ext_resource type="Texture2D" uid="uid://dkl8win42vsli" path="res://Основа/char/fire/Ocii/w.png" id="9_bji38"]
+[ext_resource type="Texture2D" uid="uid://cc3fapn06kr5b" path="res://Основа/char/fire/Znec/e.png" id="10_78eam"]
+[ext_resource type="Texture2D" uid="uid://cc4pwfc5g1q8h" path="res://Основа/char/fire/Prayer/e.png" id="11_qb80u"]
+[ext_resource type="Texture2D" uid="uid://chx4pucymxanx" path="res://Основа/char/earth/Phisita/p.png" id="12_ahk5n"]
+[ext_resource type="Texture2D" uid="uid://d0iptobleuyp2" path="res://Основа/char/air/Hiskoris/p.png" id="13_uux2m"]
+[ext_resource type="Texture2D" uid="uid://rhcxbwt2rvjq" path="res://Основа/char/earth/Parazyte/w.png" id="14_iboq1"]
+[ext_resource type="Texture2D" uid="uid://dxtcnl1qqc748" path="res://Основа/char/earth/Adoneya/e.png" id="15_yxmqu"]
 
 [node name="status_types" type="Control" unique_id=1469794512]
 layout_mode = 3
@@ -209,6 +216,209 @@ expand_mode = 3
 stretch_mode = 5
 
 [node name="frame" type="TextureRect" parent="armor/armor" unique_id=1742278337]
+custom_minimum_size = Vector2(46.965, 47.64)
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("2_a7r01")
+expand_mode = 3
+stretch_mode = 5
+
+[node name="ocii_circle_flame" type="Control" parent="." unique_id=439536963]
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="circle" type="TextureRect" parent="ocii_circle_flame" unique_id=985438378]
+custom_minimum_size = Vector2(58, 38)
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("9_bji38")
+expand_mode = 3
+stretch_mode = 5
+
+[node name="frame" type="TextureRect" parent="ocii_circle_flame/circle" unique_id=876086839]
+custom_minimum_size = Vector2(46.965, 47.64)
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("2_a7r01")
+expand_mode = 3
+stretch_mode = 5
+
+[node name="znec_znyva" type="Control" parent="." unique_id=414172506]
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="znyva" type="TextureRect" parent="znec_znyva" unique_id=1642823038]
+custom_minimum_size = Vector2(58, 38)
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("10_78eam")
+expand_mode = 3
+stretch_mode = 5
+
+[node name="frame" type="TextureRect" parent="znec_znyva/znyva" unique_id=799824863]
+custom_minimum_size = Vector2(46.965, 47.64)
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("2_a7r01")
+expand_mode = 3
+stretch_mode = 5
+
+[node name="prayers_fire" type="Control" parent="." unique_id=1324157460]
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="fire" type="TextureRect" parent="prayers_fire" unique_id=1205332705]
+custom_minimum_size = Vector2(58, 38)
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("11_qb80u")
+expand_mode = 3
+stretch_mode = 5
+
+[node name="frame" type="TextureRect" parent="prayers_fire/fire" unique_id=1049235555]
+custom_minimum_size = Vector2(46.965, 47.64)
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("2_a7r01")
+expand_mode = 3
+stretch_mode = 5
+
+[node name="phisita_grav" type="Control" parent="." unique_id=1894282023]
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="grav" type="TextureRect" parent="phisita_grav" unique_id=83475870]
+custom_minimum_size = Vector2(58, 38)
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("12_ahk5n")
+expand_mode = 3
+stretch_mode = 5
+
+[node name="frame" type="TextureRect" parent="phisita_grav/grav" unique_id=464702671]
+custom_minimum_size = Vector2(46.965, 47.64)
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("2_a7r01")
+expand_mode = 3
+stretch_mode = 5
+
+[node name="hiscoris_scares" type="Control" parent="." unique_id=305703854]
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="scares" type="TextureRect" parent="hiscoris_scares" unique_id=375830699]
+custom_minimum_size = Vector2(58, 38)
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("13_uux2m")
+expand_mode = 3
+stretch_mode = 5
+
+[node name="frame" type="TextureRect" parent="hiscoris_scares/scares" unique_id=1264364322]
+custom_minimum_size = Vector2(46.965, 47.64)
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("2_a7r01")
+expand_mode = 3
+stretch_mode = 5
+
+[node name="parazyte_assim" type="Control" parent="." unique_id=2097308865]
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="assimilation" type="TextureRect" parent="parazyte_assim" unique_id=1956712725]
+custom_minimum_size = Vector2(58, 38)
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("14_iboq1")
+expand_mode = 3
+stretch_mode = 5
+
+[node name="frame" type="TextureRect" parent="parazyte_assim/assimilation" unique_id=496977196]
+custom_minimum_size = Vector2(46.965, 47.64)
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("2_a7r01")
+expand_mode = 3
+stretch_mode = 5
+
+[node name="adoneya_golem" type="Control" parent="." unique_id=420333726]
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="golem" type="TextureRect" parent="adoneya_golem" unique_id=207238620]
+custom_minimum_size = Vector2(58, 38)
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("15_yxmqu")
+expand_mode = 3
+stretch_mode = 5
+
+[node name="frame" type="TextureRect" parent="adoneya_golem/golem" unique_id=1375580435]
 custom_minimum_size = Vector2(46.965, 47.64)
 layout_mode = 1
 anchors_preset = 15
