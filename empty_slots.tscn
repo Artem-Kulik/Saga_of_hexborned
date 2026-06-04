@@ -1,6 +1,6 @@
 [gd_scene format=3 uid="uid://ctcip5lgxyah7"]
 
-[ext_resource type="Texture2D" uid="uid://d1oqk5ocx1cpf" path="res://Основа/char/Вогонь/МайстерОічі/Майстер Оічі Скіли.png" id="1_7u4vi"]
+[ext_resource type="Texture2D" uid="uid://d1oqk5ocx1cpf" path="res://Основа/visual/choose_stage/epmty_slot_frame.png" id="1_7u4vi"]
 [ext_resource type="Script" uid="uid://cm4a30k3aamxh" path="res://empty-slot.gd" id="1_uycjr"]
 [ext_resource type="Texture2D" uid="uid://b0p2bn3qcujas" path="res://Основа/visual/choose_stage/portrait_chose_hl.png" id="2_j3xqt"]
 [ext_resource type="Texture2D" uid="uid://ue8lietc8xdk" path="res://Основа/visual/choose_stage/epmty_slot_frame.png" id="4_j3xqt"]

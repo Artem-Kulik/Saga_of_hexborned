@@ -1,7 +1,6 @@
 extends Node
 
-const SkillExecutor            = preload("res://scripts/battle/skill_executor.gd")
-const SkillAnimationDispatcher = preload("res://scripts/battle/skill_animation_dispatcher.gd")
+const SkillExecutor = preload("res://scripts/battle/skill_executor.gd")
 
 var battle_log      = null
 var battle_scene    = null
@@ -41,7 +40,7 @@ func attack(attacker, target, skill_key: String = "Q") -> void:
 	skill_controller.clear()
 
 
-func deal_damage_with_modifiers(attacker, target, base_damage: int, skill_key: String, forced_damage_type: String = "") -> void:
+func deal_damage_with_modifiers(attacker, target, base_damage: int, skill_key: String, forced_damage_type: String = "", is_aoe: bool = false) -> void:
 	if target == null:
 		return
 
@@ -67,7 +66,7 @@ func deal_damage_with_modifiers(attacker, target, base_damage: int, skill_key: S
 			var def_mults = ELEMENT_MULTIPLIERS[target_element]
 			if def_mults.has(damage_type):
 				mult = def_mults[damage_type]
-				
+
 	var armor_dmg = mini(base_damage, armor)
 	var hp_dmg = base_damage - armor_dmg
 	var final_hp_dmg = int(hp_dmg * mult)
@@ -79,7 +78,7 @@ func deal_damage_with_modifiers(attacker, target, base_damage: int, skill_key: S
 		final_damage,
 		skill_key,
 		"-",
-		"skill",
+		"effect" if is_aoe else "skill",
 		base_damage,
 		mult
 	)
@@ -98,6 +97,41 @@ func apply_damage(
 ) -> void:
 	if target == null:
 		return
+
+	# Бар'єр Сьомого: поглинає до 30 шкоди, атакуючий отримує 1 горіння, бар'єр зникає.
+	if damage > 0 and skill_key != "P" and target.get_status("barrier") > 0:
+		var absorbed: int = mini(damage, 30)
+		damage -= absorbed
+		target.remove_status("barrier", target.get_status("barrier"))
+		target._update_status_visuals()
+		if source != null and is_instance_valid(source) and not source.is_dead:
+			source.add_status("burning", 1)
+			source._update_status_visuals()
+		if battle_log:
+			battle_log.add_entry("Бар'єр поглинув %d шкоди! %s отримує 1 стак горіння." % [absorbed, source.name if source else "?"])
+
+	# Пасивка Рікера "На волосині": якщо удар смертельний — відміняє його, авто-використовує E, помирає.
+	if target.ward_id == "riker" and damage > 0 and target.current_hp > 0 and skill_key != "passive_death":
+		if not target.has_meta("riker_passive_used"):
+			var armor: int = target.health.current_armor if target.get("health") else 0
+			var hp_damage: int = damage - mini(damage, armor)
+			if hp_damage >= target.current_hp:
+				target.set_meta("riker_passive_used", true)
+				if battle_log:
+					battle_log.add_entry("На волосині: " + target.name + " відміняє смертельний удар!")
+					battle_log.add_effect(target.name, target.team, "На волосині")
+				skill_controller.activate("riker", "E", target)
+				if source != null and not source.is_dead:
+					await SkillExecutor.execute_skill(self, target, source, "E")
+				else:
+					var enemy_side: Array = battle_scene.enemy_wards if target.team == "ally" else battle_scene.ally_wards
+					var alive = get_alive_wards(enemy_side)
+					if not alive.is_empty():
+						await SkillExecutor.execute_skill(self, target, alive[0], "E")
+				skill_controller.clear()
+				# Рікер вмирає після пасивки
+				await apply_damage(null, target, target.current_hp + target.health.current_armor + 1, "passive_death", "-", "effect", 0, 1.0)
+				return
 
 	var source_name: String = "Невідомо"
 	var source_team: String = "-"
@@ -126,13 +160,13 @@ func apply_damage(
 				await target.take_damage(damage, source, skill_key)
 
 				var hp_after_hit: int = target.current_hp
-				var hp_different: int = hp_before_hit - hp_after_hit
+				var _hp_different: int = hp_before_hit - hp_after_hit
 
 				if damage > 0:
 					SkillExecutor.check_rage_passive(self, target)
-					# Пасивні удари (гідра тощо) не тригерять вогняний щит
 					if skill_key != "P":
 						_check_fire_shield(source, target)
+						_check_fire_circle(source, target)
 
 					AnimationCode.animation_dmg_number(
 						damage,
@@ -145,12 +179,13 @@ func apply_damage(
 		await target.take_damage(damage, source, skill_key)
 
 		var hp_after_hit: int = target.current_hp
-		var hp_different: int = hp_before_hit - hp_after_hit
+		var _hp_different: int = hp_before_hit - hp_after_hit
 
 		if damage > 0:
 			SkillExecutor.check_rage_passive(self, target)
 			if skill_key != "P":
 				_check_fire_shield(source, target)
+				_check_fire_circle(source, target)
 
 			AnimationCode.animation_dmg_number(
 				damage,
@@ -178,19 +213,73 @@ func apply_damage(
 	else:
 		print(source_name, " завдав ", damage, " шкоди ", target.name)
 
+	_check_zhnets_passive(target, hp_before, hp_after)
+
 	if target.is_dead and battle_log:
 		battle_log.add_death(target.name, target.team)
+		battle_scene.clear_taunt_on_death(target)
+		SkillExecutor.check_otsii_passive_death(self, target)
 		SkillExecutor.check_liah_passive(self, source, true)
+		_check_parasyt_passive(target)
+
+func _check_parasyt_passive(dead_ward) -> void:
+	if dead_ward == null: return
+	var heal_side: Array = battle_scene.ally_wards if dead_ward.team == "enemy" else battle_scene.enemy_wards
+	var parasyt_ward = null
+	for w in heal_side:
+		if w.ward_id == "parasyt" and not w.is_dead:
+			parasyt_ward = w
+			break
+	if parasyt_ward == null: return
+	var hp_before: int = parasyt_ward.current_hp
+	parasyt_ward.health.heal(75)
+	if battle_log:
+		battle_log.add_entry("Паразитування: %s поглинає силу загиблого!" % parasyt_ward.name)
+		battle_log.add_heal(parasyt_ward.name, parasyt_ward.team, hp_before, parasyt_ward.current_hp, parasyt_ward.max_hp)
 
 func _check_fire_shield(attacker, target) -> void:
 	if attacker == null or target == null: return
 	if target.has_meta("fire_shield") and target.get_meta("fire_shield"):
 		target.set_meta("fire_shield", false)
 		target._update_status_visuals()
-		attacker.add_status("burning", 2)
+		attacker.add_burning(2, 1)
 		if battle_log:
 			battle_log.add_entry("Вогняний щит відбиває атаку! " + attacker.name + " отримує 2 стаки Горіння.")
 			battle_log.add_effect(attacker.name, attacker.team, "Горіння (2 стаки)")
+
+func _check_fire_circle(attacker, target) -> void:
+	if attacker == null or target == null: return
+	if attacker.is_dead: return
+	if target.get_status("fire_circle") > 0:
+		attacker.add_burning(2, 1)
+		if battle_log:
+			battle_log.add_entry("Коло пекельного вогню! " + attacker.name + " отримує 2 стаки горіння.")
+			battle_log.add_effect(attacker.name, attacker.team, "Горіння (2 стаки від кола)")
+
+func _check_zhnets_passive(target, hp_before: int, hp_after: int) -> void:
+	if target == null or target.is_dead: return
+	# Лише коли зараз хід команди-суперника (союзники атакують ворогів)
+	if battle_scene.turn_manager.current_team == target.team: return
+	# Перетин порогу: був вище 50%, став нижче або рівно 50%
+	if not (hp_before * 2 > target.max_hp and hp_after * 2 <= target.max_hp): return
+	# Шукаємо живого Жнеця на боці атакуючих
+	var attacker_side: Array = battle_scene.ally_wards if target.team == "enemy" else battle_scene.enemy_wards
+	var zhnets_ward = null
+	for w in attacker_side:
+		if w.ward_id == "zhnets" and not w.is_dead:
+			zhnets_ward = w
+			break
+	if zhnets_ward == null: return
+	# 1 стак горіння (2 ходи) двом рандомним живим ворогам
+	var enemy_side: Array = battle_scene.ally_wards if target.team == "ally" else battle_scene.enemy_wards
+	var alive: Array = get_alive_wards(enemy_side)
+	if alive.is_empty(): return
+	alive.shuffle()
+	var cnt: int = mini(2, alive.size())
+	for i in range(cnt):
+		alive[i].add_burning(1, 2)
+	if battle_log:
+		battle_log.add_entry("Присутність: %s впав нижче 50%% — Жнець підпалює %d цілі!" % [target.name, cnt])
 
 func calc_damage_only(attacker, target, base_damage: int, skill_key: String, forced_damage_type: String = "") -> Dictionary:
 	var damage_type: String = forced_damage_type
