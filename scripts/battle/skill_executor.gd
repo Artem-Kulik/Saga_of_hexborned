@@ -460,7 +460,7 @@ static func _execute_etesena(resolver, attacker, target, skill_key: String) -> v
 		"W":
 			var targets: Array = attacker.get_meta("etesena_w_targets", [])
 			if attacker.has_meta("etesena_w_targets"):
-				attacker.erase_meta("etesena_w_targets")
+				attacker.remove_meta("etesena_w_targets")
 			for i in targets.size():
 				var t = targets[i]
 				if t == null or not is_instance_valid(t) or t.is_dead:
