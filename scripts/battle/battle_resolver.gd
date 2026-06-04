@@ -1,7 +1,6 @@
 extends Node
 
-const SkillExecutor            = preload("res://scripts/battle/skill_executor.gd")
-const SkillAnimationDispatcher = preload("res://scripts/battle/skill_animation_dispatcher.gd")
+const SkillExecutor = preload("res://scripts/battle/skill_executor.gd")
 
 var battle_log      = null
 var battle_scene    = null
@@ -126,7 +125,7 @@ func apply_damage(
 				await target.take_damage(damage, source, skill_key)
 
 				var hp_after_hit: int = target.current_hp
-				var hp_different: int = hp_before_hit - hp_after_hit
+				var _hp_different: int = hp_before_hit - hp_after_hit
 
 				if damage > 0:
 					SkillExecutor.check_rage_passive(self, target)
@@ -145,7 +144,7 @@ func apply_damage(
 		await target.take_damage(damage, source, skill_key)
 
 		var hp_after_hit: int = target.current_hp
-		var hp_different: int = hp_before_hit - hp_after_hit
+		var _hp_different: int = hp_before_hit - hp_after_hit
 
 		if damage > 0:
 			SkillExecutor.check_rage_passive(self, target)

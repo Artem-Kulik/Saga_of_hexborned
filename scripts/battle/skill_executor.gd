@@ -43,7 +43,7 @@ static func _execute_basic_attack(resolver, attacker, target, skill_key: String,
 	await resolver.deal_damage_with_modifiers(attacker, target, base_damage, skill_key)
 
 
-static func _execute_liah(resolver, attacker, target, skill_key: String, base_damage: int) -> void:
+static func _execute_liah(resolver, attacker, target, skill_key: String, _base_damage: int) -> void:
 	match skill_key:
 		"Q":
 			# Течія: Наносить 50(фіз). Якщо ціль мала максимальне HP — атакує ще раз (водяний).
@@ -111,7 +111,7 @@ static func check_rage_passive(resolver, target) -> void:
 	target.add_status("rage", 1)
 	resolver.battle_log.add_entry("Майстер Оічі отримує стак Ражу!")
 
-static func _execute_mais_oichi(resolver, attacker, target, skill_key: String, base_damage: int) -> void:
+static func _execute_mais_oichi(resolver, attacker, target, skill_key: String, _base_damage: int) -> void:
 	match skill_key:
 		"Q":
 			if target == null: return
@@ -160,7 +160,7 @@ static func _execute_mais_oichi(resolver, attacker, target, skill_key: String, b
 # Якщо живий лише один ворог — жодна гідра не спрацьовує.
 # E встановлює прапорець: наступна здібність гарантовано тригерить гідру.
 
-static func _execute_shopey(resolver, attacker, target, skill_key: String, base_damage: int) -> void:
+static func _execute_shopey(resolver, attacker, target, skill_key: String, _base_damage: int) -> void:
 	# Перевіряємо та споживаємо прапорець від E до виконання скіла
 	var e_hydra_ready: bool = attacker.has_meta("shopey_hydra_ready") and attacker.get_meta("shopey_hydra_ready")
 	if e_hydra_ready:
@@ -277,7 +277,7 @@ static func _execute_grump(resolver, attacker, target, skill_key: String, _base_
 				resolver.battle_log.add_entry("Броня Грумпа скинута до 0.")
 
 	# Пасивка: +25 броні наприкінці кожного ходу
-	await _grump_end_of_turn_passive(resolver, attacker)
+	_grump_end_of_turn_passive(resolver, attacker)
 
 
 static func _grump_end_of_turn_passive(resolver, attacker) -> void:
