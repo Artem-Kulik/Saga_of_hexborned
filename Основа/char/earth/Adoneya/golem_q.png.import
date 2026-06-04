@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://dg3c2u8aorwyx"
-path="res://.godot/imported/Ocii.png-df38fcc6ab50e8c164487961ce17d652.ctex"
+uid="uid://b2351phjn1id0"
+path="res://.godot/imported/golem_q.png-7d5311a4469b2efc0cb4a7537d60eaa9.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://Основа/char/fire/Ocii/Ocii.png"
-dest_files=["res://.godot/imported/Ocii.png-df38fcc6ab50e8c164487961ce17d652.ctex"]
+source_file="res://Основа/char/earth/Adoneya/golem_q.png"
+dest_files=["res://.godot/imported/golem_q.png-7d5311a4469b2efc0cb4a7537d60eaa9.ctex"]
 
 [params]
 

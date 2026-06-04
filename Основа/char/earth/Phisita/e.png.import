@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://sn0na7x3x3o"
-path="res://.godot/imported/infected_1_stage.png-90dc51a8924d804d4e0c8706766fa69f.ctex"
+uid="uid://qhf18gv04ui3"
+path="res://.godot/imported/e.png-d047a9e6e788dcea8f13a8753c81e62b.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://Основа/char/NPC/infected radiance/infected_1_stage.png"
-dest_files=["res://.godot/imported/infected_1_stage.png-90dc51a8924d804d4e0c8706766fa69f.ctex"]
+source_file="res://Основа/char/earth/Phisita/e.png"
+dest_files=["res://.godot/imported/e.png-d047a9e6e788dcea8f13a8753c81e62b.ctex"]
 
 [params]
 

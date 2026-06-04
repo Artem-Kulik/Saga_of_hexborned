@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://dg3c2u8aorwyx"
-path="res://.godot/imported/Ocii.png-df38fcc6ab50e8c164487961ce17d652.ctex"
+uid="uid://d3gudnoi8oi17"
+path="res://.godot/imported/infected_1_stage.png-d8d29662b5af780e9e5f834094679c5e.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://Основа/char/fire/Ocii/Ocii.png"
-dest_files=["res://.godot/imported/Ocii.png-df38fcc6ab50e8c164487961ce17d652.ctex"]
+source_file="res://Основа/char/NPC/infected radiance/stage_1/infected_1_stage.png"
+dest_files=["res://.godot/imported/infected_1_stage.png-d8d29662b5af780e9e5f834094679c5e.ctex"]
 
 [params]
 

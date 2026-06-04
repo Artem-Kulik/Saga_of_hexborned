@@ -686,14 +686,22 @@ static func _execute_siomyi(resolver, attacker, target, skill_key: String) -> vo
 				if resolver.battle_log:
 					resolver.battle_log.add_entry("Вогонь сьомого: потрібно мінімум 5 стаків горіння! (зараз: %d)" % burn_total)
 				return
-			var vos: int      = burn_total / 5
-			var consumed: int = vos * 5
-			target.consume_burning_stacks(consumed)
+			# Активуємо всі стаки горіння — вони завдають урону і зникають
+			var burn_dmg: int = target.activate_all_burning()
+			if resolver.battle_log:
+				resolver.battle_log.add_entry(
+					"Вогонь сьомого: активує %d стаків горіння — %d вогняного урону!" % [burn_total, burn_dmg]
+				)
+			if burn_dmg > 0:
+				await resolver.deal_damage_with_modifiers(attacker, target, burn_dmg, "E_burning", "fire")
+			if target.is_dead: return
+			# Накладаємо Вогонь сьомого (1 стек на кожні 5 горінь)
+			var vos: int = burn_total / 5
 			target.add_status("fire_seventh", vos)
 			target._update_status_visuals()
 			if resolver.battle_log:
 				resolver.battle_log.add_entry(
-					"Вогонь сьомого! %s: -%d горіння → +%d стаків Вогню Сьомого!" % [target.name, consumed, vos]
+					"Вогонь сьомого: %s позначений! +%d стак(и) — вся команда ворога горітиме!" % [target.name, vos]
 				)
 				resolver.battle_log.add_effect(target.name, target.team, "Вогонь сьомого (%d стак(и))" % vos)
 
