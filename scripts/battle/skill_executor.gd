@@ -407,11 +407,11 @@ static func _execute_iskoris(resolver, attacker, target, skill_key: String) -> v
 static func _iskoris_hit(resolver, attacker, target, base_dmg: int, skill_key: String, is_aoe: bool = false) -> void:
 	var stacks: int = target.get_status("cuts")
 	var skill_dmg: int = base_dmg + 10 * stacks
-	var passive_dmg: int = 20 + 10 * stacks
+	var passive_dmg: int = 20
 
 	if resolver.battle_log and stacks > 0:
 		resolver.battle_log.add_entry(
-			"Тисяча Порізів: %d стак(и) → скіл +%d, пасивка %d" % [stacks, 10 * stacks, passive_dmg]
+			"Тисяча Порізів: %d стак(и) → скіл +%d" % [stacks, 10 * stacks]
 		)
 
 	# Основний удар скіла
