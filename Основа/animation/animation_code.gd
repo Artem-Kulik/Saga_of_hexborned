@@ -1,7 +1,7 @@
 extends Node
 
 const LIAH_Q = preload("res://Основа/char/water/Liah/q_anim/liah_q.tscn")
-
+const LIAH_W = preload("res://Основа/char/water/Liah/liah_w/liah_w.tscn")
 
 func animation_take_damage(node: CanvasItem):
 	if node == null:
@@ -282,8 +282,6 @@ func animation_dmg_number(value: int, pos: Vector2) -> void:
 	if is_instance_valid(label):
 		label.queue_free()
 
-
-
 func liah_q_animation(attacker, target, on_hit: Callable) -> void:
 	if attacker == null or target == null:
 		return
@@ -301,12 +299,12 @@ func liah_q_animation(attacker, target, on_hit: Callable) -> void:
 	)
 
 	effect.play()
-
-
-# Комбо-анімація скіла Q Лії:
-# рух до цілі → on_hit_first → запускає projectile → on_hit_second при влученні → повернення.
-# Передай порожній Callable() у on_hit_second якщо другий удар не спрацьовує.
-func liah_q_combo_animation(attacker, target, on_hit_first: Callable, on_hit_second: Callable) -> void:
+func liah_q_combo_animation(
+	attacker,
+	target,
+	on_hit_first: Callable,
+	on_hit_second: Callable
+) -> void:
 	if attacker == null or target == null:
 		return
 
@@ -331,7 +329,7 @@ func liah_q_combo_animation(attacker, target, on_hit_first: Callable, on_hit_sec
 
 	var attacker_center: Vector2 = attacker_hitbox.get_global_rect().get_center()
 	var target_center: Vector2 = target_hitbox.get_global_rect().get_center()
-	var direction: Vector2 = (target_center - attacker_center)
+	var direction: Vector2 = target_center - attacker_center
 
 	if direction.length() <= 0.01:
 		return
@@ -342,73 +340,192 @@ func liah_q_combo_animation(attacker, target, on_hit_first: Callable, on_hit_sec
 		attacker_hitbox.get_global_rect().size.x,
 		attacker_hitbox.get_global_rect().size.y
 	) * 0.5
+
 	var target_radius: float = min(
 		target_hitbox.get_global_rect().size.x,
 		target_hitbox.get_global_rect().size.y
 	) * 0.5
+
 	var overlap: float = 3.0
 	var contact_center: Vector2 = target_center - direction * (attacker_radius + target_radius - overlap)
 
-	var lift_global: Vector2    = start_global_pos + Vector2(0, -45)
+	var lift_global: Vector2 = start_global_pos + Vector2(0, -45)
 	var prepare_global: Vector2 = lift_global - direction * 35.0
-	var hit_global: Vector2     = start_global_pos + (contact_center - attacker_center)
+	var hit_global: Vector2 = start_global_pos + (contact_center - attacker_center)
 	var rebound_global: Vector2 = hit_global - direction * 45.0
-	var push_global: Vector2    = hit_global + direction * 3.0
+	var push_global: Vector2 = hit_global + direction * 3.0
 	var hover_home_global: Vector2 = start_global_pos + Vector2(0, -35)
 
-	var old_z_index: int       = attacker.z_index
+	var old_z_index: int = attacker.z_index
 	var old_z_as_relative: bool = attacker.z_as_relative
+
 	attacker.z_as_relative = false
 	attacker.z_index = 4000
 
-	# Центри портретів — стабільні протягом усього тween (рухається лише WardVisual)
-	var attacker_home: Vector2  = attacker_center
-	var target_home: Vector2    = target_center
+	var attacker_home: Vector2 = attacker_center
+	var target_home: Vector2 = target_center
 
-	var tween := create_tween()
+	# --- ПІДГОТОВКА І ПЕРШИЙ УДАР ---
 
-	tween.tween_property(attacker_visual, "global_position", lift_global, 0.30
-		).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
-	tween.tween_interval(0.08)
-	tween.tween_property(attacker_visual, "global_position", prepare_global, 0.22
-		).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
-	tween.tween_interval(0.06)
-	tween.tween_property(attacker_visual, "global_position", hit_global, 0.28
-		).set_trans(Tween.TRANS_QUART).set_ease(Tween.EASE_IN)
+	var attack_tween := create_tween()
 
-	tween.tween_callback(func():
-		play_hit_sound()
+	attack_tween.tween_property(
+		attacker_visual,
+		"global_position",
+		lift_global,
+		0.30
+	).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
 
-		if on_hit_first.is_valid():
-			on_hit_first.call()
+	attack_tween.tween_interval(0.08)
 
-		if on_hit_second.is_valid():
-			var effect = LIAH_Q.instantiate()
-			get_tree().current_scene.add_child(effect)
-			effect.global_position = target_home
-			effect.z_index = 200
+	attack_tween.tween_property(
+		attacker_visual,
+		"global_position",
+		prepare_global,
+		0.22
+	).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
+
+	attack_tween.tween_interval(0.06)
+
+	attack_tween.tween_property(
+		attacker_visual,
+		"global_position",
+		hit_global,
+		0.28
+	).set_trans(Tween.TRANS_QUART).set_ease(Tween.EASE_IN)
+
+	await attack_tween.finished
+
+	play_hit_sound()
+
+	if on_hit_first.is_valid():
+		await on_hit_first.call()
+
+	# --- ДРУГИЙ УДАР ЧЕРЕЗ ЕФЕКТ ---
+
+	if on_hit_second.is_valid():
+		var effect = LIAH_Q.instantiate()
+		get_tree().current_scene.add_child(effect)
+
+		effect.global_position = target_home
+		effect.z_index = 200
+
+		if effect.has_method("set_direction"):
 			effect.set_direction(target_home - attacker_home)
-			effect.hit_moment.connect(func():
-				on_hit_second.call()
-			)
+
+		if effect.has_method("play"):
 			effect.play()
-	)
 
-	tween.tween_property(attacker_visual, "global_position", rebound_global, 0.18
-		).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
-	tween.tween_property(attacker_visual, "global_position", push_global, 0.14
-		).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
-	tween.tween_interval(0.08)
-	tween.tween_property(attacker_visual, "global_position", hover_home_global, 0.35
-		).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
-	tween.tween_interval(0.10)
-	tween.tween_property(attacker_visual, "global_position", start_global_pos, 0.16
-		).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_IN)
+		if effect.has_signal("hit_moment"):
+			await effect.hit_moment
+			await on_hit_second.call()
+		else:
+			await on_hit_second.call()
 
-	await tween.finished
+	# --- ВІДСКОК І ПОВЕРНЕННЯ ---
+
+	var return_tween := create_tween()
+
+	return_tween.tween_property(
+		attacker_visual,
+		"global_position",
+		rebound_global,
+		0.18
+	).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
+
+	return_tween.tween_property(
+		attacker_visual,
+		"global_position",
+		push_global,
+		0.14
+	).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
+
+	return_tween.tween_interval(0.08)
+
+	return_tween.tween_property(
+		attacker_visual,
+		"global_position",
+		hover_home_global,
+		0.35
+	).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
+
+	return_tween.tween_interval(0.10)
+
+	return_tween.tween_property(
+		attacker_visual,
+		"global_position",
+		start_global_pos,
+		0.16
+	).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_IN)
+
+	await return_tween.finished
 
 	attacker_visual.position = start_local_pos
 	attacker_visual.scale = start_scale
 	attacker_visual.rotation = start_rotation
+
+	attacker.z_index = old_z_index
+	attacker.z_as_relative = old_z_as_relative
+
+func anim_liah_w(attacker, target, on_hit: Callable) -> void:
+	if attacker == null:
+		return
+
+	var attacker_visual: Control = attacker.get_node_or_null("WardVisual")
+	if attacker_visual == null:
+		return
+
+	var start_pos: Vector2 = attacker_visual.global_position
+	var old_z_index: int = attacker.z_index
+	var old_z_as_relative: bool = attacker.z_as_relative
+
+	var center_pos: Vector2 = Vector2(903, 542)
+	var effect_pos: Vector2 = Vector2(903, 542)
+
+	attacker.z_as_relative = false
+	attacker.z_index = 999
+
+	var move_tween := attacker_visual.create_tween()
+	move_tween.tween_property(
+		attacker_visual,
+		"global_position",
+		center_pos,
+		0.20
+	)
+
+	await move_tween.finished
+
+	var effect = LIAH_W.instantiate()
+	get_tree().current_scene.add_child(effect)
+
+	effect.global_position = effect_pos
+	effect.z_index = 1000
+
+	if effect.has_method("play_once"):
+		effect.play_once()
+		await effect.finished
+	else:
+		if effect.has_method("play"):
+			effect.play()
+
+		await get_tree().create_timer(0.8).timeout
+
+		if is_instance_valid(effect):
+			effect.queue_free()
+
+	if on_hit.is_valid():
+		await on_hit.call()
+
+	var return_tween := attacker_visual.create_tween()
+	return_tween.tween_property(
+		attacker_visual,
+		"global_position",
+		start_pos,
+		0.20
+	)
+
+	await return_tween.finished
+
+	attacker_visual.global_position = start_pos
 	attacker.z_index = old_z_index
 	attacker.z_as_relative = old_z_as_relative
