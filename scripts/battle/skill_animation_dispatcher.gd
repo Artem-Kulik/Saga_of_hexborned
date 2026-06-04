@@ -61,7 +61,10 @@ static func play(skill_id: String, attacker, target, on_hit: Callable) -> void:
 		# "siomyi_e": await AnimationCode.anim_siomyi_e(attacker, target, on_hit)
 
 		# ── LIAH (Лія) ────────────────────────────────────────────────────────
-		# "liah_q": await AnimationCode.anim_liah_q(attacker, target, on_hit)
+		"liah_q":
+			AnimationCode.liah_q_animation(attacker, target, on_hit)
+		
+		
 		# "liah_w": await AnimationCode.anim_liah_w(attacker, target, on_hit)
 		# "liah_e": await AnimationCode.anim_liah_e(attacker, target, on_hit)
 

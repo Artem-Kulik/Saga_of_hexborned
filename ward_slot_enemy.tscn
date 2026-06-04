@@ -8,7 +8,6 @@
 [ext_resource type="Texture2D" uid="uid://c0na1t1vhl70d" path="res://Основа/animation/death/death_2.png" id="4_jsfmg"]
 [ext_resource type="Shader" uid="uid://bq4ums7tmq24a" path="res://new_shader.gdshader" id="4_p8tk1"]
 [ext_resource type="Texture2D" uid="uid://ykkdcq6r4x7i" path="res://Основа/animation/death/death_3.png" id="5_pu4rq"]
-[ext_resource type="Texture2D" uid="uid://d1oqk5ocx1cpf" path="res://Основа/char/Вогонь/МайстерОічі/Майстер Оічі Скіли.png" id="5_ta4al"]
 [ext_resource type="Texture2D" uid="uid://b53nwl1614kbs" path="res://Основа/Frame_1.png" id="6_1hm6i"]
 [ext_resource type="Texture2D" uid="uid://b1e7ar1v3ipfq" path="res://Основа/animation/death/death_4.png" id="6_qqi5i"]
 [ext_resource type="Texture2D" uid="uid://dro6jw54ufppa" path="res://Основа/animation/death/death_5.png" id="7_io57c"]
@@ -17,6 +16,7 @@
 [ext_resource type="Texture2D" uid="uid://dyw46ofgmp6a2" path="res://Основа/visual/element_cards/card_water.png" id="9_6y6oh"]
 [ext_resource type="PackedScene" uid="uid://bqa8dc6msvca0" path="res://circle_hp_bar.tscn" id="11_nlxfe"]
 [ext_resource type="PackedScene" uid="uid://3urukl8qraml" path="res://skill_button.tscn" id="13_aqxxb"]
+[ext_resource type="Texture2D" uid="uid://cispqe8gkrkwo" path="res://Основа/char/water/Liah/Liah.png" id="13_wjgmy"]
 [ext_resource type="AudioStream" uid="uid://bnbb1hlnor0i5" path="res://Основа/audio/audio_effects/death_effect.mp3" id="19_xdpea"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_e1i0d"]
@@ -72,7 +72,7 @@ offset_top = 8.0
 offset_right = 420.0
 offset_bottom = 588.0
 mouse_filter = 2
-texture = ExtResource("5_ta4al")
+texture = ExtResource("13_wjgmy")
 expand_mode = 1
 
 [node name="Circle_hp_bar" parent="WardVisual" unique_id=670661717 instance=ExtResource("11_nlxfe")]

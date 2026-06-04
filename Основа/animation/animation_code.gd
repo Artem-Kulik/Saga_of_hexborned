@@ -1,5 +1,8 @@
 extends Node
 
+const LIAH_Q = preload("res://Основа/char/water/Liah/q_anim/liah_q.tscn")
+
+
 func animation_take_damage(node: CanvasItem):
 	if node == null:
 		return
@@ -278,3 +281,23 @@ func animation_dmg_number(value: int, pos: Vector2) -> void:
 
 	if is_instance_valid(label):
 		label.queue_free()
+
+
+
+func liah_q_animation(attacker, target, on_hit: Callable) -> void:
+	if attacker == null or target == null:
+		return
+
+	var effect = LIAH_Q.instantiate()
+	get_tree().current_scene.add_child(effect)
+
+	effect.global_position = attacker.global_position
+
+	effect.set_direction(target.global_position - attacker.global_position)
+
+	effect.hit_moment.connect(func():
+		if on_hit.is_valid():
+			on_hit.call()
+	)
+
+	effect.play()
