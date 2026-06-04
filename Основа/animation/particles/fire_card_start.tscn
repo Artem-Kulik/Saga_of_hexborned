@@ -110,53 +110,12 @@
 [ext_resource type="Texture2D" uid="uid://dmplmp87cdmnj" path="res://Основа/visual/element_cards/card_start_animation/air/27.png" id="87_shypa"]
 [ext_resource type="Texture2D" uid="uid://d2mtr385a8hp" path="res://Основа/visual/element_cards/card_start_animation/air/28.png" id="88_1kyfp"]
 [ext_resource type="Texture2D" uid="uid://cj78cjbfxk61h" path="res://Основа/visual/element_cards/card_start_animation/earth/23.png" id="88_l1j1k"]
+[ext_resource type="AudioStream" uid="uid://cgicm3cxoppbi" path="res://Основа/audio/audio_effects/air_card.mp3" id="88_qhimi"]
 [ext_resource type="Texture2D" uid="uid://bbh3ro2rkr7mv" path="res://Основа/visual/element_cards/card_start_animation/air/29.png" id="89_82r01"]
 [ext_resource type="Texture2D" uid="uid://b3gifyfre6pp" path="res://Основа/visual/element_cards/card_start_animation/earth/24.png" id="89_qhimi"]
 [ext_resource type="Texture2D" uid="uid://c6kw6qurav18y" path="res://Основа/visual/element_cards/card_start_animation/earth/25.png" id="90_nbulw"]
 [ext_resource type="Texture2D" uid="uid://cpgvvgxjvpx2q" path="res://Основа/visual/element_cards/card_start_animation/earth/26.png" id="91_cmpri"]
-
-[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_2jvn8"]
-particle_flag_disable_z = true
-emission_shape_scale = Vector3(315, 445, 1)
-emission_shape = 3
-emission_box_extents = Vector3(1, 1, 1)
-direction = Vector3(0, -1, 0)
-spread = 90.0
-gravity = Vector3(0, -98, 0)
-damping_min = 0.080000006
-damping_max = 18.5
-scale_min = 0.0
-scale_max = 20.3
-
-[sub_resource type="CanvasItemMaterial" id="CanvasItemMaterial_cf1l6"]
-blend_mode = 1
-
-[sub_resource type="Gradient" id="Gradient_ujn2s"]
-offsets = PackedFloat32Array(0, 0.47028422, 1)
-colors = PackedColorArray(0.99607843, 0.85490197, 0, 1, 0.8627451, 0.57254905, 0, 1, 1, 0.9882353, 0, 1)
-
-[sub_resource type="GradientTexture1D" id="GradientTexture1D_bff2f"]
-gradient = SubResource("Gradient_ujn2s")
-
-[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_ebqow"]
-lifetime_randomness = 1.0
-particle_flag_disable_z = true
-emission_shape_scale = Vector3(315, 445, 1)
-emission_shape = 3
-emission_box_extents = Vector3(1, 1, 1)
-angle_min = -509.8
-angle_max = 301.1
-direction = Vector3(1, 1, 0)
-initial_velocity_min = 180.0
-initial_velocity_max = 420.0
-angular_velocity_min = -720.0
-angular_velocity_max = 719.99994
-gravity = Vector3(0, 90, 0)
-radial_accel_min = -98.55
-radial_accel_max = 73.71
-scale_min = 0.02
-scale_max = 0.099999994
-color_ramp = SubResource("GradientTexture1D_bff2f")
+[ext_resource type="AudioStream" uid="uid://ht4p0f0xfpdm" path="res://Основа/audio/audio_effects/sand_card.mp3" id="116_nbulw"]
 
 [sub_resource type="CanvasItemMaterial" id="CanvasItemMaterial_bl2cf"]
 
@@ -239,6 +198,49 @@ animations = [{
 "name": &"card_start_fire",
 "speed": 5.0
 }]
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_2jvn8"]
+particle_flag_disable_z = true
+emission_shape_scale = Vector3(315, 445, 1)
+emission_shape = 3
+emission_box_extents = Vector3(1, 1, 1)
+direction = Vector3(0, -1, 0)
+spread = 90.0
+gravity = Vector3(0, -98, 0)
+damping_min = 0.080000006
+damping_max = 18.5
+scale_min = 0.0
+scale_max = 20.3
+
+[sub_resource type="CanvasItemMaterial" id="CanvasItemMaterial_cf1l6"]
+blend_mode = 1
+
+[sub_resource type="Gradient" id="Gradient_ujn2s"]
+offsets = PackedFloat32Array(0, 0.47028422, 1)
+colors = PackedColorArray(0.99607843, 0.85490197, 0, 1, 0.8627451, 0.57254905, 0, 1, 1, 0.9882353, 0, 1)
+
+[sub_resource type="GradientTexture1D" id="GradientTexture1D_bff2f"]
+gradient = SubResource("Gradient_ujn2s")
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_ebqow"]
+lifetime_randomness = 1.0
+particle_flag_disable_z = true
+emission_shape_scale = Vector3(315, 445, 1)
+emission_shape = 3
+emission_box_extents = Vector3(1, 1, 1)
+angle_min = -509.8
+angle_max = 301.1
+direction = Vector3(1, 1, 0)
+initial_velocity_min = 180.0
+initial_velocity_max = 420.0
+angular_velocity_min = -720.0
+angular_velocity_max = 719.99994
+gravity = Vector3(0, 90, 0)
+radial_accel_min = -98.55
+radial_accel_max = 73.71
+scale_min = 0.02
+scale_max = 0.099999994
+color_ramp = SubResource("GradientTexture1D_bff2f")
 
 [sub_resource type="SpriteFrames" id="SpriteFrames_cm5lt"]
 animations = [{
@@ -559,9 +561,18 @@ anchors_preset = 0
 offset_right = 40.0
 offset_bottom = 40.0
 
+[node name="elemental_card_fire" type="AnimatedSprite2D" parent="Fire_card" unique_id=54380059]
+material = SubResource("CanvasItemMaterial_bl2cf")
+position = Vector2(315, 445)
+sprite_frames = SubResource("SpriteFrames_7pu5c")
+animation = &"card_start_fire"
+frame = 14
+frame_progress = 0.7557289
+speed_scale = 3.5
+
 [node name="elemental_card_fire_smoke" type="GPUParticles2D" parent="Fire_card" unique_id=823183434]
 position = Vector2(314, 444)
-amount = 90
+amount = 25
 texture = ExtResource("1_7pu5c")
 lifetime = 4.31
 randomness = 1.0
@@ -580,15 +591,6 @@ randomness = 1.0
 process_material = SubResource("ParticleProcessMaterial_ebqow")
 script = ExtResource("14_qce4f")
 
-[node name="elemental_card_fire" type="AnimatedSprite2D" parent="Fire_card" unique_id=54380059]
-material = SubResource("CanvasItemMaterial_bl2cf")
-position = Vector2(315, 445)
-sprite_frames = SubResource("SpriteFrames_7pu5c")
-animation = &"card_start_fire"
-frame = 14
-frame_progress = 0.7557289
-speed_scale = 3.5
-
 [node name="fire_audio" type="AudioStreamPlayer2D" parent="Fire_card" unique_id=253505407]
 stream = ExtResource("29_nbulw")
 volume_db = 3.5
@@ -602,8 +604,8 @@ offset_bottom = 40.0
 [node name="water_card_start_animation" type="AnimatedSprite2D" parent="Water_card" unique_id=1156183463]
 position = Vector2(314, 444)
 sprite_frames = SubResource("SpriteFrames_cm5lt")
-frame = 25
-frame_progress = 0.5474058
+frame = 6
+frame_progress = 0.622382
 speed_scale = 5.0
 
 [node name="GPUParticles2D" type="GPUParticles2D" parent="Water_card" unique_id=2034795700]
@@ -643,6 +645,11 @@ frame = 22
 frame_progress = 0.005616734
 speed_scale = 2.8
 
+[node name="AudioStreamPlayer2D" type="AudioStreamPlayer2D" parent="Air_card" unique_id=179663032]
+stream = ExtResource("88_qhimi")
+volume_db = 3.5
+autoplay = true
+
 [node name="Earth_card" type="Control" parent="." unique_id=1068950990]
 visible = false
 anchors_preset = 0
@@ -655,3 +662,8 @@ sprite_frames = SubResource("SpriteFrames_5xwe2")
 frame = 7
 frame_progress = 0.14664769
 speed_scale = 5.0
+
+[node name="AudioStreamPlayer2D" type="AudioStreamPlayer2D" parent="Earth_card" unique_id=649355169]
+stream = ExtResource("116_nbulw")
+volume_db = 3.5
+autoplay = true
