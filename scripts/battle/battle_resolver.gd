@@ -125,7 +125,9 @@ func apply_damage(
 
 				if damage > 0:
 					SkillExecutor.check_rage_passive(self, target)
-					_check_fire_shield(source, target)
+					# Пасивні удари (гідра тощо) не тригерять вогняний щит
+					if skill_key != "P":
+						_check_fire_shield(source, target)
 
 					AnimationCode.animation_dmg_number(
 						damage,
@@ -142,8 +144,9 @@ func apply_damage(
 
 		if damage > 0:
 			SkillExecutor.check_rage_passive(self, target)
-			_check_fire_shield(source, target)
-			
+			if skill_key != "P":
+				_check_fire_shield(source, target)
+
 			AnimationCode.animation_dmg_number(
 				damage,
 				target.portrait.get_global_rect().get_center()
