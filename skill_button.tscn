@@ -4,7 +4,7 @@
 [ext_resource type="Shader" uid="uid://dn6eey8nl3iyl" path="res://ward_slot.gdshader" id="2_u4o8d"]
 [ext_resource type="Shader" uid="uid://bq4ums7tmq24a" path="res://new_shader.gdshader" id="3_qgxld"]
 [ext_resource type="Texture2D" uid="uid://hiyyruhmbnet" path="res://Основа/portrait_mask_oval.png" id="4_22p8v"]
-[ext_resource type="Texture2D" uid="uid://dpt2a13yle6ma" path="res://Основа/char/Вода/Лія/liah_q.png" id="5_u4o8d"]
+[ext_resource type="Texture2D" uid="uid://cxlqqvooc7b27" path="res://Основа/char/air/Shopey/shopey_q.png" id="5_u4o8d"]
 [ext_resource type="Texture2D" uid="uid://q1n24kyl2rkp" path="res://Основа/visual/Skill_list/Skill_frame_pas.png" id="6_u4o8d"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_u4o8d"]

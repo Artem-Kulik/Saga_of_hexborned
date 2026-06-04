@@ -26,7 +26,7 @@
 [ext_resource type="Script" uid="uid://bt7p87jv8rs42" path="res://Основа/animation/sigils_fade/water/settings_tabs.gd" id="23_clsva"]
 [ext_resource type="Shader" uid="uid://bq4ums7tmq24a" path="res://new_shader.gdshader" id="24_ddreb"]
 [ext_resource type="Texture2D" uid="uid://hiyyruhmbnet" path="res://Основа/portrait_mask_oval.png" id="25_rgw6j"]
-[ext_resource type="Texture2D" uid="uid://d5tacve37cas" path="res://Основа/char/Вода/Лія/Liah.png" id="26_ble6o"]
+[ext_resource type="Texture2D" uid="uid://cispqe8gkrkwo" path="res://Основа/char/water/Liah/Liah.png" id="27_ddreb"]
 [ext_resource type="Texture2D" uid="uid://dskby8dalt4nq" path="res://Основа/mainmenu/ui/settings_but.png" id="27_rgadl"]
 [ext_resource type="Texture2D" uid="uid://ds477i1h0p14f" path="res://Основа/mainmenu/ui/set_1.png" id="28_ce0dl"]
 [ext_resource type="Texture2D" uid="uid://cdimjgdjshaip" path="res://Основа/mainmenu/ui/set_2.png" id="29_jrfv1"]
@@ -592,7 +592,7 @@ offset_right = 75.0
 offset_bottom = 76.5
 grow_horizontal = 2
 grow_vertical = 2
-texture = ExtResource("26_ble6o")
+texture = ExtResource("27_ddreb")
 expand_mode = 1
 
 [node name="profile_frame" type="Sprite2D" parent="ui/settings/profile" unique_id=649373014]
