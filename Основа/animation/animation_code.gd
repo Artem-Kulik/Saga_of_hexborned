@@ -359,34 +359,10 @@ func anim_liah_w(attacker, target, on_hit: Callable) -> void:
 	if attacker == null:
 		return
 
-	var attacker_visual: Control = attacker.get_node_or_null("WardVisual")
-	if attacker_visual == null:
-		return
-
-	var start_pos: Vector2 = attacker_visual.global_position
-	var old_z_index: int = attacker.z_index
-	var old_z_as_relative: bool = attacker.z_as_relative
-
-	var center_pos: Vector2 = Vector2(903, 542)
-	var effect_pos: Vector2 = Vector2(903, 542)
-
-	attacker.z_as_relative = false
-	attacker.z_index = 999
-
-	var move_tween := attacker_visual.create_tween()
-	move_tween.tween_property(
-		attacker_visual,
-		"global_position",
-		center_pos,
-		0.20
-	)
-
-	await move_tween.finished
-
 	var effect = LIAH_W.instantiate()
 	get_tree().current_scene.add_child(effect)
 
-	effect.global_position = effect_pos
+	effect.global_position = Vector2(903, 542)
 	effect.z_index = 1000
 
 	if effect.has_method("play_once"):
@@ -395,25 +371,9 @@ func anim_liah_w(attacker, target, on_hit: Callable) -> void:
 	else:
 		if effect.has_method("play"):
 			effect.play()
-
 		await get_tree().create_timer(0.8).timeout
-
 		if is_instance_valid(effect):
 			effect.queue_free()
 
 	if on_hit.is_valid():
 		await on_hit.call()
-
-	var return_tween := attacker_visual.create_tween()
-	return_tween.tween_property(
-		attacker_visual,
-		"global_position",
-		start_pos,
-		0.20
-	)
-
-	await return_tween.finished
-
-	attacker_visual.global_position = start_pos
-	attacker.z_index = old_z_index
-	attacker.z_as_relative = old_z_as_relative
