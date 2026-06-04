@@ -40,7 +40,7 @@ func attack(attacker, target, skill_key: String = "Q") -> void:
 	skill_controller.clear()
 
 
-func deal_damage_with_modifiers(attacker, target, base_damage: int, skill_key: String, forced_damage_type: String = "") -> void:
+func deal_damage_with_modifiers(attacker, target, base_damage: int, skill_key: String, forced_damage_type: String = "", is_aoe: bool = false) -> void:
 	if target == null:
 		return
 
@@ -66,7 +66,7 @@ func deal_damage_with_modifiers(attacker, target, base_damage: int, skill_key: S
 			var def_mults = ELEMENT_MULTIPLIERS[target_element]
 			if def_mults.has(damage_type):
 				mult = def_mults[damage_type]
-				
+
 	var armor_dmg = mini(base_damage, armor)
 	var hp_dmg = base_damage - armor_dmg
 	var final_hp_dmg = int(hp_dmg * mult)
@@ -78,7 +78,7 @@ func deal_damage_with_modifiers(attacker, target, base_damage: int, skill_key: S
 		final_damage,
 		skill_key,
 		"-",
-		"skill",
+		"effect" if is_aoe else "skill",
 		base_damage,
 		mult
 	)

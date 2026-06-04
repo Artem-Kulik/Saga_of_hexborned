@@ -82,7 +82,7 @@ static func _execute_liah(resolver, attacker, target, skill_key: String, _base_d
 
 			for enemy in enemies:
 				var hp_before = enemy.current_hp
-				await resolver.deal_damage_with_modifiers(attacker, enemy, 35, skill_key)
+				await resolver.deal_damage_with_modifiers(attacker, enemy, 35, skill_key, "", true)
 				if enemy.is_dead and hp_before > 0:
 					trigger_again = true
 
@@ -90,7 +90,7 @@ static func _execute_liah(resolver, attacker, target, skill_key: String, _base_d
 				resolver.battle_log.add_entry("Кола на воді: ефект спрацював повторно!")
 				enemies = resolver.get_alive_wards(enemy_side_w)
 				for enemy in enemies:
-					await resolver.deal_damage_with_modifiers(attacker, enemy, 35, skill_key)
+					await resolver.deal_damage_with_modifiers(attacker, enemy, 35, skill_key, "", true)
 
 		"E":
 			# Загороджуючий водопад: Стає невибираною як ціль до свого наступного ходу.
@@ -261,7 +261,7 @@ static func _execute_grump(resolver, attacker, target, skill_key: String, _base_
 		"Q":
 			# Клятва Варда: 20 фіз по всіх ворогах
 			for enemy in resolver.get_alive_wards(enemy_side):
-				await resolver.deal_damage_with_modifiers(attacker, enemy, 20, skill_key, "phys")
+				await resolver.deal_damage_with_modifiers(attacker, enemy, 20, skill_key, "phys", true)
 
 		"W":
 			# Борозда: 30 фіз + оглушення 1 хід
@@ -282,7 +282,7 @@ static func _execute_grump(resolver, attacker, target, skill_key: String, _base_
 					"Вибух породи: %d пошкоджень (25 + %d броні) по всіх!" % [total_damage, armor]
 				)
 			for enemy in resolver.get_alive_wards(enemy_side):
-				await resolver.deal_damage_with_modifiers(attacker, enemy, total_damage, skill_key, "phys")
+				await resolver.deal_damage_with_modifiers(attacker, enemy, total_damage, skill_key, "phys", true)
 			attacker.health.current_armor = 0
 			attacker.update_armor_status(0)
 			if resolver.battle_log:
@@ -335,7 +335,7 @@ static func _execute_riker(resolver, attacker, target, skill_key: String) -> voi
 					resolver.battle_log.add_entry("Стиль Доломедес: удар по всіх ворогах!")
 				var enemy_side: Array = resolver.battle_scene.enemy_wards if attacker.team == "ally" else resolver.battle_scene.ally_wards
 				for enemy in resolver.get_alive_wards(enemy_side):
-					await resolver.deal_damage_with_modifiers(attacker, enemy, 60, skill_key, "water")
+					await resolver.deal_damage_with_modifiers(attacker, enemy, 60, skill_key, "water", true)
 			else:
 				if resolver.battle_log:
 					resolver.battle_log.add_entry("Стиль Доломедес: потрібно спочатку використати Q або E!")
@@ -399,11 +399,12 @@ static func _execute_iskoris(resolver, attacker, target, skill_key: String) -> v
 		"E":
 			var enemy_side: Array = resolver.battle_scene.enemy_wards if attacker.team == "ally" else resolver.battle_scene.ally_wards
 			for enemy in resolver.get_alive_wards(enemy_side):
-				await _iskoris_hit(resolver, attacker, enemy, 10, skill_key)
+				await _iskoris_hit(resolver, attacker, enemy, 10, skill_key, true)
 
 
 # Один удар Іскоріса: base + стаки → пасивний удар → +1 стак.
-static func _iskoris_hit(resolver, attacker, target, base_dmg: int, skill_key: String) -> void:
+# is_aoe=true → без анімації руху атакера (для AoE скілів).
+static func _iskoris_hit(resolver, attacker, target, base_dmg: int, skill_key: String, is_aoe: bool = false) -> void:
 	var stacks: int = target.get_status("cuts")
 	var skill_dmg: int = base_dmg + 10 * stacks
 	var passive_dmg: int = 20 + 10 * stacks
@@ -414,13 +415,13 @@ static func _iskoris_hit(resolver, attacker, target, base_dmg: int, skill_key: S
 		)
 
 	# Основний удар скіла
-	await resolver.deal_damage_with_modifiers(attacker, target, skill_dmg, skill_key, "air")
+	await resolver.deal_damage_with_modifiers(attacker, target, skill_dmg, skill_key, "air", is_aoe)
 
 	if target.is_dead:
 		return
 
-	# Пасивний удар
-	await resolver.deal_damage_with_modifiers(attacker, target, passive_dmg, "P_cuts", "air")
+	# Пасивний удар (завжди без руху — пасивка анімується на місці)
+	await resolver.deal_damage_with_modifiers(attacker, target, passive_dmg, "P_cuts", "air", true)
 
 	if target.is_dead:
 		return
