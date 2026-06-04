@@ -20,6 +20,8 @@ static func get_skill_target_type(ward_id: String, skill_key: String, attacker =
 				var last = attacker.get_meta("riker_last_skill", "") if attacker != null and attacker.has_meta("riker_last_skill") else ""
 				if last == "E": return "all_enemies"
 				return "single_enemy"
+		"iskoris":
+			if skill_key == "E": return "all_enemies"
 
 	return "single_enemy"
 
@@ -40,6 +42,8 @@ static func execute_skill(resolver, attacker, target, skill_key: String) -> void
 			await _execute_grump(resolver, attacker, target, skill_key, base_damage)
 		"riker":
 			await _execute_riker(resolver, attacker, target, skill_key)
+		"iskoris":
+			await _execute_iskoris(resolver, attacker, target, skill_key)
 		_:
 			# Стандартна атака для всіх інших поки що
 			await _execute_basic_attack(resolver, attacker, target, skill_key, base_damage)
@@ -370,3 +374,57 @@ static func _riker_get_neighbor(resolver, attacker, target):
 		if enemy_side.size() > 1 and not enemy_side[1].is_dead:
 			return enemy_side[1]
 		return null
+
+
+# =============================================================================
+# ISKORIS (Іскоріс)
+# =============================================================================
+# P — Тисяча Порізів: кожна атака → 20+10*N повітря + 1 стак "cuts" на цілі (N = поточні стаки).
+# Q — Укус: 10+10*N повітря → пасивка.
+# W — Пісня мерця (КД 4): два удари, кожен 10+10*N повітря → пасивка × 2.
+# E — Ріжучий смерч (КД 4): 10+10*N повітря по всіх ворогах → пасивка кожному.
+
+static func _execute_iskoris(resolver, attacker, target, skill_key: String) -> void:
+	match skill_key:
+		"Q":
+			if target == null: return
+			await _iskoris_hit(resolver, attacker, target, 10, skill_key)
+
+		"W":
+			if target == null: return
+			await _iskoris_hit(resolver, attacker, target, 10, skill_key)
+			if not target.is_dead:
+				await _iskoris_hit(resolver, attacker, target, 10, skill_key)
+
+		"E":
+			var enemy_side: Array = resolver.battle_scene.enemy_wards if attacker.team == "ally" else resolver.battle_scene.ally_wards
+			for enemy in resolver.get_alive_wards(enemy_side):
+				await _iskoris_hit(resolver, attacker, enemy, 10, skill_key)
+
+
+# Один удар Іскоріса: base + стаки → пасивний удар → +1 стак.
+static func _iskoris_hit(resolver, attacker, target, base_dmg: int, skill_key: String) -> void:
+	var stacks: int = target.get_status("cuts")
+	var skill_dmg: int = base_dmg + 10 * stacks
+	var passive_dmg: int = 20 + 10 * stacks
+
+	if resolver.battle_log and stacks > 0:
+		resolver.battle_log.add_entry(
+			"Тисяча Порізів: %d стак(и) → скіл +%d, пасивка %d" % [stacks, 10 * stacks, passive_dmg]
+		)
+
+	# Основний удар скіла
+	await resolver.deal_damage_with_modifiers(attacker, target, skill_dmg, skill_key, "air")
+
+	if target.is_dead:
+		return
+
+	# Пасивний удар
+	await resolver.deal_damage_with_modifiers(attacker, target, passive_dmg, "P_cuts", "air")
+
+	if target.is_dead:
+		return
+
+	# Накладання стаку та оновлення тултіпу
+	target.add_status("cuts", 1)
+	target._update_status_visuals()

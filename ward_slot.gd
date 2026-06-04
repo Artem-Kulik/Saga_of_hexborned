@@ -16,6 +16,7 @@ const _STATUS_NODE: Dictionary = {
 	"stun":        "stunned",
 	"regen":       "regeneration",
 	"fire_shield": "oichi_flame_shield",
+	"cuts":        "cuts",
 }
 
 signal ward_clicked(ward)
@@ -330,6 +331,9 @@ func _get_status_tooltip(effect: String, count: int) -> String:
 			return "Регенерація (%d ходів)" % count
 		"fire_shield":
 			return "Вогняний щит\nАтакуючий отримує 2 стаки горіння, щит зникає."
+		"cuts":
+			var next_passive_dmg: int = 20 + 10 * count
+			return "Тисяча Порізів (%d стак(и))\nНаступна атака Іскоріса: +%d до скіла, %d пасивної шкоди повітрям." % [count, 10 * count, next_passive_dmg]
 	return ""
 
 
