@@ -631,7 +631,6 @@ process_material = SubResource("ParticleProcessMaterial_deij2")
 [node name="AudioStreamPlayer2D" type="AudioStreamPlayer2D" parent="Water_card" unique_id=302765436]
 stream = ExtResource("63_hhxng")
 volume_db = 3.5
-autoplay = true
 
 [node name="Air_card" type="Control" parent="." unique_id=619702031]
 anchors_preset = 0
@@ -648,7 +647,6 @@ speed_scale = 2.8
 [node name="AudioStreamPlayer2D" type="AudioStreamPlayer2D" parent="Air_card" unique_id=179663032]
 stream = ExtResource("88_qhimi")
 volume_db = 3.5
-autoplay = true
 
 [node name="Earth_card" type="Control" parent="." unique_id=1068950990]
 visible = false
@@ -666,4 +664,3 @@ speed_scale = 5.0
 [node name="AudioStreamPlayer2D" type="AudioStreamPlayer2D" parent="Earth_card" unique_id=649355169]
 stream = ExtResource("116_nbulw")
 volume_db = 3.5
-autoplay = true
