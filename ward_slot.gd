@@ -17,7 +17,14 @@ const _STATUS_NODE: Dictionary = {
 	"regen":       "regeneration",
 	"fire_shield": "oichi_flame_shield",
 	"cuts":        "cuts",
+	"fire_circle":   "fire_circle",
+	"barrier":       "barrier",
+	"fire_seventh":  "fire_seventh",
+	"reaping":       "taunted",
+	"parasitism":    "taunted",
 }
+
+const NEGATIVE_EFFECTS: Array = ["burning", "taunt", "stun", "cuts", "fire_seventh"]
 
 signal ward_clicked(ward)
 signal skill_clicked(ward, skill_key: String)
@@ -79,6 +86,9 @@ var base_ward_scale: Vector2
 # ====== STATUS SYSTEM ======
 var status_effects: Dictionary = {}
 var taunted_by: String = "" # ID варда, який спровокував
+
+# Горіння: кожне накладення має власний таймер [{"count": N, "turns": T}, ...]
+var burning_applications: Array = []
 
 # ====== COOLDOWN SYSTEM ======
 var _current_cd: Dictionary = {"Q": 0, "W": 0, "E": 0}
@@ -246,12 +256,29 @@ func _on_hp_changed(new_hp: int, _max_hp: int = 0) -> void:
 
 # ====== STATUS EFFECTS ======
 func add_status(effect_name: String, count: int = 1) -> void:
+	if effect_name == "burning":
+		add_burning(count, 1)
+		return
 	if not status_effects.has(effect_name):
 		status_effects[effect_name] = 0
 	status_effects[effect_name] += count
 	_update_status_visuals()
 
 func remove_status(effect_name: String, count: int = 1) -> void:
+	if effect_name == "burning":
+		var to_remove: int = count
+		var i: int = burning_applications.size() - 1
+		while i >= 0 and to_remove > 0:
+			if burning_applications[i].count <= to_remove:
+				to_remove -= burning_applications[i].count
+				burning_applications.remove_at(i)
+			else:
+				burning_applications[i].count -= to_remove
+				to_remove = 0
+			i -= 1
+		_sync_burning_to_status()
+		_update_status_visuals()
+		return
 	if status_effects.has(effect_name):
 		status_effects[effect_name] -= count
 		if status_effects[effect_name] <= 0:
@@ -259,12 +286,100 @@ func remove_status(effect_name: String, count: int = 1) -> void:
 	_update_status_visuals()
 
 func get_status(effect_name: String) -> int:
+	if effect_name == "burning":
+		var total: int = 0
+		for app in burning_applications:
+			total += app.count
+		return total
 	return status_effects.get(effect_name, 0)
 
 func clear_statuses() -> void:
 	status_effects.clear()
+	burning_applications.clear()
 	taunted_by = ""
 	_update_status_visuals()
+
+func remove_negative_effects() -> void:
+	for effect in NEGATIVE_EFFECTS:
+		if status_effects.has(effect):
+			status_effects.erase(effect)
+	burning_applications.clear()
+	taunted_by = ""
+	if has_meta("fire_shield") and get_meta("fire_shield"):
+		set_meta("fire_shield", false)
+	_update_status_visuals()
+
+# ====== BURNING SYSTEM ======
+func add_burning(count: int, turns: int = 1) -> void:
+	for i in range(burning_applications.size()):
+		if burning_applications[i].turns == turns:
+			burning_applications[i].count += count
+			_sync_burning_to_status()
+			_update_status_visuals()
+			return
+	burning_applications.append({"count": count, "turns": turns})
+	_sync_burning_to_status()
+	_update_status_visuals()
+
+func tick_burning() -> int:
+	var total_dmg: int = 0
+	var remaining: Array = []
+	for app in burning_applications:
+		total_dmg += 50 * app.count
+		if app.turns - 1 > 0:
+			remaining.append({"count": app.count, "turns": app.turns - 1})
+	burning_applications = remaining
+	_sync_burning_to_status()
+	_update_status_visuals()
+	return total_dmg
+
+func extend_burning(extra_turns: int = 1) -> void:
+	for i in range(burning_applications.size()):
+		burning_applications[i].turns += extra_turns
+	_update_status_visuals()
+
+func reduce_burning_turns(reduce_by: int = 1) -> void:
+	var remaining: Array = []
+	for app in burning_applications:
+		var new_turns: int = app.turns - reduce_by
+		if new_turns > 0:
+			remaining.append({"count": app.count, "turns": new_turns})
+	burning_applications = remaining
+	_sync_burning_to_status()
+	_update_status_visuals()
+
+func consume_burning_stacks(count: int) -> void:
+	burning_applications.sort_custom(func(a, b): return a.turns < b.turns)
+	var to_consume: int = count
+	var i: int = 0
+	while i < burning_applications.size() and to_consume > 0:
+		if burning_applications[i].count <= to_consume:
+			to_consume -= burning_applications[i].count
+			burning_applications.remove_at(i)
+		else:
+			burning_applications[i].count -= to_consume
+			to_consume = 0
+			i += 1
+	_sync_burning_to_status()
+	_update_status_visuals()
+
+func activate_all_burning() -> int:
+	var virtual_stacks: int = 0
+	for app in burning_applications:
+		virtual_stacks += app.count * app.turns
+	burning_applications.clear()
+	_sync_burning_to_status()
+	_update_status_visuals()
+	return virtual_stacks * 50
+
+func _sync_burning_to_status() -> void:
+	var total: int = 0
+	for app in burning_applications:
+		total += app.count
+	if total > 0:
+		status_effects["burning"] = total
+	elif status_effects.has("burning"):
+		status_effects.erase("burning")
 
 func update_armor_status(armor_value: int) -> void:
 	if armor_value > 0:
@@ -284,9 +399,23 @@ func _update_status_visuals() -> void:
 
 	var lib := _STATUS_TYPES.instantiate()
 
+	# Горіння: одна іконка на стак, всі мають однаковий тултіп з усіма групами
+	if not burning_applications.is_empty():
+		var lines: Array = []
+		for app in burning_applications:
+			lines.append("%d стак(и) діють %d хід(ів)" % [app.count, app.turns])
+		var shared_tooltip: String = "Горіння:\n" + "\n".join(lines)
+		var total_stacks: int = 0
+		for app in burning_applications:
+			total_stacks += app.count
+		for _i in range(total_stacks):
+			_add_status_icon(container, lib, "burning", shared_tooltip)
+
 	for effect in status_effects.keys():
+		if effect == "burning":
+			continue
 		var count: int = status_effects[effect]
-		var draw_count: int = 1 if effect == "armor" else count
+		var draw_count: int = 1 if effect in ["armor", "fire_circle", "barrier", "regen", "parasitism", "reaping"] else count
 		var node_name: String = _STATUS_NODE.get(effect, "")
 		if node_name == "":
 			continue
@@ -328,11 +457,21 @@ func _get_status_tooltip(effect: String, count: int) -> String:
 		"stun":
 			return "Оглушення (%d ходів)\nПропускає хід." % count
 		"regen":
-			return "Регенерація (%d ходів)" % count
+			return "Регенерація (%d ход(и))\n+100 HP на початку кожного ходу." % count
 		"fire_shield":
 			return "Вогняний щит\nАтакуючий отримує 2 стаки горіння, щит зникає."
 		"cuts":
 			return "Тисяча Порізів (%d стак(и))\nНаступна атака Іскоріса: +%d до скіла + 20 повітря пасивки." % [count, 10 * count]
+		"fire_circle":
+			return "Коло пекельного вогню (%d ход(и))\nАтакуючий отримує 2 стаки горіння." % count
+		"barrier":
+			return "Бар'єр (%d ход(и))\nПоглинає до 30 шкоди від наступного удару.\nАтакуючий отримує 1 стак горіння." % count
+		"fire_seventh":
+			return "Вогонь сьомого (%d стак(и))\nНа початку ходу: %d вогняної шкоди усій команді." % [count, 150 * count]
+		"reaping":
+			return "Жнива\nЖнець атакує на початку свого наступного ходу.\nАктивує всі стаки горіння."
+		"parasitism":
+			return "Паразитування (%d хід)\nНа початку ходу — б'є випадкового союзника випадковим скілом." % count
 	return ""
 
 
@@ -380,6 +519,14 @@ func setup_ward(id: String) -> void:
 		return
 
 	name = data["name"]
+
+	var hp_override: int = int(data.get("hp", 0))
+	if hp_override > 0:
+		max_hp    = hp_override
+		start_hp  = hp_override
+		current_hp = hp_override
+		if health:
+			health.setup(max_hp, start_hp, hp_bar)
 
 	var portrait_node := get_node_or_null("WardVisual/Portrait") as TextureRect
 	if portrait_node != null:
