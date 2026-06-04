@@ -167,15 +167,12 @@ static func _execute_shopey(resolver, attacker, target, skill_key: String, base_
 				await _shopey_passive_check(resolver, attacker, target)
 
 		"W":
-			# Ріжуча гідра: 90 повітря + власна гідра W (завжди) + умови пасивки
+			# Ріжуча гідра: 90 повітря + власна гідра W (завжди, без пасивки)
 			if target == null: return
 			await resolver.deal_damage_with_modifiers(attacker, target, 90, skill_key, "air")
 			await _shopey_trigger_hydra(resolver, attacker, target)
 			if e_hydra_ready:
-				# E-буф: друга гідра гарантовано, пасивка не кидається
 				await _shopey_trigger_hydra(resolver, attacker, target)
-			else:
-				await _shopey_passive_check(resolver, attacker, target)
 
 		"E":
 			# Наскок: 30 фіз → встановлює прапорець для наступної здібності
