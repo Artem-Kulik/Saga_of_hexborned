@@ -22,6 +22,9 @@ static func get_skill_target_type(ward_id: String, skill_key: String, attacker =
 				return "single_enemy"
 		"iskoris":
 			if skill_key == "E": return "all_enemies"
+		"etesena":
+			if skill_key == "Q": return "all_enemies"
+			if skill_key == "W": return "etesena_w"
 
 	return "single_enemy"
 
@@ -44,6 +47,8 @@ static func execute_skill(resolver, attacker, target, skill_key: String) -> void
 			await _execute_riker(resolver, attacker, target, skill_key)
 		"iskoris":
 			await _execute_iskoris(resolver, attacker, target, skill_key)
+		"etesena":
+			await _execute_etesena(resolver, attacker, target, skill_key)
 		_:
 			# Стандартна атака для всіх інших поки що
 			await _execute_basic_attack(resolver, attacker, target, skill_key, base_damage)
@@ -429,3 +434,84 @@ static func _iskoris_hit(resolver, attacker, target, base_dmg: int, skill_key: S
 	# Накладання стаку та оновлення тултіпу
 	target.add_status("cuts", 1)
 	target._update_status_visuals()
+
+
+# =============================================================================
+# ETESENA (Етесена)
+# =============================================================================
+# P — Пасивка: якщо ціль оглушена — 33% шанс пробити і нанести таку ж шкоду сусідній цілі.
+# Q — Укол: 3 голки по 25(фіз), кожна летить у рандомну живу ціль.
+# W — Танець (КД 3): гравець обирає 3 цілі → 1-й 35(фіз), 2-й оглушення, 3-й 45(фіз).
+#     Цілі передаються через meta "etesena_w_targets".
+# E — Північні вітри (КД 5): 5 голок × 25(фіз) в одну ціль; якщо оглушена — продовжує +1 хід.
+
+static func _execute_etesena(resolver, attacker, target, skill_key: String) -> void:
+	var enemy_side: Array = resolver.battle_scene.enemy_wards if attacker.team == "ally" else resolver.battle_scene.ally_wards
+
+	match skill_key:
+		"Q":
+			for i in 3:
+				var alive = resolver.get_alive_wards(enemy_side)
+				if alive.is_empty(): break
+				var t = alive[randi() % alive.size()]
+				await resolver.deal_damage_with_modifiers(attacker, t, 25, skill_key, "phys", true)
+				await _etesena_passive_check(resolver, attacker, t, 25, enemy_side)
+
+		"W":
+			var targets: Array = attacker.get_meta("etesena_w_targets", [])
+			if attacker.has_meta("etesena_w_targets"):
+				attacker.remove_meta("etesena_w_targets")
+			for i in targets.size():
+				var t = targets[i]
+				if t == null or not is_instance_valid(t) or t.is_dead:
+					continue
+				match i:
+					0:
+						await resolver.deal_damage_with_modifiers(attacker, t, 35, skill_key, "phys")
+						await _etesena_passive_check(resolver, attacker, t, 35, enemy_side)
+					1:
+						t.add_status("stun", 1)
+						if resolver.battle_log:
+							resolver.battle_log.add_entry(t.name + " оглушений!")
+							resolver.battle_log.add_effect(t.name, t.team, "Оглушення (1 хід)")
+					2:
+						await resolver.deal_damage_with_modifiers(attacker, t, 45, skill_key, "phys")
+						await _etesena_passive_check(resolver, attacker, t, 45, enemy_side)
+
+		"E":
+			if target == null: return
+			for i in 5:
+				if target.is_dead: break
+				await resolver.deal_damage_with_modifiers(attacker, target, 25, skill_key, "phys", true)
+				await _etesena_passive_check(resolver, attacker, target, 25, enemy_side)
+			if not target.is_dead and target.get_status("stun") > 0:
+				target.add_status("stun", 1)
+				if resolver.battle_log:
+					resolver.battle_log.add_entry("Північні вітри: оглушення продовжено +1 хід!")
+
+
+# Пасивка: 33% шанс пробити оглушену ціль і нанести таку ж шкоду сусідній.
+static func _etesena_passive_check(resolver, attacker, target, damage: int, enemy_side: Array) -> void:
+	if target.is_dead: return
+	if target.get_status("stun") <= 0: return
+	if randf() >= 0.33: return
+	var neighbor = _etesena_get_neighbor(enemy_side, target)
+	if neighbor == null or neighbor.is_dead: return
+	if resolver.battle_log:
+		resolver.battle_log.add_entry("Пасивна: голка пробиває оглушеного і б'є %s!" % neighbor.name)
+	await resolver.deal_damage_with_modifiers(attacker, neighbor, damage, "P_etesena", "phys")
+
+
+# Сусідній варт: крайній (0/2) → центр (1); центр (1) → рандом живого крайнього.
+static func _etesena_get_neighbor(enemy_side: Array, target) -> Variant:
+	var idx: int = enemy_side.find(target)
+	if idx < 0: return null
+	if idx == 1:
+		var candidates: Array = []
+		if not enemy_side[0].is_dead: candidates.append(enemy_side[0])
+		if enemy_side.size() > 2 and not enemy_side[2].is_dead: candidates.append(enemy_side[2])
+		if candidates.is_empty(): return null
+		return candidates[randi() % candidates.size()]
+	else:
+		if enemy_side.size() > 1 and not enemy_side[1].is_dead: return enemy_side[1]
+		return null

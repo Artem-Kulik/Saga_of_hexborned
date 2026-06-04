@@ -64,6 +64,12 @@ var battle_started: bool = false
 # Блокує нові скіл-кліки під час анімації атаки — запобігає паралельним атакам
 var _turn_locked: bool = false
 
+# Стан для W Етесени — вибір цілей у порядку
+var _etesena_w_active: bool = false
+var _etesena_w_targets: Array = []
+var _etesena_w_labels: Array = []
+var _etesena_w_required: int = 0
+
 
 func _ready() -> void:
 	_apply_ward_data()
@@ -251,7 +257,9 @@ func _input(event: InputEvent) -> void:
 					_on_skill_clicked(current_ward, "E")
 
 	# Drag-to-target: відпустив мишку → атакуємо або скасовуємо
+	# Пропускаємо якщо активний multi-target вибір (Танець Етесени)
 	if waiting_for_target \
+			and not _etesena_w_active \
 			and event is InputEventMouseButton \
 			and event.button_index == MOUSE_BUTTON_LEFT \
 			and not event.pressed:
@@ -358,6 +366,10 @@ func _start_turn() -> void:
 		return
 
 	_turn_locked = false
+	if _etesena_w_active:
+		_etesena_w_active = false
+		_etesena_w_targets.clear()
+		_etesena_w_clear_labels()
 	hide_target_arrow()
 
 	if battle_resolver.is_team_dead(ally_wards):
@@ -489,6 +501,26 @@ func _on_skill_clicked(ward, skill_key: String) -> void:
 			)
 		battle_log.add_entry("Обраний скіл: " + skill_key)
 		battle_log.add_entry("Обери ворога")
+	elif target_type == "etesena_w":
+		var alive_count: int = battle_resolver.get_alive_wards(enemy_wards).size()
+		if alive_count == 0: return
+		# Якщо під провокацією — лише 1 ціль (тільки провокатор)
+		if ward.taunted_by != "":
+			var taunter_found = false
+			for w in enemy_wards:
+				if w.ward_id == ward.taunted_by and not w.is_dead:
+					taunter_found = true
+					break
+			_etesena_w_required = 1 if taunter_found else mini(alive_count, 3)
+		else:
+			_etesena_w_required = mini(alive_count, 3)
+		_etesena_w_targets = []
+		_etesena_w_labels = []
+		_etesena_w_active = true
+		waiting_for_target = true
+		if pressed_button:
+			AnimationCode.skill_pressed_animation(pressed_button)
+		battle_log.add_entry("Танець: обери %d ціль(і) у порядку атаки  (Escape — скасування)" % _etesena_w_required)
 	elif target_type == "self" or target_type == "all_enemies":
 		if ward.taunted_by != "":
 			var taunter_alive = false
@@ -538,6 +570,11 @@ func _on_ward_clicked(ward) -> void:
 
 	if ward.has_meta("untargetable") and ward.get_meta("untargetable"):
 		battle_log.add_entry("Ця ціль наразі не вразлива!")
+		return
+
+	# Танець Етесени — multi-target вибір
+	if _etesena_w_active:
+		_etesena_w_add_target(ward)
 		return
 
 	if selected_attacker.taunted_by != "":
@@ -680,6 +717,10 @@ func _cancel_skill() -> void:
 	selected_attacker = null
 	selected_skill = ""
 	hide_target_arrow()
+	if _etesena_w_active:
+		_etesena_w_active = false
+		_etesena_w_targets.clear()
+		_etesena_w_clear_labels()
 	battle_log.add_entry("Скіл скасовано")
 
 
@@ -693,6 +734,75 @@ func _get_enemy_ward_at_mouse():
 		if ward.get_global_rect().has_point(mouse_pos):
 			return ward
 	return null
+
+
+# ── Танець Етесени: multi-target ────────────────────────────────────────────
+
+func _etesena_w_add_target(ward) -> void:
+	# Перевірка провокації
+	if selected_attacker.taunted_by != "" and ward.ward_id != selected_attacker.taunted_by:
+		var taunter = null
+		for w in enemy_wards:
+			if w.ward_id == selected_attacker.taunted_by and not w.is_dead:
+				taunter = w
+				break
+		if taunter != null:
+			battle_log.add_entry("Під Провокацією! Потрібно атакувати " + taunter.name)
+			return
+		else:
+			selected_attacker.remove_status("taunt", selected_attacker.get_status("taunt"))
+			selected_attacker.taunted_by = ""
+
+	_etesena_w_targets.append(ward)
+	var order_num: int = _etesena_w_targets.size()
+
+	# Лейбл з номером поверх картки варда
+	var label := Label.new()
+	label.text = str(order_num)
+	label.z_index = 500
+	label.add_theme_font_size_override("font_size", 38)
+	label.add_theme_color_override("font_color", Color(1.0, 0.92, 0.1, 1.0))
+	var portrait_center: Vector2 = ward.portrait.get_global_rect().get_center()
+	label.global_position = portrait_center - Vector2(11, 24)
+	add_child(label)
+	_etesena_w_labels.append(label)
+
+	battle_log.add_entry("Танець: ціль %d — %s" % [order_num, ward.name])
+
+	# Рахуємо required динамічно — захист від несинхронізованого стану
+	var required: int = mini(battle_resolver.get_alive_wards(enemy_wards).size(), 3)
+	if required <= 0: required = 1
+	if _etesena_w_targets.size() >= required:
+		await _etesena_w_execute()
+
+
+func _etesena_w_execute() -> void:
+	_etesena_w_active = false
+	waiting_for_target = false
+	hide_target_arrow()
+	_etesena_w_clear_labels()
+
+	selected_attacker.set_meta("etesena_w_targets", _etesena_w_targets.duplicate())
+	_etesena_w_targets.clear()
+
+	_turn_locked = true
+	await battle_resolver.attack(selected_attacker, null, selected_skill)
+	_apply_and_log_cd(selected_attacker, selected_skill)
+
+	if battle_resolver.is_team_dead(enemy_wards):
+		_finish_battle("ПЕРЕМОГА")
+		return
+	if battle_resolver.is_team_dead(ally_wards):
+		_finish_battle("ПОРАЗКА")
+		return
+	_next_turn()
+
+
+func _etesena_w_clear_labels() -> void:
+	for label in _etesena_w_labels:
+		if is_instance_valid(label):
+			label.queue_free()
+	_etesena_w_labels.clear()
 
 
 func _next_turn() -> void:
