@@ -274,6 +274,9 @@ func _play_card_anim(slot_idx: int, element: String) -> void:
 	var audio_node_path: String = ""
 	match element:
 		"fire":  audio_node_path = "Fire_card/fire_audio"
+		"water": audio_node_path = "Water_card/AudioStreamPlayer2D"
+		"air":   audio_node_path = "Air_card/AudioStreamPlayer2D"
+		"earth": audio_node_path = "Earth_card/AudioStreamPlayer2D"
 	if audio_node_path != "":
 		var audio := anim.get_node_or_null(audio_node_path) as AudioStreamPlayer2D
 		if audio:
