@@ -162,32 +162,34 @@ static func _execute_shopey(resolver, attacker, target, skill_key: String, base_
 			await resolver.deal_damage_with_modifiers(attacker, target, 75, skill_key, "phys")
 			if e_hydra_ready:
 				await _shopey_trigger_hydra(resolver, attacker, target)
-			await _shopey_passive_check(resolver, attacker, target)
+				# E-буф спожито — пасивка не кидається
+			else:
+				await _shopey_passive_check(resolver, attacker, target)
 
 		"W":
-			# Ріжуча гідра: 90 повітря + гарантована гідра (45 повітря сусідній)
+			# Ріжуча гідра: 90 повітря + власна гідра W (завжди) + умови пасивки
 			if target == null: return
 			await resolver.deal_damage_with_modifiers(attacker, target, 90, skill_key, "air")
-			# Власна гідра W (завжди)
 			await _shopey_trigger_hydra(resolver, attacker, target)
-			# Гідра від E-буфа (якщо був активний)
 			if e_hydra_ready:
+				# E-буф: друга гідра гарантовано, пасивка не кидається
 				await _shopey_trigger_hydra(resolver, attacker, target)
-			await _shopey_passive_check(resolver, attacker, target)
+			else:
+				await _shopey_passive_check(resolver, attacker, target)
 
 		"E":
-			# Наскок: 30 фіз + встановлює прапорець на наступну здібність
+			# Наскок: 30 фіз → встановлює прапорець для наступної здібності
 			if target == null: return
 			await resolver.deal_damage_with_modifiers(attacker, target, 30, skill_key, "phys")
-			# Гідра від попереднього E (якщо був активний)
 			if e_hydra_ready:
+				# E-буф спожито — пасивка не кидається
 				await _shopey_trigger_hydra(resolver, attacker, target)
-			# Встановлюємо прапорець для наступної здібності
+			else:
+				await _shopey_passive_check(resolver, attacker, target)
 			attacker.set_meta("shopey_hydra_ready", true)
 			if resolver.battle_log:
 				resolver.battle_log.add_entry("Шопей: наступна здібність гарантовано викличе Відсічену Гідру!")
 				resolver.battle_log.add_effect(attacker.name, attacker.team, "Наскок (гарантована гідра)")
-			await _shopey_passive_check(resolver, attacker, target)
 
 
 # Випадковий живий ворог, відмінний від основної цілі.
