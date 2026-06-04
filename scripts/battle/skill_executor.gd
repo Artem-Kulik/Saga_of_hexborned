@@ -11,8 +11,11 @@ static func get_skill_target_type(ward_id: String, skill_key: String) -> String:
 			if skill_key == "E": return "self"
 		"mais_oichi":
 			if skill_key == "W": return "self"
-			if skill_key == "E": return "single_enemy" # Taunts a specific enemy
-	
+			if skill_key == "E": return "single_enemy"
+		"grump":
+			if skill_key == "Q": return "all_enemies"
+			if skill_key == "E": return "all_enemies"
+
 	return "single_enemy"
 
 
@@ -28,6 +31,8 @@ static func execute_skill(resolver, attacker, target, skill_key: String) -> void
 			await _execute_mais_oichi(resolver, attacker, target, skill_key, base_damage)
 		"shopey":
 			await _execute_shopey(resolver, attacker, target, skill_key, base_damage)
+		"grump":
+			await _execute_grump(resolver, attacker, target, skill_key, base_damage)
 		_:
 			# Стандартна атака для всіх інших поки що
 			await _execute_basic_attack(resolver, attacker, target, skill_key, base_damage)
@@ -221,3 +226,61 @@ static func _shopey_passive_check(resolver, attacker, attacked_target) -> void:
 	if resolver.battle_log:
 		resolver.battle_log.add_entry("Пасивка Відсічена Гідра: атакує " + hydra_target.name + "!")
 	await resolver.deal_damage_with_modifiers(attacker, hydra_target, 45, "P", "air")
+
+
+# =============================================================================
+# GRUMP (Грумп)
+# =============================================================================
+# P — Наростання породи: +25 броні після кожного власного скіла.
+# Q — Клятва Варда: 20 фіз по всіх ворогах.
+# W — Борозда: 30 фіз + оглушення 1 хід.
+# E — Вибух породи: (25 + поточна броня) фіз по всіх, броня → 0.
+
+static func _execute_grump(resolver, attacker, target, skill_key: String, _base_damage: int) -> void:
+	var enemy_side: Array = resolver.battle_scene.enemy_wards if attacker.team == "ally" else resolver.battle_scene.ally_wards
+
+	match skill_key:
+		"Q":
+			# Клятва Варда: 20 фіз по всіх ворогах
+			for enemy in resolver.get_alive_wards(enemy_side):
+				await resolver.deal_damage_with_modifiers(attacker, enemy, 20, skill_key, "phys")
+
+		"W":
+			# Борозда: 30 фіз + оглушення 1 хід
+			if target == null: return
+			await resolver.deal_damage_with_modifiers(attacker, target, 30, skill_key, "phys")
+			if not target.is_dead:
+				target.add_status("stun", 1)
+				if resolver.battle_log:
+					resolver.battle_log.add_entry(target.name + " оглушений на 1 хід!")
+					resolver.battle_log.add_effect(target.name, target.team, "Оглушення (1 хід)")
+
+		"E":
+			# Вибух породи: (25 + поточна броня) фіз по всіх, після — броня Грумпа → 0
+			var armor: int = attacker.health.current_armor
+			var total_damage: int = 25 + armor
+			if resolver.battle_log:
+				resolver.battle_log.add_entry(
+					"Вибух породи: %d пошкоджень (25 + %d броні) по всіх!" % [total_damage, armor]
+				)
+			for enemy in resolver.get_alive_wards(enemy_side):
+				await resolver.deal_damage_with_modifiers(attacker, enemy, total_damage, skill_key, "phys")
+			attacker.health.current_armor = 0
+			attacker.update_armor_status(0)
+			if resolver.battle_log:
+				resolver.battle_log.add_entry("Броня Грумпа скинута до 0.")
+
+	# Пасивка: +25 броні наприкінці кожного ходу
+	await _grump_end_of_turn_passive(resolver, attacker)
+
+
+static func _grump_end_of_turn_passive(resolver, attacker) -> void:
+	attacker.health.add_armor(25)
+	attacker.update_armor_status(attacker.health.current_armor)
+	if resolver.battle_log:
+		resolver.battle_log.add_entry(
+			"Наростання породи: +25 броні. Всього броні: %d" % attacker.health.current_armor
+		)
+		resolver.battle_log.add_effect(
+			attacker.name, attacker.team, "Броня +25 (всього: %d)" % attacker.health.current_armor
+		)

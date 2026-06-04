@@ -370,6 +370,17 @@ func _start_turn() -> void:
 		current_ward.set_meta("untargetable", false)
 		current_ward.modulate.a = 1.0
 
+	# === ОБРОБКА ОГЛУШЕННЯ ===
+	# Оглушений Вард пропускає хід; хід переходить до наступного Варда ТІЄї ж команди.
+	# Жодна команда не може ходити двічі поспіль.
+	if current_ward.get_status("stun") > 0:
+		battle_log.add_entry(current_ward.name + " оглушений — пропускає хід!")
+		current_ward.remove_status("stun", 1)
+		if current_ward.has_method("tick_cooldowns"):
+			current_ward.tick_cooldowns()
+		_start_turn()  # Та ж команда — наступний Вард, без switch_team()
+		return
+
 	_update_active_ward_visual()
 
 	battle_log.add_empty_line()
