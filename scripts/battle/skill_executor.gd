@@ -72,18 +72,19 @@ static func _execute_liah(resolver, attacker, target, skill_key: String, _base_d
 				
 		"W":
 			# Кола на воді: Атакує всіх ворогів, наносить 35(вода). Якщо хтось гине — атакує ще раз.
+			var enemy_side_w: Array = resolver.battle_scene.enemy_wards if attacker.team == "ally" else resolver.battle_scene.ally_wards
 			var trigger_again = false
-			var enemies = resolver.get_alive_wards(resolver.battle_scene.enemy_wards)
-			
+			var enemies = resolver.get_alive_wards(enemy_side_w)
+
 			for enemy in enemies:
 				var hp_before = enemy.current_hp
 				await resolver.deal_damage_with_modifiers(attacker, enemy, 35, skill_key)
 				if enemy.is_dead and hp_before > 0:
 					trigger_again = true
-			
+
 			if trigger_again:
 				resolver.battle_log.add_entry("Кола на воді: ефект спрацював повторно!")
-				enemies = resolver.get_alive_wards(resolver.battle_scene.enemy_wards)
+				enemies = resolver.get_alive_wards(enemy_side_w)
 				for enemy in enemies:
 					await resolver.deal_damage_with_modifiers(attacker, enemy, 35, skill_key)
 
