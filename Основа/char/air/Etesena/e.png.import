@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://dg3c2u8aorwyx"
-path="res://.godot/imported/ocii.png-422f1657311a1dc9c431850718278408.ctex"
+uid="uid://cf6twjr53qqm6"
+path="res://.godot/imported/e.png-46a399e8afca166134f10af2721a1340.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://Основа/char/fire/Ocii/ocii.png"
-dest_files=["res://.godot/imported/ocii.png-422f1657311a1dc9c431850718278408.ctex"]
+source_file="res://Основа/char/air/Etesena/e.png"
+dest_files=["res://.godot/imported/e.png-46a399e8afca166134f10af2721a1340.ctex"]
 
 [params]
 
