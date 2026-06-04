@@ -1,9 +1,11 @@
 extends Node
 
-const SkillExecutor = preload("res://scripts/battle/skill_executor.gd")
+const SkillExecutor            = preload("res://scripts/battle/skill_executor.gd")
+const SkillAnimationDispatcher = preload("res://scripts/battle/skill_animation_dispatcher.gd")
 
-var battle_log = null
-var battle_scene = null
+var battle_log      = null
+var battle_scene    = null
+var skill_controller: SkillController = SkillController.new()
 
 const ELEMENT_MULTIPLIERS = {
 	"fire": {"fire": 1.0, "water": 2.0, "air": 0.5, "earth": 1.0, "light": 2.0},
@@ -22,6 +24,8 @@ func attack(attacker, target, skill_key: String = "Q") -> void:
 	if attacker == null:
 		return
 
+	skill_controller.activate(attacker.ward_id, skill_key, attacker)
+
 	var pressed_button = null
 
 	match skill_key:
@@ -31,9 +35,10 @@ func attack(attacker, target, skill_key: String = "Q") -> void:
 
 	if pressed_button != null:
 		await AnimationCode.skill_used_animation(pressed_button)
-		AnimationCode.skill_qwe_animation(pressed_button)
 
 	await SkillExecutor.execute_skill(self, attacker, target, skill_key)
+
+	skill_controller.clear()
 
 
 func deal_damage_with_modifiers(attacker, target, base_damage: int, skill_key: String, forced_damage_type: String = "") -> void:
@@ -105,7 +110,9 @@ func apply_damage(
 	var max_hp: int = target.max_hp
 
 	if damage_source == "skill" and source != null:
-		await AnimationCode.skill_hit_animation(
+		# Анімація визначається за skill_id — аніматор додає гілки в skill_animation_dispatcher.gd
+		await SkillAnimationDispatcher.play(
+			skill_controller.active_skill_id,
 			source,
 			target,
 			func():
@@ -119,7 +126,7 @@ func apply_damage(
 				if damage > 0:
 					SkillExecutor.check_rage_passive(self, target)
 					_check_fire_shield(source, target)
-					
+
 					AnimationCode.animation_dmg_number(
 						damage,
 						target.portrait.get_global_rect().get_center()
