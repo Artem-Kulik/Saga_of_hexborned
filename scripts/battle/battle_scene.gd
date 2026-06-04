@@ -257,7 +257,9 @@ func _input(event: InputEvent) -> void:
 					_on_skill_clicked(current_ward, "E")
 
 	# Drag-to-target: відпустив мишку → атакуємо або скасовуємо
+	# Пропускаємо якщо активний multi-target вибір (Танець Етесени)
 	if waiting_for_target \
+			and not _etesena_w_active \
 			and event is InputEventMouseButton \
 			and event.button_index == MOUSE_BUTTON_LEFT \
 			and not event.pressed:
