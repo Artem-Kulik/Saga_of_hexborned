@@ -95,6 +95,6 @@ process_material = SubResource("ParticleProcessMaterial_0wxjq")
 [node name="liah_q_animation" type="AnimatedSprite2D" parent="visual_root" unique_id=598291649]
 scale = Vector2(1, 1.8125)
 sprite_frames = SubResource("SpriteFrames_14vii")
-frame = 6
-frame_progress = 0.5333384
+frame = 1
+frame_progress = 0.05768141
 speed_scale = 2.57
