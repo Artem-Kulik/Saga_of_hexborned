@@ -106,9 +106,22 @@ static func _execute_liah(resolver, attacker, target, skill_key: String, _base_d
 		"W":
 			# Кола на воді: Атакує всіх ворогів, наносить 35(вода). Якщо хтось гине — атакує ще раз.
 			var enemy_side_w: Array = resolver.battle_scene.enemy_wards if attacker.team == "ally" else resolver.battle_scene.ally_wards
+			var center_w: Vector2 = Vector2(903, 542)
+
+			# Рух Лії вперед
+			var av_w: Control = attacker.get_node_or_null("WardVisual")
+			var start_pos_w: Vector2 = av_w.global_position if av_w else Vector2.ZERO
+			if av_w:
+				var t := av_w.create_tween()
+				t.tween_property(av_w, "global_position", center_w, 0.20)
+				await t.finished
+
+			# Ефект
+			await AnimationCode.anim_liah_w_effect(center_w)
+
+			# Шкода всім ворогам
 			var trigger_again = false
 			var enemies = resolver.get_alive_wards(enemy_side_w)
-
 			for enemy in enemies:
 				var hp_before = enemy.current_hp
 				await resolver.deal_damage_with_modifiers(attacker, enemy, 35, skill_key, "", true)
@@ -120,6 +133,12 @@ static func _execute_liah(resolver, attacker, target, skill_key: String, _base_d
 				enemies = resolver.get_alive_wards(enemy_side_w)
 				for enemy in enemies:
 					await resolver.deal_damage_with_modifiers(attacker, enemy, 35, skill_key, "", true)
+
+			# Повернення
+			if av_w:
+				var t := av_w.create_tween()
+				t.tween_property(av_w, "global_position", start_pos_w, 0.20)
+				await t.finished
 
 		"E":
 			# Загороджуючий водопад: Стає невибираною як ціль до свого наступного ходу.
