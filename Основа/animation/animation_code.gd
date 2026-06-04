@@ -355,6 +355,21 @@ func liah_q_combo_animation(
 	attacker.z_index = old_z_index
 	attacker.z_as_relative = old_z_as_relative
 
+func anim_liah_w_effect(pos: Vector2) -> void:
+	var effect = LIAH_W.instantiate()
+	get_tree().current_scene.add_child(effect)
+	effect.global_position = pos
+	effect.z_index = 1000
+	if effect.has_method("play_once"):
+		effect.play_once()
+		await effect.finished
+	else:
+		if effect.has_method("play"):
+			effect.play()
+		await get_tree().create_timer(0.8).timeout
+		if is_instance_valid(effect):
+			effect.queue_free()
+
 func anim_liah_w(attacker, target, on_hit: Callable) -> void:
 	if attacker == null:
 		return
