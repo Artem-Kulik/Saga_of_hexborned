@@ -1,4 +1,4 @@
-extends Control
+extends Node2D
 
 signal hit_moment
 
@@ -13,6 +13,8 @@ func set_direction(direction: Vector2) -> void:
 
 func play() -> void:
 	particles.emitting = false
+	sprite.stop()
+	sprite.frame = 0
 	sprite.play("default")
 
 

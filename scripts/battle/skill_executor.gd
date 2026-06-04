@@ -49,13 +49,19 @@ static func _execute_liah(resolver, attacker, target, skill_key: String, base_da
 			# Течія: Наносить 50(фіз). Якщо ціль мала максимальне HP — атакує ще раз (водяний).
 			if target == null: return
 			var was_full_hp = (target.current_hp == target.max_hp)
-			
-			await resolver.deal_damage_with_modifiers(attacker, target, base_damage, skill_key) # phys
-			
-			if was_full_hp and not target.is_dead:
+			if was_full_hp:
 				resolver.battle_log.add_entry("Течія: додатковий водяний удар!")
-				# Передаємо спеціальний флаг чи damage_type
-				await resolver.deal_damage_with_modifiers(attacker, target, base_damage, "Q_water_bonus", "water")
+			var d1 = resolver.calc_damage_only(attacker, target, 50, "Q", "phys")
+			var d2_callable := Callable()
+			if was_full_hp:
+				var d2 = resolver.calc_damage_only(attacker, target, 50, "Q_water_bonus", "water")
+				d2_callable = func():
+					await resolver.apply_damage(attacker, target, d2.final_damage, "Q_water_bonus", "-", "effect", 50, d2.mult)
+			await SkillAnimationDispatcher.play_liah_q(
+				attacker, target,
+				func(): await resolver.apply_damage(attacker, target, d1.final_damage, "Q", "-", "effect", 50, d1.mult),
+				d2_callable
+			)
 				
 		"W":
 			# Кола на воді: Атакує всіх ворогів, наносить 35(вода). Якщо хтось гине — атакує ще раз.

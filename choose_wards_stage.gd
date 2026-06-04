@@ -276,6 +276,15 @@ func _play_card_anim(slot_idx: int, element: String) -> void:
 	else:
 		get_tree().create_timer(2.0).timeout.connect(anim.queue_free)
 
+	# Граємо звук тільки для відповідної стихії
+	var audio_node_path: String = ""
+	match element:
+		"fire":  audio_node_path = "Fire_card/fire_audio"
+	if audio_node_path != "":
+		var audio := anim.get_node_or_null(audio_node_path) as AudioStreamPlayer2D
+		if audio:
+			audio.play()
+
 
 # --- Оновлення верхніх слотів ---
 

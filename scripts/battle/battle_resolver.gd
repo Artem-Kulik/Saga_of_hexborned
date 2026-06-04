@@ -110,9 +110,14 @@ func apply_damage(
 	var max_hp: int = target.max_hp
 
 	if damage_source == "skill" and source != null:
+		# Підваріанти удару (skill_key містить "_") отримують власний anim_id:
+		# "Q_water_bonus" → "liah_q_water_bonus", "Q_rage" → "mais_oichi_q_rage" тощо
+		var anim_id: String = skill_controller.active_skill_id
+		if "_" in skill_key and source != null:
+			anim_id = source.ward_id + "_" + skill_key.to_lower()
 		# Анімація визначається за skill_id — аніматор додає гілки в skill_animation_dispatcher.gd
 		await SkillAnimationDispatcher.play(
-			skill_controller.active_skill_id,
+			anim_id,
 			source,
 			target,
 			func():
@@ -186,6 +191,32 @@ func _check_fire_shield(attacker, target) -> void:
 		if battle_log:
 			battle_log.add_entry("Вогняний щит відбиває атаку! " + attacker.name + " отримує 2 стаки Горіння.")
 			battle_log.add_effect(attacker.name, attacker.team, "Горіння (2 стаки)")
+
+func calc_damage_only(attacker, target, base_damage: int, skill_key: String, forced_damage_type: String = "") -> Dictionary:
+	var damage_type: String = forced_damage_type
+	var mult: float = 1.0
+
+	var armor: int = 0
+	if target.get("health"):
+		armor = target.health.current_armor
+
+	if damage_type == "" and attacker != null and attacker.ward_id != "":
+		var attacker_data = WardDatabase.get_data(attacker.ward_id)
+		if not attacker_data.is_empty():
+			var skill_data = attacker_data.get("skills", {}).get(skill_key, {})
+			damage_type = skill_data.get("damage_type", "phys")
+
+	if damage_type != "phys" and damage_type != "passive" and damage_type != "":
+		var target_element = WardDatabase.get_data(target.ward_id).get("element", "phys")
+		if ELEMENT_MULTIPLIERS.has(target_element) and ELEMENT_MULTIPLIERS[target_element].has(damage_type):
+			mult = ELEMENT_MULTIPLIERS[target_element][damage_type]
+
+	var armor_dmg: int = mini(base_damage, armor)
+	var final_damage: int = armor_dmg + int((base_damage - armor_dmg) * mult)
+
+	return {"final_damage": final_damage, "mult": mult}
+
+
 
 func get_alive_wards(wards: Array) -> Array:
 	var result: Array = []

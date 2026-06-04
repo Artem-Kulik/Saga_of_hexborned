@@ -61,6 +61,9 @@ var waiting_for_target: bool = false
 var battle_finished: bool = false
 var battle_started: bool = false
 
+# Блокує нові скіл-кліки під час анімації атаки — запобігає паралельним атакам
+var _turn_locked: bool = false
+
 
 func _ready() -> void:
 	_apply_ward_data()
@@ -255,8 +258,23 @@ func _input(event: InputEvent) -> void:
 		var enemy_target = _get_enemy_ward_at_mouse()
 		if enemy_target != null:
 			# Відпустив над живим ворогом → атака
+			# Перевірка провокації (taunt)
+			if selected_attacker.taunted_by != "":
+				if enemy_target.ward_id != selected_attacker.taunted_by:
+					var taunter = null
+					for w in enemy_wards:
+						if w.ward_id == selected_attacker.taunted_by and not w.is_dead:
+							taunter = w
+							break
+					if taunter != null:
+						battle_log.add_entry("Ви під дією Провокації! Потрібно атакувати " + taunter.name)
+						return
+					else:
+						selected_attacker.remove_status("taunt", selected_attacker.get_status("taunt"))
+						selected_attacker.taunted_by = ""
 			hide_target_arrow()
 			waiting_for_target = false
+			_turn_locked = true
 			await battle_resolver.attack(selected_attacker, enemy_target, selected_skill)
 			# Застосовуємо КД + логуємо (drag-to-target шлях)
 			_apply_and_log_cd(selected_attacker, selected_skill)
@@ -339,6 +357,7 @@ func _start_turn() -> void:
 	if battle_finished:
 		return
 
+	_turn_locked = false
 	hide_target_arrow()
 
 	if battle_resolver.is_team_dead(ally_wards):
@@ -428,6 +447,9 @@ func _on_skill_clicked(ward, skill_key: String) -> void:
 	if battle_finished:
 		return
 
+	if _turn_locked:
+		return
+
 	if turn_manager.current_team != "ally":
 		return
 
@@ -477,6 +499,7 @@ func _on_skill_clicked(ward, skill_key: String) -> void:
 		if pressed_button:
 			AnimationCode.skill_pressed_animation(pressed_button)
 		battle_log.add_entry("Обраний скіл: " + skill_key)
+		_turn_locked = true
 		await battle_resolver.attack(selected_attacker, null, selected_skill)
 		_apply_and_log_cd(selected_attacker, selected_skill)
 		if battle_resolver.is_team_dead(enemy_wards):
@@ -529,6 +552,7 @@ func _on_ward_clicked(ward) -> void:
 	hide_target_arrow()
 
 	waiting_for_target = false
+	_turn_locked = true
 
 	await battle_resolver.attack(
 		selected_attacker,

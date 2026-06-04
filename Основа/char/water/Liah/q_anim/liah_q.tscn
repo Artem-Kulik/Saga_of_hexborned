@@ -61,22 +61,15 @@ animations = [{
 "duration": 1.0,
 "texture": ExtResource("9_muqev")
 }],
-"loop": true,
+"loop": false,
 "name": &"default",
 "speed": 5.0
 }]
 
-[node name="liah_q" type="Control" unique_id=448160523]
-layout_mode = 3
-anchors_preset = 0
-offset_left = -67.0
-offset_top = -253.78313
-offset_right = 69.0
-offset_bottom = -8.0
+[node name="liah_q" type="Node2D" unique_id=448160523]
 script = ExtResource("1_ga5ad")
 
 [node name="visual_root" type="Node2D" parent="." unique_id=651343643]
-script = ExtResource("2_owebn")
 
 [node name="water_drop" type="GPUParticles2D" parent="visual_root" unique_id=2138279243]
 modulate = Color(0.7843024, 0.8574656, 1, 1)
@@ -98,3 +91,5 @@ sprite_frames = SubResource("SpriteFrames_14vii")
 frame = 1
 frame_progress = 0.05768141
 speed_scale = 2.57
+
+[connection signal="animation_finished" from="visual_root/liah_q_animation" to="." method="_on_animated_sprite_2d_animation_finished"]

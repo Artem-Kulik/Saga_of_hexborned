@@ -61,10 +61,7 @@ static func play(skill_id: String, attacker, target, on_hit: Callable) -> void:
 		# "siomyi_e": await AnimationCode.anim_siomyi_e(attacker, target, on_hit)
 
 		# ── LIAH (Лія) ────────────────────────────────────────────────────────
-		"liah_q":
-			AnimationCode.liah_q_animation(attacker, target, on_hit)
-		
-		
+		# "liah_q": два удари — маршрутизується через play_liah_q(attacker, target, on_hit_first, on_hit_second)
 		# "liah_w": await AnimationCode.anim_liah_w(attacker, target, on_hit)
 		# "liah_e": await AnimationCode.anim_liah_e(attacker, target, on_hit)
 
@@ -122,3 +119,9 @@ static func play(skill_id: String, attacker, target, on_hit: Callable) -> void:
 		# Стандартна анімація атаки — поки конкретна анімація не готова
 		_:
 			await AnimationCode.skill_hit_animation(attacker, target, on_hit)
+
+
+# Liah Q — два удари: базовий фіз + умовний водяний projectile.
+# on_hit_second: порожній Callable() якщо другий удар не спрацьовує.
+static func play_liah_q(attacker, target, on_hit_first: Callable, on_hit_second: Callable) -> void:
+	await AnimationCode.liah_q_combo_animation(attacker, target, on_hit_first, on_hit_second)

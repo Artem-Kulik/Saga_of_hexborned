@@ -601,7 +601,7 @@ speed_scale = 3.5
 [node name="fire_audio" type="AudioStreamPlayer2D" parent="Fire_card" unique_id=253505407]
 stream = ExtResource("29_nbulw")
 volume_db = 3.586
-autoplay = true
+autoplay = false
 
 [node name="Water_card" type="Control" parent="." unique_id=378487933]
 visible = false
