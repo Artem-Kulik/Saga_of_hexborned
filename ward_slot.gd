@@ -18,7 +18,7 @@ const _STATUS_NODE: Dictionary = {
 	"fire_shield": "oichi_flame_shield",
 	"cuts":          "hiscoris_scares",
 	"fire_circle":   "ocii_circle_flame",
-	"barrier":       "barrier",
+	"barrier":       "armor",
 	"fire_seventh":  "prayers_fire",
 	"reaping":       "znec_znyva",
 	"parasitism":    "parazyte_assim",

@@ -99,10 +99,10 @@ var WARDS: Dictionary = {
 		"short_desc_file": "res://Основа/char/earth/Groomp/skills_short.txt",
 		"full_desc_file":  "res://Основа/char/earth/Groomp/skills_full.txt",
 		"skills": {
-			"P": { "id": "grump_p", "damage_type": "passive", "name": "Наростання породи", "cd": 0, "icon": "", "desc": "", "desc_full": "" },
-			"Q": { "id": "grump_q", "damage_type": "earth",   "name": "Клятва Варда",      "cd": 0, "icon": "", "desc": "", "desc_full": "" },
-			"W": { "id": "grump_w", "damage_type": "earth",   "name": "Борозда",           "cd": 3, "icon": "", "desc": "", "desc_full": "" },
-			"E": { "id": "grump_e", "damage_type": "earth",   "name": "Вибух породи",      "cd": 2, "icon": "", "desc": "", "desc_full": "" },
+			"P": { "id": "grump_p", "damage_type": "passive", "name": "Наростання породи", "cd": 0, "icon": "res://Основа/char/earth/Groomp/P.png", "desc": "", "desc_full": "" },
+			"Q": { "id": "grump_q", "damage_type": "earth",   "name": "Клятва Варда",      "cd": 0, "icon": "res://Основа/char/earth/Groomp/Q.png", "desc": "", "desc_full": "" },
+			"W": { "id": "grump_w", "damage_type": "earth",   "name": "Борозда",           "cd": 3, "icon": "res://Основа/char/earth/Groomp/W.png", "desc": "", "desc_full": "" },
+			"E": { "id": "grump_e", "damage_type": "earth",   "name": "Вибух породи",      "cd": 2, "icon": "res://Основа/char/earth/Groomp/E.png", "desc": "", "desc_full": "" },
 		}
 	},
 	"kromius": {
