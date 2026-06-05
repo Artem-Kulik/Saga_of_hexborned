@@ -92,7 +92,7 @@ position = Vector2(7.6293945e-06, 0)
 scale = Vector2(7, 4.711)
 sprite_frames = SubResource("SpriteFrames_buraj")
 frame_progress = 0.4346897
-speed_scale = 3.0
+speed_scale = 4.0
 
 [node name="3" type="GPUParticles2D" parent="." unique_id=955783567]
 amount = 362

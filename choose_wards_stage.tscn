@@ -2,7 +2,7 @@
 
 [ext_resource type="Script" uid="uid://pmglc34io1xn" path="res://choose_wards_stage.gd" id="1_k366w"]
 [ext_resource type="Texture2D" uid="uid://ccmi1jrtt83kk" path="res://Основа/visual/green_highlight.png" id="2_jejem"]
-[ext_resource type="Texture2D" uid="uid://di34xc4kk7lfs" path="res://Основа/visual/choose_stage/bg.png" id="2_k366w"]
+[ext_resource type="Texture2D" uid="uid://di34xc4kk7lfs" path="res://Основа/visual/choose_stage/BG.png" id="2_k366w"]
 [ext_resource type="Texture2D" uid="uid://cvd8bbjfjry67" path="res://Основа/visual/choose_stage/glow_gb.png" id="3_0mrmj"]
 [ext_resource type="Texture2D" uid="uid://cgjmqk6t3yfop" path="res://Основа/visual/element_cards/card_reverse.png" id="3_bd0us"]
 [ext_resource type="Texture2D" uid="uid://5vw8fk0gxtfe" path="res://Основа/visual/logo.png" id="4_inqys"]
@@ -18,15 +18,14 @@
 [ext_resource type="Texture2D" uid="uid://cad7yr62r3l0x" path="res://Основа/visual/choose_stage/chosebg_air.png" id="11_xma24"]
 [ext_resource type="Texture2D" uid="uid://b801le688h3ov" path="res://Основа/visual/sigils/sigil_air.png" id="12_0iq2c"]
 [ext_resource type="Texture2D" uid="uid://6tsgn6kxqpro" path="res://Основа/visual/choose_stage/tile_earth.png" id="14_18k0n"]
-[ext_resource type="PackedScene" uid="uid://ctcip5lgxyah7" path="res://empty_slots.tscn" id="14_eo2re"]
 [ext_resource type="Script" uid="uid://bbp54807il017" path="res://tabs_menu.gd" id="14_k242r"]
 [ext_resource type="Texture2D" uid="uid://cexdw0323h8yv" path="res://Основа/visual/choose_stage/tile_water.png" id="15_eo2re"]
 [ext_resource type="Texture2D" uid="uid://eaf2p58lh1oy" path="res://Основа/visual/choose_stage/tile_fire.png" id="16_d40o3"]
 [ext_resource type="Script" uid="uid://dvuwlduuiu1bu" path="res://buttons_chose_stage.gd" id="16_jprfe"]
 [ext_resource type="Texture2D" uid="uid://cxwdwvnimwdqo" path="res://Основа/visual/choose_stage/tile_air.png" id="17_xma24"]
 [ext_resource type="Texture2D" uid="uid://ccusj82vd0uds" path="res://Основа/visual/Skill_list/Skill_background.png" id="20_tyi47"]
-[ext_resource type="Texture2D" uid="uid://dpt2a13yle6ma" path="res://Основа/char/water/Liah/liah_q.png" id="21_w318r"]
-[ext_resource type="Texture2D" uid="uid://d5tacve37cas" path="res://Основа/char/water/Liah/Liah.png" id="22_jprfe"]
+[ext_resource type="Texture2D" uid="uid://blgnor610pcxs" path="res://Основа/char/water/Liah/liah_q.png" id="21_w318r"]
+[ext_resource type="Texture2D" uid="uid://cispqe8gkrkwo" path="res://Основа/char/water/Liah/Liah.png" id="22_jprfe"]
 [ext_resource type="FontFile" uid="uid://bymkrthni0vye" path="res://Основа/Шрифти/silvus__.ttf" id="26_m8a06"]
 [ext_resource type="Texture2D" uid="uid://oym6a1atnd2l" path="res://Основа/visual/choose_stage/page_lor_bg.png" id="27_m8a06"]
 [ext_resource type="FontFile" uid="uid://sin06uqgfb8o" path="res://Основа/Шрифти/Brock_Script_D.ttf" id="28_o6ifj"]
@@ -107,7 +106,6 @@ grow_horizontal = 2
 texture = ExtResource("3_bd0us")
 expand_mode = 1
 
-
 [node name="ward_2" type="Control" parent="PickedWards" unique_id=190020635]
 anchors_preset = 0
 offset_right = 40.0
@@ -140,7 +138,6 @@ size_flags_stretch_ratio = 0.0
 texture = ExtResource("3_bd0us")
 expand_mode = 1
 
-
 [node name="ward_3" type="Control" parent="PickedWards" unique_id=1910242448]
 anchors_preset = 0
 offset_right = 40.0
@@ -170,7 +167,6 @@ offset_bottom = 325.0
 grow_horizontal = 2
 texture = ExtResource("3_bd0us")
 expand_mode = 1
-
 
 [node name="Wards_collection" type="Control" parent="." unique_id=82112796]
 anchors_preset = 0
@@ -459,7 +455,6 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("14_k242r")
-empty_slot_scene = ExtResource("14_eo2re")
 slot_size = Vector2(124, 170)
 
 [node name="Buttons" type="Control" parent="Wards_collection/chose_zone/TabsMenu" unique_id=1547550369]
