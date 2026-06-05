@@ -379,25 +379,18 @@ func anim_liah_w(attacker, target, on_hit: Callable) -> void:
 
 	var attacker_visual: Control = attacker.get_node_or_null("WardVisual")
 	if attacker_visual == null:
+		print("LIAH_W: WardVisual не знайдено")
 		return
 
 	var start_pos: Vector2 = attacker_visual.global_position
 
-	# Запам'ятовуємо старі значення
 	var old_z_index: int = attacker.z_index
 	var old_z_as_relative: bool = attacker.z_as_relative
 
 	var center_pos: Vector2 = Vector2(903, 542)
-	var effect_pos: Vector2 = Vector2(903, 542)
 
-	# Піднімаємо поверх всіх
 	attacker.z_as_relative = false
 	attacker.z_index = 999
-
-	# ====================================================================
-	# >>> ТУТ ЗМІНЮЙ КУДИ РУХАЄТЬСЯ ЛІЯ <<<
-	var center_pos: Vector2 = Vector2(903, 542)
-	# ====================================================================
 
 	var move_tween := attacker_visual.create_tween()
 	move_tween.tween_property(attacker_visual, "global_position", center_pos, 0.20)
@@ -406,17 +399,21 @@ func anim_liah_w(attacker, target, on_hit: Callable) -> void:
 	var effect = LIAH_W.instantiate()
 	get_tree().current_scene.add_child(effect)
 	effect.global_position = center_pos
-	effect.z_index = 1000
+
+	if effect is CanvasItem:
+		effect.z_index = 1000
 
 	if effect.has_method("play_once"):
 		effect.play_once()
-		await effect.finished
+	elif effect.has_method("play"):
+		effect.play()
 	else:
-		if effect.has_method("play"):
-			effect.play()
-		await get_tree().create_timer(0.8).timeout
-		if is_instance_valid(effect):
-			effect.queue_free()
+		print("LIAH_W: у ефекта нема play_once/play")
+
+	await get_tree().create_timer(0.8).timeout
+
+	if is_instance_valid(effect):
+		effect.queue_free()
 
 	if on_hit.is_valid():
 		await on_hit.call()
@@ -425,7 +422,6 @@ func anim_liah_w(attacker, target, on_hit: Callable) -> void:
 	return_tween.tween_property(attacker_visual, "global_position", start_pos, 0.20)
 	await return_tween.finished
 
-	# Повертаємо як було
 	attacker_visual.global_position = start_pos
 	attacker.z_index = old_z_index
 	attacker.z_as_relative = old_z_as_relative
