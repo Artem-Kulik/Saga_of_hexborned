@@ -387,17 +387,14 @@ func anim_liah_w(attacker, target, on_hit: Callable) -> void:
 	var old_z_index: int = attacker.z_index
 	var old_z_as_relative: bool = attacker.z_as_relative
 
-	var center_pos: Vector2 = Vector2(903, 542)
-	var effect_pos: Vector2 = Vector2(903, 542)
-
-	# Піднімаємо поверх всіх
-	attacker.z_as_relative = false
-	attacker.z_index = 999
-
 	# ====================================================================
 	# >>> ТУТ ЗМІНЮЙ КУДИ РУХАЄТЬСЯ ЛІЯ <<<
 	var center_pos: Vector2 = Vector2(903, 542)
 	# ====================================================================
+
+	# Піднімаємо поверх всіх
+	attacker.z_as_relative = false
+	attacker.z_index = 999
 
 	var move_tween := attacker_visual.create_tween()
 	move_tween.tween_property(attacker_visual, "global_position", center_pos, 0.20)
