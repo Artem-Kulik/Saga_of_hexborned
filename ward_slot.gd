@@ -19,7 +19,7 @@ const _STATUS_NODE: Dictionary = {
 	"cuts":          "hiscoris_scares",
 	"fire_circle":   "ocii_circle_flame",
 	"barrier":       "prayers_barrier",
-	"counterattack": "armor",
+	"counterattack": "counter_attack",
 	"fire_seventh":  "prayers_fire",
 	"reaping":       "znec_znyva",
 	"parasitism":    "parazyte_assim",

@@ -1,0 +1,117 @@
+[gd_scene format=3 uid="uid://cryt3kvddifb0"]
+
+[ext_resource type="Texture2D" uid="uid://dikak2b2lt8c4" path="res://Основа/char/water/Ricker/q_anim/ricker_q_10000.png" id="1_1xt51"]
+[ext_resource type="Texture2D" uid="uid://depxsxqlypsf1" path="res://Основа/char/water/Ricker/q_anim/ricker_q_10001.png" id="2_25qkj"]
+[ext_resource type="Texture2D" uid="uid://bm3nau6gfvm8t" path="res://Основа/char/water/Ricker/q_anim/ricker_q_10002.png" id="3_iiwo1"]
+[ext_resource type="Texture2D" uid="uid://75roptch0wvx" path="res://Основа/char/water/Ricker/q_anim/ricker_q_10003.png" id="4_n4y15"]
+[ext_resource type="Texture2D" uid="uid://cfl6teigkl44d" path="res://Основа/char/water/Ricker/q_anim/ricker_q_10004.png" id="5_xv6rg"]
+[ext_resource type="Texture2D" uid="uid://dd473temwuc2i" path="res://Основа/char/water/Ricker/q_anim/ricker_q_10005.png" id="6_c6nqa"]
+[ext_resource type="Texture2D" uid="uid://bngij6g6hnou8" path="res://Основа/char/water/Ricker/q_anim/ricker_q_10006.png" id="7_kiku4"]
+[ext_resource type="Texture2D" uid="uid://boi6381twqy2k" path="res://Основа/char/water/Ricker/q_anim/ricker_q_10007.png" id="8_lpvbm"]
+[ext_resource type="Texture2D" uid="uid://bg0wa0jcdpr3u" path="res://Основа/char/water/Ricker/q_anim/ricker_q_10008.png" id="9_bmuev"]
+[ext_resource type="Texture2D" uid="uid://dwyv338ql0u0" path="res://Основа/char/water/Ricker/q_anim/ricker_q_10009.png" id="10_qnh15"]
+[ext_resource type="Texture2D" uid="uid://dwy6ue30sepf1" path="res://Основа/char/water/Ricker/q_anim/ricker_q_10010.png" id="11_ca23k"]
+[ext_resource type="Texture2D" uid="uid://brvtatyd64f4s" path="res://Основа/char/water/Ricker/q_anim/ricker_q_10011.png" id="12_ortqr"]
+[ext_resource type="Texture2D" uid="uid://bboy5pxuqbvpq" path="res://Основа/char/water/Ricker/q_anim/ricker_q_10012.png" id="13_osian"]
+[ext_resource type="Texture2D" uid="uid://ciki3824w6olf" path="res://Основа/char/water/Ricker/q_anim/ricker_q_10013.png" id="14_1lfiy"]
+[ext_resource type="Texture2D" uid="uid://oeoetlb2u8c2" path="res://Основа/char/water/Ricker/q_anim/ricker_q_10014.png" id="15_bt1kf"]
+[ext_resource type="Texture2D" uid="uid://tw8tca8258la" path="res://Основа/char/water/Ricker/q_anim/ricker_q_10015.png" id="16_he4qo"]
+[ext_resource type="Texture2D" uid="uid://dvu4rdmsy1kh5" path="res://Основа/char/water/Ricker/q_anim/ricker_q_10016.png" id="17_b4w3k"]
+[ext_resource type="Texture2D" uid="uid://bw6ep8r45ftxd" path="res://Основа/char/water/Ricker/q_anim/ricker_q_10017.png" id="18_5qifi"]
+[ext_resource type="Texture2D" uid="uid://cw8jc2s2tovoi" path="res://Основа/animation/particles/water_particles.png" id="19_st0e7"]
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_gu6in"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("1_1xt51")
+}, {
+"duration": 1.0,
+"texture": ExtResource("2_25qkj")
+}, {
+"duration": 1.0,
+"texture": ExtResource("3_iiwo1")
+}, {
+"duration": 1.0,
+"texture": ExtResource("4_n4y15")
+}, {
+"duration": 1.0,
+"texture": ExtResource("5_xv6rg")
+}, {
+"duration": 1.0,
+"texture": ExtResource("6_c6nqa")
+}, {
+"duration": 1.0,
+"texture": ExtResource("7_kiku4")
+}, {
+"duration": 1.0,
+"texture": ExtResource("8_lpvbm")
+}, {
+"duration": 1.0,
+"texture": ExtResource("9_bmuev")
+}, {
+"duration": 1.0,
+"texture": ExtResource("10_qnh15")
+}, {
+"duration": 1.0,
+"texture": ExtResource("11_ca23k")
+}, {
+"duration": 1.0,
+"texture": ExtResource("12_ortqr")
+}, {
+"duration": 1.0,
+"texture": ExtResource("13_osian")
+}, {
+"duration": 1.0,
+"texture": ExtResource("14_1lfiy")
+}, {
+"duration": 1.0,
+"texture": ExtResource("15_bt1kf")
+}, {
+"duration": 1.0,
+"texture": ExtResource("16_he4qo")
+}, {
+"duration": 1.0,
+"texture": ExtResource("17_b4w3k")
+}, {
+"duration": 1.0,
+"texture": ExtResource("18_5qifi")
+}],
+"loop": true,
+"name": &"default",
+"speed": 5.0
+}]
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_yt6ex"]
+lifetime_randomness = 0.34
+particle_flag_disable_z = true
+emission_shape_scale = Vector3(100, 100, 1)
+emission_shape = 3
+emission_box_extents = Vector3(1, 1, 1)
+direction = Vector3(1, 1.32, 0)
+spread = 0.0
+angular_velocity_min = -720.0
+angular_velocity_max = 719.99994
+radial_velocity_min = -2.2351742e-05
+radial_velocity_max = 276.58997
+gravity = Vector3(0, 98, 0)
+scale_min = 0.099999994
+scale_max = 0.19999999
+
+[node name="ricker_q" type="Node2D" unique_id=101590281]
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=11177023]
+sprite_frames = SubResource("SpriteFrames_gu6in")
+frame = 15
+frame_progress = 0.7921933
+speed_scale = 4.0
+
+[node name="GPUParticles2D" type="GPUParticles2D" parent="." unique_id=648807952]
+emitting = false
+amount = 1000
+texture = ExtResource("19_st0e7")
+lifetime = 1.73
+one_shot = true
+speed_scale = 3.24
+randomness = 1.0
+process_material = SubResource("ParticleProcessMaterial_yt6ex")

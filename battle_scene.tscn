@@ -22,6 +22,7 @@
 [ext_resource type="Texture2D" uid="uid://dq6ku4ylkg1wl" path="res://Основа/animation/particles/ash_particles.png" id="20_vsfrs"]
 [ext_resource type="Texture2D" uid="uid://cmxy4xcxdtlxt" path="res://Основа/animation/particles/ember_particles.png" id="21_05lyd"]
 [ext_resource type="Texture2D" uid="uid://kexwoiqbt8yj" path="res://Основа/visual/endgame/defeat_title.png" id="21_pp5u3"]
+[ext_resource type="AudioStream" uid="uid://b1wgivcqwg722" path="res://Основа/audio/audio_effects/error.mp3" id="23_05lyd"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_67y2d"]
 shader = ExtResource("12_wy2mt")
@@ -695,6 +696,10 @@ script = ExtResource("19_vmq30")
 
 [node name="ResultPlayer" type="AudioStreamPlayer2D" parent="." unique_id=1933343620]
 volume_db = 15.0
+
+[node name="error" type="AudioStreamPlayer2D" parent="." unique_id=397860312]
+stream = ExtResource("23_05lyd")
+volume_db = 19.0
 
 [connection signal="mouse_entered" from="EndGameOverlay/RestartButton/ClickButton" to="EndGameOverlay/RestartButton/ClickButton" method="_on_mouse_entered"]
 [connection signal="mouse_exited" from="EndGameOverlay/RestartButton/ClickButton" to="EndGameOverlay/RestartButton/ClickButton" method="_on_mouse_exited"]
