@@ -92,6 +92,18 @@ var WARDS: Dictionary = {
 			"E": { "id": "adoneia_e", "damage_type": "earth",   "name": "Голем",                 "cd": 8, "icon": "res://Основа/char/earth/Adoneya/e.png", "desc": "", "desc_full": "" },
 		}
 	},
+	"adoneia_golem": {
+		"name": "Адонея (Голем)",
+		"hidden": true,
+		"element": "earth",
+		"portrait": "res://Основа/char/earth/Adoneya/form_golem.png",
+		"skills": {
+			"P": { "id": "adoneia_p",      "damage_type": "passive", "name": "Пасивна",                "cd": 0, "icon": "res://Основа/char/earth/Adoneya/p.png",      "desc": "Контратакує при слабкості.", "desc_full": "Контратакує при слабкості." },
+			"Q": { "id": "adoneia_golem_q","damage_type": "phys",    "name": "Пролом (Голем)",         "cd": 0, "icon": "res://Основа/char/earth/Adoneya/golem_q.png", "desc": "60(фіз) по всіх ворогах одразу.", "desc_full": "60(фіз) по всіх ворогах одразу." },
+			"W": { "id": "adoneia_golem_w","damage_type": "phys",    "name": "Гром кулаків (Голем)",   "cd": 2, "icon": "res://Основа/char/earth/Adoneya/golem_w.png", "desc": "3 удари по 35(фіз) по рандомних цілях. Кожен ударений ворог отримує Провокацію.", "desc_full": "3 удари по 35(фіз) по рандомних цілях. Кожен ударений ворог отримує Провокацію." },
+			"E": { "id": "adoneia_e",      "damage_type": "earth",   "name": "Голем",                 "cd": 8, "icon": "res://Основа/char/earth/Adoneya/e.png",      "desc": "Форма Голема активна.", "desc_full": "Форма Голема активна." },
+		}
+	},
 	"grump": {
 		"name": "Грумп",
 		"element": "earth",
@@ -234,10 +246,14 @@ func get_data(id: String) -> Dictionary:
 func get_by_element(element: String) -> Array:
 	var result: Array = []
 	for id in WARDS:
-		if WARDS[id]["element"] == element:
+		if WARDS[id]["element"] == element and not WARDS[id].get("hidden", false):
 			result.append(id)
 	return result
 
 
 func get_all_ids() -> Array:
-	return WARDS.keys()
+	var result: Array = []
+	for id in WARDS:
+		if not WARDS[id].get("hidden", false):
+			result.append(id)
+	return result

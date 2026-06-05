@@ -15,6 +15,7 @@
 [ext_resource type="Texture2D" uid="uid://d0iptobleuyp2" path="res://Основа/char/air/Hiskoris/p.png" id="13_uux2m"]
 [ext_resource type="Texture2D" uid="uid://rhcxbwt2rvjq" path="res://Основа/char/earth/Parazyte/w.png" id="14_iboq1"]
 [ext_resource type="Texture2D" uid="uid://dxtcnl1qqc748" path="res://Основа/char/earth/Adoneya/e.png" id="15_yxmqu"]
+[ext_resource type="Texture2D" uid="uid://bk9mrnf2xvqe6" path="res://Основа/char/fire/Prayer/w.png" id="16_prbr"]
 [ext_resource type="Texture2D" uid="uid://c5xm6hf5dft8w" path="res://Основа/visual/status/counter_attack.png" id="16_78eam"]
 [ext_resource type="Texture2D" uid="uid://dur1as0qpe11o" path="res://Основа/char/earth/Phisita/w.png" id="17_ahk5n"]
 [ext_resource type="Texture2D" uid="uid://qhf18gv04ui3" path="res://Основа/char/earth/Phisita/e.png" id="18_uux2m"]
@@ -422,6 +423,35 @@ expand_mode = 3
 stretch_mode = 5
 
 [node name="frame" type="TextureRect" parent="adoneya_golem/golem" unique_id=1375580435]
+custom_minimum_size = Vector2(46.965, 47.64)
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("2_a7r01")
+expand_mode = 3
+stretch_mode = 5
+
+[node name="prayers_barrier" type="Control" parent="." unique_id=1503847291]
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="barrier" type="TextureRect" parent="prayers_barrier" unique_id=1630492817]
+custom_minimum_size = Vector2(58, 38)
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("16_prbr")
+expand_mode = 3
+stretch_mode = 5
+
+[node name="frame" type="TextureRect" parent="prayers_barrier/barrier" unique_id=1720384956]
 custom_minimum_size = Vector2(46.965, 47.64)
 layout_mode = 1
 anchors_preset = 15

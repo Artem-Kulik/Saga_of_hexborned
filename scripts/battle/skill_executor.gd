@@ -41,6 +41,11 @@ static func get_skill_target_type(ward_id: String, skill_key: String, attacker =
 			if skill_key == "Q": return "single_enemy"
 			if skill_key == "W": return "single_enemy"
 			if skill_key == "E": return "self"
+		"adoneia":
+			if skill_key == "E": return "self"
+			var in_golem: bool = attacker != null and attacker.has_meta("golem_form")
+			if in_golem: return "all_enemies"
+			return "single_enemy"
 
 	return "single_enemy"
 
@@ -73,6 +78,8 @@ static func execute_skill(resolver, attacker, target, skill_key: String) -> void
 			await _execute_zhnets(resolver, attacker, target, skill_key)
 		"parasyt":
 			await _execute_parasyt(resolver, attacker, target, skill_key)
+		"adoneia":
+			await _execute_adoneia(resolver, attacker, target, skill_key)
 		_:
 			# Стандартна атака для всіх інших поки що
 			await _execute_basic_attack(resolver, attacker, target, skill_key, base_damage)
@@ -200,7 +207,7 @@ static func _execute_mais_oichi(resolver, attacker, target, skill_key: String, _
 				resolver.battle_log.add_entry(
 					"Жар: +30 броні (разом: %d). Вогняний щит активний!" % attacker.health.current_armor
 				)
-				resolver.battle_log.add_effect(attacker.name, attacker.team, "Вогняний щит (+30 броні, разом: %d)" % attacker.health.current_armor)
+				resolver.battle_log.add_effect(attacker.name, attacker.team, "Вогняний щит + Броня +30 (разом: %d)" % attacker.health.current_armor)
 				
 		"E":
 			# Чесний бій: Провокує ціль на 1 хід. Збільшує свою броню на 100.
@@ -684,11 +691,13 @@ static func _execute_siomyi(resolver, attacker, target, skill_key: String) -> vo
 			if target.team != attacker.team:
 				target.extend_burning(1)
 				if resolver.battle_log:
-					resolver.battle_log.add_entry("Покарання: %s — тривалість горіння +1 хід!" % target.name)
+					resolver.battle_log.add_entry("Покарання: %s — тривалість всіх стаків горіння +1 хід! (стаків: %d)" % [target.name, total_burn])
+					resolver.battle_log.add_effect(target.name, target.team, "Горіння: тривалість +1 хід (%d стаків)" % total_burn)
 			else:
 				target.reduce_burning_turns(1)
 				if resolver.battle_log:
-					resolver.battle_log.add_entry("Покарання: %s — тривалість горіння -1 хід!" % target.name)
+					resolver.battle_log.add_entry("Покарання: %s — тривалість всіх стаків горіння -1 хід! (стаків: %d)" % [target.name, total_burn])
+					resolver.battle_log.add_effect(target.name, target.team, "Горіння: тривалість -1 хід (%d стаків)" % total_burn)
 
 		"W":
 			if target == null: target = attacker
@@ -744,6 +753,8 @@ static func _execute_zhnets(resolver, attacker, target, skill_key: String) -> vo
 				await resolver.deal_damage_with_modifiers(attacker, enemy, 20, skill_key, "fire", true)
 				if not enemy.is_dead:
 					enemy.add_burning(1, 2)
+					if resolver.battle_log:
+						resolver.battle_log.add_effect(enemy.name, enemy.team, "Горіння +1 стак (2 ходи)")
 			if resolver.battle_log:
 				resolver.battle_log.add_entry("Прокляття жнеця: всі вороги — 20 вогню + 1 горіння (2 ходи)!")
 
@@ -802,3 +813,84 @@ static func _execute_parasyt(resolver, attacker, target, skill_key: String) -> v
 			attacker._update_status_visuals()
 			if resolver.battle_log:
 				resolver.battle_log.add_effect(attacker.name, attacker.team, "Регенерація (3 ходи, 100 HP/хід)")
+
+
+# =============================================================================
+# ADONEIA (Адонея)
+# =============================================================================
+# P — Відповідь: при падінні нижче 50% HP — +1 стак Контратаки (в battle_resolver).
+# Q — Пролом: 2×30 фіз; Голем-Q: 60 фіз по всіх ворогах.
+# W — Майстер кулачного бою: 40 фіз + провокація + контратака на себе;
+#     Голем-W: 3×35 фіз по рандомних + провокація кожному.
+# E — Форма Голема: не витрачає хід, макс/поточне HP +100, 2 ходи (хід E рахується).
+#     Змінює Q/W. Після завершення: HP-реверт + оглушення 2.
+
+static func _execute_adoneia(resolver, attacker, target, skill_key: String) -> void:
+	var in_golem: bool = attacker.has_meta("golem_form")
+	var enemy_side: Array = resolver.battle_scene.enemy_wards if attacker.team == "ally" else resolver.battle_scene.ally_wards
+
+	match skill_key:
+		"Q":
+			if in_golem:
+				if resolver.battle_log:
+					resolver.battle_log.add_entry("Пролом (Голем): %s дробить усіх ворогів! (60 фіз)" % attacker.name)
+				for enemy in resolver.get_alive_wards(enemy_side):
+					await resolver.deal_damage_with_modifiers(attacker, enemy, 60, skill_key, "phys", true)
+			else:
+				if target == null: return
+				if resolver.battle_log:
+					resolver.battle_log.add_entry("Пролом: %s б'є двічі по 30!" % attacker.name)
+				await resolver.deal_damage_with_modifiers(attacker, target, 30, skill_key, "phys")
+				if not target.is_dead:
+					await resolver.deal_damage_with_modifiers(attacker, target, 30, skill_key, "phys")
+
+		"W":
+			if in_golem:
+				if resolver.battle_log:
+					resolver.battle_log.add_entry("Гром кулаків (Голем): %s завдає 3 удари по рандомних цілях!" % attacker.name)
+				var taunted_set: Dictionary = {}
+				for i in 3:
+					var alive: Array = resolver.get_alive_wards(enemy_side)
+					if alive.is_empty(): break
+					var t = alive[randi() % alive.size()]
+					await resolver.deal_damage_with_modifiers(attacker, t, 35, skill_key, "phys", true)
+					if not t.is_dead:
+						taunted_set[t] = true
+				for t in taunted_set.keys():
+					if not t.is_dead:
+						t.add_status("taunt", 1)
+						t.taunted_by = attacker.ward_id
+						t._update_status_visuals()
+						if resolver.battle_log:
+							resolver.battle_log.add_effect(t.name, t.team, "Провокація (Голем Адонеї)")
+				if resolver.battle_log and not taunted_set.is_empty():
+					resolver.battle_log.add_entry("Гром кулаків: поранені вороги спровоковані!")
+			else:
+				if target == null: return
+				await resolver.deal_damage_with_modifiers(attacker, target, 40, skill_key, "phys")
+				if not target.is_dead:
+					target.add_status("taunt", 1)
+					target.taunted_by = attacker.ward_id
+					target._update_status_visuals()
+					if resolver.battle_log:
+						resolver.battle_log.add_entry("Майстер кулачного бою: %s спровокований!" % target.name)
+						resolver.battle_log.add_effect(target.name, target.team, "Провокація (1 хід)")
+				attacker.add_status("counterattack", 1)
+				attacker._update_status_visuals()
+				if resolver.battle_log:
+					resolver.battle_log.add_entry("Контратака: %s готова відповісти!" % attacker.name)
+					resolver.battle_log.add_effect(attacker.name, attacker.team, "Контратака +1 стак")
+
+		"E":
+			var hp_was: int = attacker.current_hp
+			var max_was: int = attacker.max_hp
+			attacker.set_meta("golem_base_max_hp", attacker.max_hp)
+			attacker.set_meta("golem_form", 2)
+			attacker.max_hp += 100
+			attacker.current_hp += 100
+			if attacker.get("health") != null:
+				attacker.health.setup(attacker.max_hp, attacker.current_hp, attacker.hp_bar)
+			if resolver.battle_log:
+				resolver.battle_log.add_entry("⚙ Форма Голема! %s перетворюється на Кам'яного Голема!" % attacker.name)
+				resolver.battle_log.add_entry("HP: %d → %d | Макс. HP: %d → %d" % [hp_was, attacker.current_hp, max_was, attacker.max_hp])
+				resolver.battle_log.add_effect(attacker.name, attacker.team, "Форма Голема (2 ходи, +100 HP)")

@@ -387,7 +387,10 @@ func anim_liah_w(attacker, target, on_hit: Callable) -> void:
 	var old_z_index: int = attacker.z_index
 	var old_z_as_relative: bool = attacker.z_as_relative
 
+	# ====================================================================
+	# >>> ТУТ ЗМІНЮЙ КУДИ РУХАЄТЬСЯ ЛІЯ <<<
 	var center_pos: Vector2 = Vector2(903, 542)
+	# ====================================================================
 
 	attacker.z_as_relative = false
 	attacker.z_index = 999
