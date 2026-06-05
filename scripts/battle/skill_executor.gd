@@ -106,9 +106,22 @@ static func _execute_liah(resolver, attacker, target, skill_key: String, _base_d
 		"W":
 			# Кола на воді: Атакує всіх ворогів, наносить 35(вода). Якщо хтось гине — атакує ще раз.
 			var enemy_side_w: Array = resolver.battle_scene.enemy_wards if attacker.team == "ally" else resolver.battle_scene.ally_wards
+			var center_w: Vector2 = Vector2(903, 542)
+
+			# Рух Лії вперед
+			var av_w: Control = attacker.get_node_or_null("WardVisual")
+			var start_pos_w: Vector2 = av_w.global_position if av_w else Vector2.ZERO
+			if av_w:
+				var t := av_w.create_tween()
+				t.tween_property(av_w, "global_position", center_w, 0.20)
+				await t.finished
+
+			# Ефект
+			await AnimationCode.anim_liah_w_effect(center_w)
+
+			# Шкода всім ворогам
 			var trigger_again = false
 			var enemies = resolver.get_alive_wards(enemy_side_w)
-
 			for enemy in enemies:
 				var hp_before = enemy.current_hp
 				await resolver.deal_damage_with_modifiers(attacker, enemy, 35, skill_key, "", true)
@@ -120,6 +133,12 @@ static func _execute_liah(resolver, attacker, target, skill_key: String, _base_d
 				enemies = resolver.get_alive_wards(enemy_side_w)
 				for enemy in enemies:
 					await resolver.deal_damage_with_modifiers(attacker, enemy, 35, skill_key, "", true)
+
+			# Повернення
+			if av_w:
+				var t := av_w.create_tween()
+				t.tween_property(av_w, "global_position", start_pos_w, 0.20)
+				await t.finished
 
 		"E":
 			# Загороджуючий водопад: Стає невибираною як ціль до свого наступного ходу.
@@ -686,14 +705,22 @@ static func _execute_siomyi(resolver, attacker, target, skill_key: String) -> vo
 				if resolver.battle_log:
 					resolver.battle_log.add_entry("Вогонь сьомого: потрібно мінімум 5 стаків горіння! (зараз: %d)" % burn_total)
 				return
-			var vos: int      = burn_total / 5
-			var consumed: int = vos * 5
-			target.consume_burning_stacks(consumed)
+			# Активуємо всі стаки горіння — вони завдають урону і зникають
+			var burn_dmg: int = target.activate_all_burning()
+			if resolver.battle_log:
+				resolver.battle_log.add_entry(
+					"Вогонь сьомого: активує %d стаків горіння — %d вогняного урону!" % [burn_total, burn_dmg]
+				)
+			if burn_dmg > 0:
+				await resolver.deal_damage_with_modifiers(attacker, target, burn_dmg, "E_burning", "fire")
+			if target.is_dead: return
+			# Накладаємо Вогонь сьомого (1 стек на кожні 5 горінь)
+			var vos: int = burn_total / 5
 			target.add_status("fire_seventh", vos)
 			target._update_status_visuals()
 			if resolver.battle_log:
 				resolver.battle_log.add_entry(
-					"Вогонь сьомого! %s: -%d горіння → +%d стаків Вогню Сьомого!" % [target.name, consumed, vos]
+					"Вогонь сьомого: %s позначений! +%d стак(и) — вся команда ворога горітиме!" % [target.name, vos]
 				)
 				resolver.battle_log.add_effect(target.name, target.team, "Вогонь сьомого (%d стак(и))" % vos)
 

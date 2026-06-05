@@ -16,12 +16,12 @@ const _STATUS_NODE: Dictionary = {
 	"stun":        "stunned",
 	"regen":       "regeneration",
 	"fire_shield": "oichi_flame_shield",
-	"cuts":        "cuts",
-	"fire_circle":   "fire_circle",
-	"barrier":       "barrier",
-	"fire_seventh":  "fire_seventh",
-	"reaping":       "taunted",
-	"parasitism":    "taunted",
+	"cuts":          "hiscoris_scares",
+	"fire_circle":   "ocii_circle_flame",
+	"barrier":       "armor",
+	"fire_seventh":  "prayers_fire",
+	"reaping":       "znec_znyva",
+	"parasitism":    "parazyte_assim",
 }
 
 const NEGATIVE_EFFECTS: Array = ["burning", "taunt", "stun", "cuts", "fire_seventh"]

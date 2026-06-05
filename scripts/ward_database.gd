@@ -21,10 +21,10 @@ var WARDS: Dictionary = {
 		"short_desc_file": "res://Основа/char/fire/Znec/skills_short.txt",
 		"full_desc_file":  "res://Основа/char/fire/Znec/skills_full.txt",
 		"skills": {
-			"P": { "id": "zhnets_p", "damage_type": "passive", "name": "Присутність",     "cd": 0, "icon": "", "desc": "", "desc_full": "" },
-			"Q": { "id": "zhnets_q", "damage_type": "fire",    "name": "Прокляття жнеця", "cd": 0, "icon": "", "desc": "", "desc_full": "" },
-			"W": { "id": "zhnets_w", "damage_type": "fire",    "name": "Маска горгони",   "cd": 4, "icon": "", "desc": "", "desc_full": "" },
-			"E": { "id": "zhnets_e", "damage_type": "fire",    "name": "Жнива",           "cd": 3, "icon": "", "desc": "", "desc_full": "" },
+			"P": { "id": "zhnets_p", "damage_type": "passive", "name": "Присутність",     "cd": 0, "icon": "res://Основа/char/fire/Znec/p.png", "desc": "", "desc_full": "" },
+			"Q": { "id": "zhnets_q", "damage_type": "fire",    "name": "Прокляття жнеця", "cd": 0, "icon": "res://Основа/char/fire/Znec/q.png", "desc": "", "desc_full": "" },
+			"W": { "id": "zhnets_w", "damage_type": "fire",    "name": "Маска горгони",   "cd": 4, "icon": "res://Основа/char/fire/Znec/w.png", "desc": "", "desc_full": "" },
+			"E": { "id": "zhnets_e", "damage_type": "fire",    "name": "Жнива",           "cd": 3, "icon": "res://Основа/char/fire/Znec/e.png", "desc": "", "desc_full": "" },
 		}
 	},
 	"otsii": {
@@ -34,10 +34,10 @@ var WARDS: Dictionary = {
 		"short_desc_file": "res://Основа/char/fire/Ocii/skills_short.txt",
 		"full_desc_file":  "res://Основа/char/fire/Ocii/skills_full.txt",
 		"skills": {
-			"P": { "id": "otsii_p", "damage_type": "passive", "name": "Пасивна",               "cd": 0, "icon": "", "desc": "", "desc_full": "" },
-			"Q": { "id": "otsii_q", "damage_type": "fire",    "name": "Вигорання",             "cd": 0, "icon": "", "desc": "", "desc_full": "" },
-			"W": { "id": "otsii_w", "damage_type": "fire",    "name": "Коло пекельного вогню", "cd": 4, "icon": "", "desc": "", "desc_full": "" },
-			"E": { "id": "otsii_e", "damage_type": "phys",    "name": "Рик",                   "cd": 4, "icon": "", "desc": "", "desc_full": "" },
+			"P": { "id": "otsii_p", "damage_type": "passive", "name": "Пасивна",               "cd": 0, "icon": "res://Основа/char/fire/Ocii/p.png", "desc": "", "desc_full": "" },
+			"Q": { "id": "otsii_q", "damage_type": "fire",    "name": "Вигорання",             "cd": 0, "icon": "res://Основа/char/fire/Ocii/q.png", "desc": "", "desc_full": "" },
+			"W": { "id": "otsii_w", "damage_type": "fire",    "name": "Коло пекельного вогню", "cd": 4, "icon": "res://Основа/char/fire/Ocii/w.png", "desc": "", "desc_full": "" },
+			"E": { "id": "otsii_e", "damage_type": "phys",    "name": "Рик",                   "cd": 4, "icon": "res://Основа/char/fire/Ocii/e.png", "desc": "", "desc_full": "" },
 		}
 	},
 	"siomyi": {
@@ -47,10 +47,10 @@ var WARDS: Dictionary = {
 		"short_desc_file": "res://Основа/char/fire/Prayer/skills_short.txt",
 		"full_desc_file":  "res://Основа/char/fire/Prayer/skills_full.txt",
 		"skills": {
-			"P": { "id": "siomyi_p", "damage_type": "passive", "name": "З пилу жару",    "cd": 0, "icon": "", "desc": "", "desc_full": "" },
-			"Q": { "id": "siomyi_q", "damage_type": "phys",    "name": "Покарання",      "cd": 0, "icon": "", "desc": "", "desc_full": "" },
-			"W": { "id": "siomyi_w", "damage_type": "passive", "name": "Бар'єр",         "cd": 3, "icon": "", "desc": "", "desc_full": "" },
-			"E": { "id": "siomyi_e", "damage_type": "fire",    "name": "Вогонь сьомого", "cd": 7, "icon": "", "desc": "", "desc_full": "" },
+			"P": { "id": "siomyi_p", "damage_type": "passive", "name": "З пилу жару",    "cd": 0, "icon": "res://Основа/char/fire/Prayer/p.png", "desc": "", "desc_full": "" },
+			"Q": { "id": "siomyi_q", "damage_type": "phys",    "name": "Покарання",      "cd": 0, "icon": "res://Основа/char/fire/Prayer/q.png", "desc": "", "desc_full": "" },
+			"W": { "id": "siomyi_w", "damage_type": "passive", "name": "Бар'єр",         "cd": 3, "icon": "res://Основа/char/fire/Prayer/w.png", "desc": "", "desc_full": "" },
+			"E": { "id": "siomyi_e", "damage_type": "fire",    "name": "Вогонь сьомого", "cd": 7, "icon": "res://Основа/char/fire/Prayer/e.png", "desc": "", "desc_full": "" },
 		}
 	},
 	"liah": {
@@ -73,10 +73,10 @@ var WARDS: Dictionary = {
 		"short_desc_file": "res://Основа/char/water/Ricker/skills_short.txt",
 		"full_desc_file":  "res://Основа/char/water/Ricker/skills_full.txt",
 		"skills": {
-			"P": { "id": "riker_p", "damage_type": "passive", "name": "На волосині",     "cd": 0, "icon": "", "desc": "", "desc_full": "" },
-			"Q": { "id": "riker_q", "damage_type": "phys",    "name": "Роздирання",      "cd": 0, "icon": "", "desc": "", "desc_full": "" },
-			"W": { "id": "riker_w", "damage_type": "phys",    "name": "Стиль Доломедес", "cd": 2, "icon": "", "desc": "", "desc_full": "" },
-			"E": { "id": "riker_e", "damage_type": "phys",    "name": "Кігті",           "cd": 0, "icon": "", "desc": "", "desc_full": "" },
+			"P": { "id": "riker_p", "damage_type": "passive", "name": "На волосині",     "cd": 0, "icon": "res://Основа/char/water/Ricker/p.png", "desc": "", "desc_full": "" },
+			"Q": { "id": "riker_q", "damage_type": "phys",    "name": "Роздирання",      "cd": 0, "icon": "res://Основа/char/water/Ricker/q.png", "desc": "", "desc_full": "" },
+			"W": { "id": "riker_w", "damage_type": "phys",    "name": "Стиль Доломедес", "cd": 2, "icon": "res://Основа/char/water/Ricker/w.png", "desc": "", "desc_full": "" },
+			"E": { "id": "riker_e", "damage_type": "phys",    "name": "Кігті",           "cd": 0, "icon": "res://Основа/char/water/Ricker/e.png", "desc": "", "desc_full": "" },
 		}
 	},
 	"adoneia": {
@@ -86,10 +86,10 @@ var WARDS: Dictionary = {
 		"short_desc_file": "res://Основа/char/earth/Adoneya/skills_short.txt",
 		"full_desc_file":  "res://Основа/char/earth/Adoneya/skills_full.txt",
 		"skills": {
-			"P": { "id": "adoneia_p", "damage_type": "passive", "name": "Пасивна",               "cd": 0, "icon": "", "desc": "", "desc_full": "" },
-			"Q": { "id": "adoneia_q", "damage_type": "phys",    "name": "Пролом",                "cd": 0, "icon": "", "desc": "", "desc_full": "" },
-			"W": { "id": "adoneia_w", "damage_type": "phys",    "name": "Майстер кулачного бою", "cd": 4, "icon": "", "desc": "", "desc_full": "" },
-			"E": { "id": "adoneia_e", "damage_type": "earth",   "name": "Голем",                 "cd": 8, "icon": "", "desc": "", "desc_full": "" },
+			"P": { "id": "adoneia_p", "damage_type": "passive", "name": "Пасивна",               "cd": 0, "icon": "res://Основа/char/earth/Adoneya/p.png", "desc": "", "desc_full": "" },
+			"Q": { "id": "adoneia_q", "damage_type": "phys",    "name": "Пролом",                "cd": 0, "icon": "res://Основа/char/earth/Adoneya/q.png", "desc": "", "desc_full": "" },
+			"W": { "id": "adoneia_w", "damage_type": "phys",    "name": "Майстер кулачного бою", "cd": 4, "icon": "res://Основа/char/earth/Adoneya/w.png", "desc": "", "desc_full": "" },
+			"E": { "id": "adoneia_e", "damage_type": "earth",   "name": "Голем",                 "cd": 8, "icon": "res://Основа/char/earth/Adoneya/e.png", "desc": "", "desc_full": "" },
 		}
 	},
 	"grump": {
@@ -99,10 +99,10 @@ var WARDS: Dictionary = {
 		"short_desc_file": "res://Основа/char/earth/Groomp/skills_short.txt",
 		"full_desc_file":  "res://Основа/char/earth/Groomp/skills_full.txt",
 		"skills": {
-			"P": { "id": "grump_p", "damage_type": "passive", "name": "Наростання породи", "cd": 0, "icon": "", "desc": "", "desc_full": "" },
-			"Q": { "id": "grump_q", "damage_type": "earth",   "name": "Клятва Варда",      "cd": 0, "icon": "", "desc": "", "desc_full": "" },
-			"W": { "id": "grump_w", "damage_type": "earth",   "name": "Борозда",           "cd": 3, "icon": "", "desc": "", "desc_full": "" },
-			"E": { "id": "grump_e", "damage_type": "earth",   "name": "Вибух породи",      "cd": 2, "icon": "", "desc": "", "desc_full": "" },
+			"P": { "id": "grump_p", "damage_type": "passive", "name": "Наростання породи", "cd": 0, "icon": "res://Основа/char/earth/Groomp/P.png", "desc": "", "desc_full": "" },
+			"Q": { "id": "grump_q", "damage_type": "earth",   "name": "Клятва Варда",      "cd": 0, "icon": "res://Основа/char/earth/Groomp/Q.png", "desc": "", "desc_full": "" },
+			"W": { "id": "grump_w", "damage_type": "earth",   "name": "Борозда",           "cd": 3, "icon": "res://Основа/char/earth/Groomp/W.png", "desc": "", "desc_full": "" },
+			"E": { "id": "grump_e", "damage_type": "earth",   "name": "Вибух породи",      "cd": 2, "icon": "res://Основа/char/earth/Groomp/E.png", "desc": "", "desc_full": "" },
 		}
 	},
 	"kromius": {
@@ -126,10 +126,10 @@ var WARDS: Dictionary = {
 		"short_desc_file": "res://Основа/char/earth/Parazyte/skills_short.txt",
 		"full_desc_file":  "res://Основа/char/earth/Parazyte/skills_full.txt",
 		"skills": {
-			"P": { "id": "parasyt_p", "damage_type": "passive", "name": "Паразитування", "cd": 0, "icon": "", "desc": "", "desc_full": "" },
-			"Q": { "id": "parasyt_q", "damage_type": "phys",    "name": "Укол",          "cd": 0, "icon": "", "desc": "", "desc_full": "" },
-			"W": { "id": "parasyt_w", "damage_type": "earth",   "name": "Асиміляція",    "cd": 2, "icon": "", "desc": "", "desc_full": "" },
-			"E": { "id": "parasyt_e", "damage_type": "earth",   "name": "Плач чаші",     "cd": 2, "icon": "", "desc": "", "desc_full": "" },
+			"P": { "id": "parasyt_p", "damage_type": "passive", "name": "Паразитування", "cd": 0, "icon": "res://Основа/char/earth/Parazyte/p.png", "desc": "", "desc_full": "" },
+			"Q": { "id": "parasyt_q", "damage_type": "phys",    "name": "Укол",          "cd": 0, "icon": "res://Основа/char/earth/Parazyte/q.png", "desc": "", "desc_full": "" },
+			"W": { "id": "parasyt_w", "damage_type": "earth",   "name": "Асиміляція",    "cd": 2, "icon": "res://Основа/char/earth/Parazyte/w.png", "desc": "", "desc_full": "" },
+			"E": { "id": "parasyt_e", "damage_type": "earth",   "name": "Плач чаші",     "cd": 2, "icon": "res://Основа/char/earth/Parazyte/e.png", "desc": "", "desc_full": "" },
 		}
 	},
 	"fizita": {
@@ -139,10 +139,10 @@ var WARDS: Dictionary = {
 		"short_desc_file": "res://Основа/char/earth/Phisita/skills_short.txt",
 		"full_desc_file":  "res://Основа/char/earth/Phisita/skills_full.txt",
 		"skills": {
-			"P": { "id": "fizita_p", "damage_type": "passive", "name": "Тяжіння",  "cd": 0, "icon": "", "desc": "", "desc_full": "" },
-			"Q": { "id": "fizita_q", "damage_type": "earth",   "name": "Шквал",    "cd": 0, "icon": "", "desc": "", "desc_full": "" },
-			"W": { "id": "fizita_w", "damage_type": "earth",   "name": "Стіна",    "cd": 1, "icon": "", "desc": "", "desc_full": "" },
-			"E": { "id": "fizita_e", "damage_type": "earth",   "name": "Смятіння", "cd": 0, "icon": "", "desc": "", "desc_full": "" },
+			"P": { "id": "fizita_p", "damage_type": "passive", "name": "Тяжіння",  "cd": 0, "icon": "res://Основа/char/earth/Phisita/p.png", "desc": "", "desc_full": "" },
+			"Q": { "id": "fizita_q", "damage_type": "earth",   "name": "Шквал",    "cd": 0, "icon": "res://Основа/char/earth/Phisita/q.png", "desc": "", "desc_full": "" },
+			"W": { "id": "fizita_w", "damage_type": "earth",   "name": "Стіна",    "cd": 1, "icon": "res://Основа/char/earth/Phisita/w.png", "desc": "", "desc_full": "" },
+			"E": { "id": "fizita_e", "damage_type": "earth",   "name": "Смятіння", "cd": 0, "icon": "res://Основа/char/earth/Phisita/e.png", "desc": "", "desc_full": "" },
 		}
 	},
 	"shusima": {
@@ -152,10 +152,10 @@ var WARDS: Dictionary = {
 		"short_desc_file": "res://Основа/char/earth/ShuSima/skills_short.txt",
 		"full_desc_file":  "res://Основа/char/earth/ShuSima/skills_full.txt",
 		"skills": {
-			"P": { "id": "shusima_p", "damage_type": "passive", "name": "Розсипання",   "cd": 0, "icon": "", "desc": "", "desc_full": "" },
-			"Q": { "id": "shusima_q", "damage_type": "earth",   "name": "Висушення",    "cd": 0, "icon": "", "desc": "", "desc_full": "" },
-			"W": { "id": "shusima_w", "damage_type": "earth",   "name": "Зибучі піски", "cd": 0, "icon": "", "desc": "", "desc_full": "" },
-			"E": { "id": "shusima_e", "damage_type": "earth",   "name": "Розпад",       "cd": 3, "icon": "", "desc": "", "desc_full": "" },
+			"P": { "id": "shusima_p", "damage_type": "passive", "name": "Розсипання",   "cd": 0, "icon": "res://Основа/char/earth/ShuSima/p.png", "desc": "", "desc_full": "" },
+			"Q": { "id": "shusima_q", "damage_type": "earth",   "name": "Висушення",    "cd": 0, "icon": "res://Основа/char/earth/ShuSima/q.png", "desc": "", "desc_full": "" },
+			"W": { "id": "shusima_w", "damage_type": "earth",   "name": "Зибучі піски", "cd": 0, "icon": "res://Основа/char/earth/ShuSima/w.png", "desc": "", "desc_full": "" },
+			"E": { "id": "shusima_e", "damage_type": "earth",   "name": "Розпад",       "cd": 3, "icon": "res://Основа/char/earth/ShuSima/e.png", "desc": "", "desc_full": "" },
 		}
 	},
 	"iskoris": {
@@ -165,10 +165,10 @@ var WARDS: Dictionary = {
 		"short_desc_file": "res://Основа/char/air/Hiskoris/skills_short.txt",
 		"full_desc_file":  "res://Основа/char/air/Hiskoris/skills_full.txt",
 		"skills": {
-			"P": { "id": "iskoris_p", "damage_type": "passive", "name": "Тисяча порізів", "cd": 0, "icon": "", "desc": "", "desc_full": "" },
-			"Q": { "id": "iskoris_q", "damage_type": "phys",    "name": "Укус",           "cd": 0, "icon": "", "desc": "", "desc_full": "" },
-			"W": { "id": "iskoris_w", "damage_type": "air",     "name": "Пісня мерця",    "cd": 4, "icon": "", "desc": "", "desc_full": "" },
-			"E": { "id": "iskoris_e", "damage_type": "air",     "name": "Ріжучий смерч",  "cd": 4, "icon": "", "desc": "", "desc_full": "" },
+			"P": { "id": "iskoris_p", "damage_type": "passive", "name": "Тисяча порізів", "cd": 0, "icon": "res://Основа/char/air/Hiskoris/p.png", "desc": "", "desc_full": "" },
+			"Q": { "id": "iskoris_q", "damage_type": "phys",    "name": "Укус",           "cd": 0, "icon": "res://Основа/char/air/Hiskoris/q.png", "desc": "", "desc_full": "" },
+			"W": { "id": "iskoris_w", "damage_type": "air",     "name": "Пісня мерця",    "cd": 4, "icon": "res://Основа/char/air/Hiskoris/w.png", "desc": "", "desc_full": "" },
+			"E": { "id": "iskoris_e", "damage_type": "air",     "name": "Ріжучий смерч",  "cd": 4, "icon": "res://Основа/char/air/Hiskoris/e.png", "desc": "", "desc_full": "" },
 		}
 	},
 	"etesena": {
@@ -178,10 +178,10 @@ var WARDS: Dictionary = {
 		"short_desc_file": "res://Основа/char/air/Etesena/skills_short.txt",
 		"full_desc_file":  "res://Основа/char/air/Etesena/skills_full.txt",
 		"skills": {
-			"P": { "id": "etesena_p", "damage_type": "passive", "name": "Пасивна",        "cd": 0, "icon": "", "desc": "", "desc_full": "" },
-			"Q": { "id": "etesena_q", "damage_type": "phys",    "name": "Укол",           "cd": 0, "icon": "", "desc": "", "desc_full": "" },
-			"W": { "id": "etesena_w", "damage_type": "air",     "name": "Танець",         "cd": 3, "icon": "", "desc": "", "desc_full": "" },
-			"E": { "id": "etesena_e", "damage_type": "air",     "name": "Північні вітри", "cd": 5, "icon": "", "desc": "", "desc_full": "" },
+			"P": { "id": "etesena_p", "damage_type": "passive", "name": "Пасивна",        "cd": 0, "icon": "res://Основа/char/air/Etesena/p.png", "desc": "", "desc_full": "" },
+			"Q": { "id": "etesena_q", "damage_type": "phys",    "name": "Укол",           "cd": 0, "icon": "res://Основа/char/air/Etesena/q.png", "desc": "", "desc_full": "" },
+			"W": { "id": "etesena_w", "damage_type": "air",     "name": "Танець",         "cd": 3, "icon": "res://Основа/char/air/Etesena/w.png", "desc": "", "desc_full": "" },
+			"E": { "id": "etesena_e", "damage_type": "air",     "name": "Північні вітри", "cd": 5, "icon": "res://Основа/char/air/Etesena/e.png", "desc": "", "desc_full": "" },
 		}
 	},
 	"shopey": {
