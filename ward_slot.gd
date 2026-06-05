@@ -724,4 +724,7 @@ func _apply_cd_to_button(btn, skill_key: String) -> void:
 	if btn == null:
 		return
 	if btn.has_method("set_cooldown"):
-		btn.set_cooldown(_current_cd.get(skill_key, 0))
+		var cd_val: int = _current_cd.get(skill_key, 0)
+		if skill_key == "E" and ward_id == "adoneia" and has_meta("golem_form"):
+			cd_val = get_meta("golem_form")
+		btn.set_cooldown(cd_val)

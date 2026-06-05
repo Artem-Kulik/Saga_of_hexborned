@@ -986,11 +986,13 @@ func _try_adoneia_golem_tick() -> void:
 	var turns_left: int = current_ward.get_meta("golem_form") - 1
 	if turns_left > 0:
 		current_ward.set_meta("golem_form", turns_left)
+		current_ward._sync_cd_buttons()
 		if battle_log:
 			battle_log.add_entry("Форма Голема (%s): залишився %d хід(и)." % [current_ward.name, turns_left])
 		return
 	# Форма Голема завершується
 	current_ward.remove_meta("golem_form")
+	current_ward._current_cd["E"] = max(0, current_ward._max_cd.get("E", 8) - 2)
 	var base_max: int = current_ward.get_meta("golem_base_max_hp", current_ward.max_hp - 100)
 	if current_ward.has_meta("golem_base_max_hp"):
 		current_ward.remove_meta("golem_base_max_hp")
