@@ -288,6 +288,8 @@ func _input(event: InputEvent) -> void:
 			# Застосовуємо КД + логуємо (drag-to-target шлях)
 			_apply_and_log_cd(selected_attacker, selected_skill)
 			_clear_taunt_after_attack(selected_attacker)
+			await _try_zhnets_harvest()
+			await _try_adoneia_golem_tick()
 			if battle_resolver.is_team_dead(enemy_wards):
 				_finish_battle("ПЕРЕМОГА")
 				return
@@ -368,6 +370,9 @@ func _start_turn() -> void:
 		return
 
 	_turn_locked = false
+	for _w in ally_wards + enemy_wards:
+		if _w.has_meta("countered_this_turn"):
+			_w.remove_meta("countered_this_turn")
 	if _etesena_w_active:
 		_etesena_w_active = false
 		_etesena_w_targets.clear()
@@ -429,13 +434,14 @@ func _start_turn() -> void:
 	if current_ward.ward_id == "siomyi":
 		var all_active: Array = []
 		for w in ally_wards + enemy_wards:
-			if not w.is_dead:
+			if not w.is_dead and w != current_ward:
 				all_active.append(w)
 		if not all_active.is_empty():
 			var lucky = all_active[randi() % all_active.size()]
 			lucky.add_status("burning", 2)
 			lucky._update_status_visuals()
 			battle_log.add_entry("З пилу жару: %s отримує 2 стаки горіння!" % lucky.name)
+			battle_log.add_effect(lucky.name, lucky.team, "Горіння +2 стаки (пасивка Сьомого)")
 
 	# === ВОГОНЬ СЬОМОГО: шкода всій команді ===
 	var fs_stacks: int = current_ward.get_status("fire_seventh")
@@ -512,29 +518,6 @@ func _start_turn() -> void:
 			await battle_resolver.attack(current_ward, target_ally, chosen_sk)
 		else:
 			battle_log.add_entry("Паразитування: немає доступних скілів або союзників.")
-		if battle_resolver.is_team_dead(enemy_wards): _finish_battle("ПЕРЕМОГА"); return
-		if battle_resolver.is_team_dead(ally_wards):  _finish_battle("ПОРАЗКА");  return
-		_next_turn()
-		return
-
-	# === ЖНЕЦЬ: авто-Жнива ===
-	if current_ward.ward_id == "zhnets" and current_ward.has_meta("zhnets_e_target"):
-		var harvest_target = current_ward.get_meta("zhnets_e_target")
-		current_ward.remove_meta("zhnets_e_target")
-		if is_instance_valid(harvest_target) and not harvest_target.is_dead:
-			harvest_target.remove_status("reaping", harvest_target.get_status("reaping"))
-			battle_log.add_entry("Жнива! Жнець атакує %s!" % harvest_target.name)
-			_turn_locked = true
-			var burn_dmg: int = harvest_target.activate_all_burning()
-			if burn_dmg > 0:
-				battle_log.add_entry("Жнива: активує горіння — %d вогняної шкоди!" % burn_dmg)
-				await battle_resolver.deal_damage_with_modifiers(current_ward, harvest_target, burn_dmg, "burning", "fire")
-			if is_instance_valid(harvest_target) and not harvest_target.is_dead:
-				await battle_resolver.deal_damage_with_modifiers(current_ward, harvest_target, 80, "zhnets_e", "phys")
-		else:
-			if is_instance_valid(harvest_target):
-				harvest_target.remove_status("reaping", harvest_target.get_status("reaping"))
-			battle_log.add_entry("Жнива: ціль вже мертва.")
 		if battle_resolver.is_team_dead(enemy_wards): _finish_battle("ПЕРЕМОГА"); return
 		if battle_resolver.is_team_dead(ally_wards):  _finish_battle("ПОРАЗКА");  return
 		_next_turn()
@@ -676,6 +659,13 @@ func _on_skill_clicked(ward, skill_key: String) -> void:
 		await battle_resolver.attack(selected_attacker, null, selected_skill)
 		_apply_and_log_cd(selected_attacker, selected_skill)
 		_clear_taunt_after_attack(selected_attacker)
+		# Адонея E: не закінчує хід — гравець обирає Q/W у формі Голема
+		if ward.ward_id == "adoneia" and skill_key == "E":
+			_adoneia_set_form(ward, true)
+			_turn_locked = false
+			return
+		await _try_zhnets_harvest()
+		await _try_adoneia_golem_tick()
 		if battle_resolver.is_team_dead(enemy_wards):
 			_finish_battle("ПЕРЕМОГА")
 			return
@@ -707,6 +697,8 @@ func _on_ward_clicked(ward) -> void:
 			await battle_resolver.attack(selected_attacker, ward, selected_skill)
 			_apply_and_log_cd(selected_attacker, selected_skill)
 			_clear_taunt_after_attack(selected_attacker)
+			await _try_zhnets_harvest()
+			await _try_adoneia_golem_tick()
 			if battle_resolver.is_team_dead(enemy_wards): _finish_battle("ПЕРЕМОГА"); return
 			if battle_resolver.is_team_dead(ally_wards):  _finish_battle("ПОРАЗКА"); return
 			_next_turn()
@@ -715,6 +707,15 @@ func _on_ward_clicked(ward) -> void:
 	if ward.team != "enemy":
 		battle_log.add_entry("Це не ворог")
 		return
+
+	# Блок single_ally скілів від вибору ворога (наприклад, Сьомий W)
+	if selected_attacker != null:
+		var SkillExecBlock = preload("res://scripts/battle/skill_executor.gd")
+		var bl_type = SkillExecBlock.get_skill_target_type(selected_attacker.ward_id, selected_skill, selected_attacker)
+		if bl_type == "single_ally":
+			battle_log.add_entry("Цей скіл застосовується лише на союзника!")
+			AnimationCode.skill_blocked_animation(_get_skill_button(selected_attacker, selected_skill))
+			return
 
 	if ward.is_dead:
 		battle_log.add_entry("Ціль вже мертва")
@@ -766,6 +767,9 @@ func _on_ward_clicked(ward) -> void:
 	# Застосовуємо КД + логуємо
 	_apply_and_log_cd(selected_attacker, selected_skill)
 	_clear_taunt_after_attack(selected_attacker)
+
+	await _try_zhnets_harvest()
+	await _try_adoneia_golem_tick()
 
 	if battle_resolver.is_team_dead(enemy_wards):
 		_finish_battle("ПЕРЕМОГА")
@@ -848,6 +852,12 @@ func _enemy_attack(enemy_ward) -> void:
 		# AI: атакує ворога (пріоритет — ті з горінням)
 		var burn_targets = alive_targets.filter(func(w): return w.get_status("burning") > 0)
 		target = burn_targets.pick_random() if not burn_targets.is_empty() else alive_targets.pick_random()
+	elif target_type == "etesena_w":
+		# AI Єтесени: W атакує 3 рандомних живих вороги (союзників гравця)
+		var w_pool: Array = alive_targets.duplicate()
+		w_pool.shuffle()
+		enemy_ward.set_meta("etesena_w_targets", w_pool.slice(0, mini(3, w_pool.size())))
+		# target залишається null — execute_skill читає з meta
 
 	await battle_resolver.attack(
 		enemy_ward,
@@ -859,8 +869,25 @@ func _enemy_attack(enemy_ward) -> void:
 	_apply_and_log_cd(enemy_ward, random_skill)
 	_clear_taunt_after_attack(enemy_ward)
 
+	# Адонея E (ворог): не закінчує хід — бот одразу вибирає Q/W у формі Голема
+	if enemy_ward.ward_id == "adoneia" and random_skill == "E" and not enemy_ward.is_dead:
+		_adoneia_set_form(enemy_ward, true)
+		var golem_skills: Array = []
+		for sk in ["Q", "W"]:
+			if enemy_ward.is_skill_ready(sk):
+				golem_skills.append(sk)
+		if golem_skills.is_empty():
+			golem_skills = ["Q"]
+		var golem_skill: String = golem_skills.pick_random()
+		await battle_resolver.attack(enemy_ward, null, golem_skill)
+		_apply_and_log_cd(enemy_ward, golem_skill)
+		_clear_taunt_after_attack(enemy_ward)
+
 	if battle_finished:
 		return
+
+	await _try_zhnets_harvest()
+	await _try_adoneia_golem_tick()
 
 	if battle_resolver.is_team_dead(ally_wards):
 		_finish_battle("ПОРАЗКА")
@@ -871,6 +898,114 @@ func _enemy_attack(enemy_ward) -> void:
 		return
 
 	_next_turn()
+
+
+func _try_zhnets_harvest() -> void:
+	if current_ward == null or current_ward.ward_id != "zhnets": return
+	if not current_ward.has_meta("zhnets_e_target"): return
+	var harvest_target = current_ward.get_meta("zhnets_e_target")
+	current_ward.remove_meta("zhnets_e_target")
+	if is_instance_valid(harvest_target) and not harvest_target.is_dead:
+		var burn_total_before: int = harvest_target.get_status("burning")
+		harvest_target.remove_status("reaping", harvest_target.get_status("reaping"))
+		harvest_target._update_status_visuals()
+		battle_log.add_entry("Жнива! Жнець атакує %s! Знімає ефект Жнива." % harvest_target.name)
+		var burn_dmg: int = harvest_target.activate_all_burning()
+		if burn_dmg > 0:
+			battle_log.add_entry("Жнива: активує %d стаків горіння — %d вогняної шкоди! Горіння знято." % [burn_total_before, burn_dmg])
+			await battle_resolver.deal_damage_with_modifiers(current_ward, harvest_target, burn_dmg, "burning", "fire")
+		if is_instance_valid(harvest_target) and not harvest_target.is_dead:
+			await battle_resolver.deal_damage_with_modifiers(current_ward, harvest_target, 80, "zhnets_e", "phys")
+	else:
+		if is_instance_valid(harvest_target):
+			harvest_target.remove_status("reaping", harvest_target.get_status("reaping"))
+		battle_log.add_entry("Жнива: ціль вже мертва.")
+
+
+func _adoneia_set_form(ward, is_golem: bool) -> void:
+	var portrait_node := ward.get_node_or_null("WardVisual/Portrait") as TextureRect
+	if is_golem:
+		# Портрет і іконки скілів
+		if portrait_node:
+			portrait_node.texture = load("res://Основа/char/earth/Adoneya/form_golem.png")
+		var q_icon := ward.skill_q.get_node_or_null("Icon") as TextureRect
+		if q_icon:
+			q_icon.texture = load("res://Основа/char/earth/Adoneya/golem_q.png")
+		var w_icon := ward.skill_w.get_node_or_null("Icon") as TextureRect
+		if w_icon:
+			w_icon.texture = load("res://Основа/char/earth/Adoneya/golem_w.png")
+		# Ліва панель — override на golem запис
+		ward.set_meta("skill_panel_override", "adoneia_golem")
+		# Незалежні КД: зберігаємо звичайні, ставимо голем КД
+		ward.set_meta("normal_q_max_cd", ward._max_cd.get("Q", 0))
+		ward.set_meta("normal_w_max_cd", ward._max_cd.get("W", 0))
+		ward.set_meta("normal_q_cd",     ward._current_cd.get("Q", 0))
+		ward.set_meta("normal_w_cd",     ward._current_cd.get("W", 0))
+		ward._max_cd["Q"] = 0
+		ward._max_cd["W"] = 2
+		ward._current_cd["Q"] = 0
+		ward._current_cd["W"] = 0
+		ward._sync_cd_buttons()
+	else:
+		var ward_data = WardDatabase.get_data("adoneia")
+		# Портрет і іконки скілів
+		if portrait_node:
+			var base_portrait: String = ward_data.get("portrait", "")
+			if base_portrait != "" and ResourceLoader.exists(base_portrait):
+				portrait_node.texture = load(base_portrait)
+		var skills: Dictionary = ward_data.get("skills", {})
+		var q_icon := ward.skill_q.get_node_or_null("Icon") as TextureRect
+		if q_icon:
+			var p: String = skills.get("Q", {}).get("icon", "")
+			if p != "" and ResourceLoader.exists(p):
+				q_icon.texture = load(p)
+		var w_icon := ward.skill_w.get_node_or_null("Icon") as TextureRect
+		if w_icon:
+			var p: String = skills.get("W", {}).get("icon", "")
+			if p != "" and ResourceLoader.exists(p):
+				w_icon.texture = load(p)
+		# Ліва панель — скидаємо override
+		if ward.has_meta("skill_panel_override"):
+			ward.remove_meta("skill_panel_override")
+		# Незалежні КД: відновлюємо звичайні
+		ward._max_cd["Q"]     = ward.get_meta("normal_q_max_cd", 0)
+		ward._max_cd["W"]     = ward.get_meta("normal_w_max_cd", 4)
+		ward._current_cd["Q"] = ward.get_meta("normal_q_cd",     0)
+		ward._current_cd["W"] = ward.get_meta("normal_w_cd",     0)
+		for _key in ["normal_q_max_cd", "normal_w_max_cd", "normal_q_cd", "normal_w_cd"]:
+			if ward.has_meta(_key):
+				ward.remove_meta(_key)
+		ward._sync_cd_buttons()
+
+
+func _try_adoneia_golem_tick() -> void:
+	if current_ward == null or current_ward.ward_id != "adoneia": return
+	if not current_ward.has_meta("golem_form"): return
+	var turns_left: int = current_ward.get_meta("golem_form") - 1
+	if turns_left > 0:
+		current_ward.set_meta("golem_form", turns_left)
+		if battle_log:
+			battle_log.add_entry("Форма Голема (%s): залишився %d хід(и)." % [current_ward.name, turns_left])
+		return
+	# Форма Голема завершується
+	current_ward.remove_meta("golem_form")
+	var base_max: int = current_ward.get_meta("golem_base_max_hp", current_ward.max_hp - 100)
+	if current_ward.has_meta("golem_base_max_hp"):
+		current_ward.remove_meta("golem_base_max_hp")
+	var hp_was: int = current_ward.current_hp
+	var max_was: int = current_ward.max_hp
+	current_ward.max_hp = base_max
+	current_ward.current_hp = mini(current_ward.current_hp, base_max)
+	if current_ward.get("health") != null:
+		current_ward.health.setup(current_ward.max_hp, current_ward.current_hp, current_ward.hp_bar)
+	_adoneia_set_form(current_ward, false)
+	current_ward.add_status("stun", 2)
+	current_ward._update_status_visuals()
+	if battle_log:
+		battle_log.add_entry("Форма Голема завершена! %s повертається до звичайної форми." % current_ward.name)
+		battle_log.add_entry("HP: %d → %d | Макс. HP: %d → %d" % [hp_was, current_ward.current_hp, max_was, current_ward.max_hp])
+		battle_log.add_entry("Оглушення: %s на 2 ходи!" % current_ward.name)
+		battle_log.add_effect(current_ward.name, current_ward.team, "Оглушення 2 ходи (завершення Голема)")
 
 
 func _cancel_skill() -> void:
@@ -957,6 +1092,9 @@ func _etesena_w_execute() -> void:
 	await battle_resolver.attack(selected_attacker, null, selected_skill)
 	_apply_and_log_cd(selected_attacker, selected_skill)
 	_clear_taunt_after_attack(selected_attacker)
+
+	await _try_zhnets_harvest()
+	await _try_adoneia_golem_tick()
 
 	if battle_resolver.is_team_dead(enemy_wards):
 		_finish_battle("ПЕРЕМОГА")

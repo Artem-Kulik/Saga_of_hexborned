@@ -18,7 +18,8 @@ const _STATUS_NODE: Dictionary = {
 	"fire_shield": "oichi_flame_shield",
 	"cuts":          "hiscoris_scares",
 	"fire_circle":   "ocii_circle_flame",
-	"barrier":       "armor",
+	"barrier":       "prayers_barrier",
+	"counterattack": "armor",
 	"fire_seventh":  "prayers_fire",
 	"reaping":       "znec_znyva",
 	"parasitism":    "parazyte_assim",
@@ -466,6 +467,8 @@ func _get_status_tooltip(effect: String, count: int) -> String:
 			return "Коло пекельного вогню (%d ход(и))\nАтакуючий отримує 2 стаки горіння." % count
 		"barrier":
 			return "Бар'єр (%d ход(и))\nПоглинає до 30 шкоди від наступного удару.\nАтакуючий отримує 1 стак горіння." % count
+		"counterattack":
+			return "Контратака (%d стак(и))\nПри отриманні удару — б'є атакуючого двічі по 30 фіз.\nСпрацьовує один раз за хід ворога." % count
 		"fire_seventh":
 			return "Вогонь сьомого (%d стак(и))\nНа початку ходу: %d вогняної шкоди усій команді." % [count, 150 * count]
 		"reaping":
@@ -493,7 +496,8 @@ func _on_hover_entered() -> void:
 
 	var skill_panel = get_tree().get_first_node_in_group("skill_panel")
 	if skill_panel and skill_panel.has_method("populate") and ward_id != "":
-		skill_panel.populate(ward_id)
+		var override_id: String = get_meta("skill_panel_override", "")
+		skill_panel.populate(override_id if override_id != "" else ward_id)
 	elif skill_panel and skill_panel.has_method("show_panel"):
 		skill_panel.show_panel()
 

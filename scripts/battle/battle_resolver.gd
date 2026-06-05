@@ -214,6 +214,7 @@ func apply_damage(
 		print(source_name, " завдав ", damage, " шкоди ", target.name)
 
 	_check_zhnets_passive(target, hp_before, hp_after)
+	await _check_adoneia(target, source, hp_before, hp_after, damage, skill_key, source_name)
 
 	if target.is_dead and battle_log:
 		battle_log.add_death(target.name, target.team)
@@ -278,8 +279,40 @@ func _check_zhnets_passive(target, hp_before: int, hp_after: int) -> void:
 	var cnt: int = mini(2, alive.size())
 	for i in range(cnt):
 		alive[i].add_burning(1, 2)
+		if battle_log:
+			battle_log.add_effect(alive[i].name, alive[i].team, "Горіння +1 стак (пасивка Присутність)")
 	if battle_log:
 		battle_log.add_entry("Присутність: %s впав нижче 50%% — Жнець підпалює %d цілі!" % [target.name, cnt])
+
+func _check_adoneia(target, source, hp_before: int, hp_after: int, damage: int, skill_key: String, source_name: String) -> void:
+	if target == null or target.ward_id != "adoneia": return
+	if target.is_dead: return
+
+	# Пасивка P: стак Контратаки при падінні нижче 50% HP
+	if damage > 0 and hp_before * 2 > target.max_hp and hp_after * 2 <= target.max_hp:
+		target.add_status("counterattack", 1)
+		target._update_status_visuals()
+		if battle_log:
+			battle_log.add_entry("Відповідь (пасивка): %s пробита нижче 50%% HP — +1 Контратака!" % target.name)
+			battle_log.add_effect(target.name, target.team, "Контратака +1 (пасивка)")
+
+	# Контратака: спрацьовує раз за хід ворога при будь-якому ударі
+	if skill_key == "Q_counter": return
+	if damage <= 0: return
+	if target.get_status("counterattack") <= 0: return
+	if target.has_meta("countered_this_turn"): return
+	if source == null or not is_instance_valid(source) or source.is_dead: return
+
+	target.set_meta("countered_this_turn", true)
+	target.remove_status("counterattack", 1)
+	target._update_status_visuals()
+	if battle_log:
+		battle_log.add_entry("Контратака! %s відповідає — двічі б'є %s по 30!" % [target.name, source_name])
+		battle_log.add_effect(target.name, target.team, "Контратака спрацювала!")
+	await deal_damage_with_modifiers(target, source, 30, "Q_counter", "phys")
+	if source != null and is_instance_valid(source) and not source.is_dead:
+		await deal_damage_with_modifiers(target, source, 30, "Q_counter", "phys")
+
 
 func calc_damage_only(attacker, target, base_damage: int, skill_key: String, forced_damage_type: String = "") -> Dictionary:
 	var damage_type: String = forced_damage_type
