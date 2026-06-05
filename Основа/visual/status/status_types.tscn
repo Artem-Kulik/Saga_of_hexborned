@@ -15,6 +15,9 @@
 [ext_resource type="Texture2D" uid="uid://d0iptobleuyp2" path="res://Основа/char/air/Hiskoris/p.png" id="13_uux2m"]
 [ext_resource type="Texture2D" uid="uid://rhcxbwt2rvjq" path="res://Основа/char/earth/Parazyte/w.png" id="14_iboq1"]
 [ext_resource type="Texture2D" uid="uid://dxtcnl1qqc748" path="res://Основа/char/earth/Adoneya/e.png" id="15_yxmqu"]
+[ext_resource type="Texture2D" uid="uid://c5xm6hf5dft8w" path="res://Основа/visual/status/counter_attack.png" id="16_78eam"]
+[ext_resource type="Texture2D" uid="uid://dur1as0qpe11o" path="res://Основа/char/earth/Phisita/w.png" id="17_ahk5n"]
+[ext_resource type="Texture2D" uid="uid://qhf18gv04ui3" path="res://Основа/char/earth/Phisita/e.png" id="18_uux2m"]
 
 [node name="status_types" type="Control" unique_id=1469794512]
 layout_mode = 3
@@ -419,6 +422,93 @@ expand_mode = 3
 stretch_mode = 5
 
 [node name="frame" type="TextureRect" parent="adoneya_golem/golem" unique_id=1375580435]
+custom_minimum_size = Vector2(46.965, 47.64)
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("2_a7r01")
+expand_mode = 3
+stretch_mode = 5
+
+[node name="counter_attack" type="Control" parent="." unique_id=732922801]
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="counter" type="TextureRect" parent="counter_attack" unique_id=162102302]
+custom_minimum_size = Vector2(58, 38)
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("16_78eam")
+expand_mode = 3
+stretch_mode = 5
+
+[node name="frame" type="TextureRect" parent="counter_attack/counter" unique_id=1376258839]
+custom_minimum_size = Vector2(46.965, 47.64)
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("2_a7r01")
+expand_mode = 3
+stretch_mode = 5
+
+[node name="phisita_wall" type="Control" parent="." unique_id=1519778921]
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="wall" type="TextureRect" parent="phisita_wall" unique_id=1156119442]
+custom_minimum_size = Vector2(58, 38)
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("17_ahk5n")
+expand_mode = 3
+stretch_mode = 5
+
+[node name="frame" type="TextureRect" parent="phisita_wall/wall" unique_id=1761127192]
+custom_minimum_size = Vector2(46.965, 47.64)
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("2_a7r01")
+expand_mode = 3
+stretch_mode = 5
+
+[node name="phisita_e" type="Control" parent="." unique_id=1897977470]
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="e" type="TextureRect" parent="phisita_e" unique_id=390737270]
+custom_minimum_size = Vector2(58, 38)
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("18_uux2m")
+expand_mode = 3
+stretch_mode = 5
+
+[node name="frame" type="TextureRect" parent="phisita_e/e" unique_id=341685502]
 custom_minimum_size = Vector2(46.965, 47.64)
 layout_mode = 1
 anchors_preset = 15
