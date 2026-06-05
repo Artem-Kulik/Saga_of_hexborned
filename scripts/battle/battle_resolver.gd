@@ -35,7 +35,30 @@ func attack(attacker, target, skill_key: String = "Q") -> void:
 	if pressed_button != null:
 		await AnimationCode.skill_used_animation(pressed_button)
 
-	await SkillExecutor.execute_skill(self, attacker, target, skill_key)
+	# === СМЕТІННЯ: перевіряємо phisita_e перед виконанням скіла ===
+	var effective_target = target
+	var target_type: String = SkillExecutor.get_skill_target_type(attacker.ward_id, skill_key, attacker)
+	if target_type != "all_enemies" and attacker.get_status("phisita_e") > 0:
+		var chance: int = attacker.get_meta("phisita_e_chance", 0)
+		attacker.remove_status("phisita_e", attacker.get_status("phisita_e"))
+		if attacker.has_meta("phisita_e_chance"):
+			attacker.remove_meta("phisita_e_chance")
+		attacker._update_status_visuals()
+		if chance > 0 and randf() * 100.0 < float(chance):
+			var all_alive: Array = []
+			for w in battle_scene.ally_wards + battle_scene.enemy_wards:
+				if not w.is_dead and w != attacker and w != target:
+					all_alive.append(w)
+			if not all_alive.is_empty():
+				var redirect = all_alive[randi() % all_alive.size()]
+				if battle_log:
+					var orig_name: String = target.name if target != null else "себе"
+					battle_log.add_entry("Сметіння! %s [%s] промахується: ціль %s → б'є %s" % [
+						attacker.name, skill_key, orig_name, redirect.name
+					])
+				effective_target = redirect
+
+	await SkillExecutor.execute_skill(self, attacker, effective_target, skill_key)
 
 	skill_controller.clear()
 
@@ -71,6 +94,9 @@ func deal_damage_with_modifiers(attacker, target, base_damage: int, skill_key: S
 	var hp_dmg = base_damage - armor_dmg
 	var final_hp_dmg = int(hp_dmg * mult)
 	final_damage = armor_dmg + final_hp_dmg
+
+	if armor_dmg > 0 and battle_log:
+		battle_log.add_entry("    → В броню: %d | У HP: %d" % [armor_dmg, final_hp_dmg])
 
 	await apply_damage(
 		attacker,
@@ -108,7 +134,23 @@ func apply_damage(
 			source.add_status("burning", 1)
 			source._update_status_visuals()
 		if battle_log:
-			battle_log.add_entry("Бар'єр поглинув %d шкоди! %s отримує 1 стак горіння." % [absorbed, source.name if source else "?"])
+			battle_log.add_entry("Бар'єр: поглинуто %d → В щит: %d | До HP: %d | %s +1 горіння" % [absorbed, absorbed, damage, source.name if source else "?"])
+
+	# Кам'яна стіна Фізіти: поглинає весь удар поки жива.
+	if damage > 0 and skill_key != "P" and target.get_status("phisita_wall") > 0:
+		var wall_hp: int = target.get_status("phisita_wall")
+		target.remove_status("phisita_wall", wall_hp)
+		var new_wall_hp: int = wall_hp - damage
+		if new_wall_hp > 0:
+			target.add_status("phisita_wall", new_wall_hp)
+		target._update_status_visuals()
+		if battle_log:
+			var src: String = source.name if source != null else "?"
+			if new_wall_hp <= 0:
+				battle_log.add_entry("Стіна %s [%s → %s]: поглинула %d → стіна: %d→0 HP (зруйновано) | У варда: 0" % [target.name, src, skill_key, damage, wall_hp])
+			else:
+				battle_log.add_entry("Стіна %s [%s → %s]: поглинула %d → стіна: %d→%d HP | У варда: 0" % [target.name, src, skill_key, damage, wall_hp, new_wall_hp])
+		return
 
 	# Пасивка Рікера "На волосині": якщо удар смертельний — відміняє його, авто-використовує E, помирає.
 	if target.ward_id == "riker" and damage > 0 and target.current_hp > 0 and skill_key != "passive_death":
@@ -259,30 +301,28 @@ func _check_fire_circle(attacker, target) -> void:
 
 func _check_zhnets_passive(target, hp_before: int, hp_after: int) -> void:
 	if target == null or target.is_dead: return
-	# Лише коли зараз хід команди-суперника (союзники атакують ворогів)
-	if battle_scene.turn_manager.current_team == target.team: return
 	# Перетин порогу: був вище 50%, став нижче або рівно 50%
 	if not (hp_before * 2 > target.max_hp and hp_after * 2 <= target.max_hp): return
-	# Шукаємо живого Жнеця на боці атакуючих
-	var attacker_side: Array = battle_scene.ally_wards if target.team == "enemy" else battle_scene.enemy_wards
+	# Шукаємо живого Жнеця у грі, для якого target — ворог
 	var zhnets_ward = null
-	for w in attacker_side:
-		if w.ward_id == "zhnets" and not w.is_dead:
+	for w in battle_scene.ally_wards + battle_scene.enemy_wards:
+		if w.ward_id == "zhnets" and not w.is_dead and w.team != target.team:
 			zhnets_ward = w
 			break
 	if zhnets_ward == null: return
-	# 1 стак горіння (2 ходи) двом рандомним живим ворогам
-	var enemy_side: Array = battle_scene.ally_wards if target.team == "ally" else battle_scene.enemy_wards
+	# 1 стак горіння (2 ходи) двом рандомним живим ворогам Жнеця
+	var enemy_side: Array = battle_scene.enemy_wards if zhnets_ward.team == "ally" else battle_scene.ally_wards
 	var alive: Array = get_alive_wards(enemy_side)
 	if alive.is_empty(): return
 	alive.shuffle()
 	var cnt: int = mini(2, alive.size())
 	for i in range(cnt):
 		alive[i].add_burning(1, 2)
+		alive[i]._update_status_visuals()
 		if battle_log:
-			battle_log.add_effect(alive[i].name, alive[i].team, "Горіння +1 стак (пасивка Присутність)")
+			battle_log.add_effect(alive[i].name, alive[i].team, "Горіння +1 стак (Присутність)")
 	if battle_log:
-		battle_log.add_entry("Присутність: %s впав нижче 50%% — Жнець підпалює %d цілі!" % [target.name, cnt])
+		battle_log.add_entry("Присутність (%s): %s впав нижче 50%% — %d ворог(и) підпалено!" % [zhnets_ward.name, target.name, cnt])
 
 func _check_adoneia(target, source, hp_before: int, hp_after: int, damage: int, skill_key: String, source_name: String) -> void:
 	if target == null or target.ward_id != "adoneia": return

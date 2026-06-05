@@ -194,7 +194,8 @@ func liah_q_combo_animation(
 	attacker,
 	target,
 	on_hit_first: Callable,
-	on_hit_second: Callable
+	on_hit_second: Callable,
+	has_second_hit: bool = false
 ) -> void:
 	if attacker == null or target == null:
 		return
@@ -294,7 +295,7 @@ func liah_q_combo_animation(
 
 	# --- ДРУГИЙ УДАР ЧЕРЕЗ ЕФЕКТ ---
 
-	if on_hit_second.is_valid():
+	if has_second_hit:
 		var effect = LIAH_Q.instantiate()
 		get_tree().current_scene.add_child(effect)
 
@@ -309,8 +310,8 @@ func liah_q_combo_animation(
 
 		if effect.has_signal("hit_moment"):
 			await effect.hit_moment
-			await on_hit_second.call()
-		else:
+
+		if on_hit_second.is_valid():
 			await on_hit_second.call()
 
 	# --- ВІДСКОК І ПОВЕРНЕННЯ ---

@@ -23,6 +23,9 @@ const _STATUS_NODE: Dictionary = {
 	"fire_seventh":  "prayers_fire",
 	"reaping":       "znec_znyva",
 	"parasitism":    "parazyte_assim",
+	"gravity":       "phisita_grav",
+	"phisita_wall":  "phisita_wall",
+	"phisita_e":     "phisita_e",
 }
 
 const NEGATIVE_EFFECTS: Array = ["burning", "taunt", "stun", "cuts", "fire_seventh"]
@@ -416,12 +419,13 @@ func _update_status_visuals() -> void:
 		if effect == "burning":
 			continue
 		var count: int = status_effects[effect]
-		var draw_count: int = 1 if effect in ["armor", "fire_circle", "barrier", "regen", "parasitism", "reaping"] else count
+		var draw_count: int = 1 if effect in ["armor", "fire_circle", "barrier", "regen", "parasitism", "reaping", "phisita_wall", "phisita_e"] else count
 		var node_name: String = _STATUS_NODE.get(effect, "")
 		if node_name == "":
 			continue
 		for i in range(draw_count):
-			_add_status_icon(container, lib, node_name, _get_status_tooltip(effect, count))
+			var badge: String = str(count) if effect == "phisita_wall" else ""
+			_add_status_icon(container, lib, node_name, _get_status_tooltip(effect, count), badge)
 
 	if has_meta("fire_shield") and get_meta("fire_shield"):
 		_add_status_icon(container, lib, "oichi_flame_shield",
@@ -432,7 +436,7 @@ func _update_status_visuals() -> void:
 	lib.queue_free()
 
 
-func _add_status_icon(container: Node, lib: Node, node_name: String, tooltip: String) -> void:
+func _add_status_icon(container: Node, lib: Node, node_name: String, tooltip: String, badge_text: String = "") -> void:
 	var source := lib.get_node_or_null(node_name)
 	if source == null:
 		return
@@ -441,6 +445,17 @@ func _add_status_icon(container: Node, lib: Node, node_name: String, tooltip: St
 	icon.mouse_filter = Control.MOUSE_FILTER_STOP
 	icon.mouse_entered.connect(func(): _show_status_tooltip(tooltip, icon))
 	icon.mouse_exited.connect(_hide_status_tooltip)
+	if badge_text != "":
+		var lbl := Label.new()
+		lbl.text = badge_text
+		lbl.add_theme_font_size_override("font_size", 9)
+		lbl.add_theme_color_override("font_color", Color.WHITE)
+		lbl.add_theme_color_override("font_shadow_color", Color.BLACK)
+		lbl.add_theme_constant_override("shadow_offset_x", 1)
+		lbl.add_theme_constant_override("shadow_offset_y", 1)
+		lbl.set_anchors_and_offsets_preset(Control.PRESET_BOTTOM_RIGHT)
+		lbl.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		icon.add_child(lbl)
 	container.add_child(icon)
 
 
@@ -475,6 +490,13 @@ func _get_status_tooltip(effect: String, count: int) -> String:
 			return "Жнива\nЖнець атакує на початку свого наступного ходу.\nАктивує всі стаки горіння."
 		"parasitism":
 			return "Паразитування (%d хід)\nНа початку ходу — б'є випадкового союзника випадковим скілом." % count
+		"gravity":
+			return "Тяжіння (%d стак(и))\nQ: %d фіз (40 за стак) | W: стіна %d HP | E: %d%% відхилення" % [count, 40*count, 40*count, 12*count]
+		"phisita_wall":
+			return "Кам'яна стіна (%d HP)\nПоглинає всі атаки поки жива." % count
+		"phisita_e":
+			var _chance: int = get_meta("phisita_e_chance", 0)
+			return "Сметіння (%d%%)\nПри використанні скіла — шанс промахнутися і вцілити іншого варда." % _chance
 	return ""
 
 
@@ -592,6 +614,12 @@ func die() -> void:
 		return
 
 	is_dead = true
+	clear_statuses()
+	for m in ["untargetable", "phisita_e_chance", "fizita_gravity_turns", "golem_form",
+			"fire_shield", "countered_this_turn", "riker_passive_used",
+			"zhnets_e_target", "zhnets_e_just_used"]:
+		if has_meta(m):
+			remove_meta(m)
 	if death_sound:
 		death_sound.play()
 	current_hp = 0

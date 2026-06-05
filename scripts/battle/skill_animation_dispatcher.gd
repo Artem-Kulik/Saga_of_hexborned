@@ -124,5 +124,5 @@ static func play(skill_id: String, attacker, target, on_hit: Callable) -> void:
 
 # Liah Q — два удари: базовий фіз + умовний водяний projectile.
 # on_hit_second: порожній Callable() якщо другий удар не спрацьовує.
-static func play_liah_q(attacker, target, on_hit_first: Callable, on_hit_second: Callable) -> void:
-	await AnimationCode.liah_q_combo_animation(attacker, target, on_hit_first, on_hit_second)
+static func play_liah_q(attacker, target, on_hit_first: Callable, on_hit_second: Callable, has_second_hit: bool = false) -> void:
+	await AnimationCode.liah_q_combo_animation(attacker, target, on_hit_first, on_hit_second, has_second_hit)

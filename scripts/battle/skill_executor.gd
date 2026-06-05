@@ -46,6 +46,8 @@ static func get_skill_target_type(ward_id: String, skill_key: String, attacker =
 			var in_golem: bool = attacker != null and attacker.has_meta("golem_form")
 			if in_golem: return "all_enemies"
 			return "single_enemy"
+		"fizita":
+			if skill_key == "W": return "single_ally"
 
 	return "single_enemy"
 
@@ -80,6 +82,8 @@ static func execute_skill(resolver, attacker, target, skill_key: String) -> void
 			await _execute_parasyt(resolver, attacker, target, skill_key)
 		"adoneia":
 			await _execute_adoneia(resolver, attacker, target, skill_key)
+		"fizita":
+			await _execute_fizita(resolver, attacker, target, skill_key)
 		_:
 			# Стандартна атака для всіх інших поки що
 			await _execute_basic_attack(resolver, attacker, target, skill_key, base_damage)
@@ -107,7 +111,8 @@ static func _execute_liah(resolver, attacker, target, skill_key: String, _base_d
 			await SkillAnimationDispatcher.play_liah_q(
 				attacker, target,
 				func(): await resolver.apply_damage(attacker, target, d1.final_damage, "Q", "-", "effect", 50, d1.mult),
-				d2_callable
+				d2_callable,
+				was_full_hp
 			)
 				
 		"W":
@@ -608,15 +613,23 @@ static func _execute_otsii(resolver, attacker, target, skill_key: String) -> voi
 			if target == null: return
 			target.add_status("burning", 1)
 			target._update_status_visuals()
-			if resolver.battle_log:
-				resolver.battle_log.add_entry("Рик: " + target.name + " отримує 1 стак горіння!")
 			var ally_side: Array = resolver.battle_scene.ally_wards if attacker.team == "ally" else resolver.battle_scene.enemy_wards
 			var alive_allies: Array = resolver.get_alive_wards(ally_side).filter(func(w): return w != attacker)
-			if not alive_allies.is_empty():
-				var ally_helper = alive_allies[randi() % alive_allies.size()]
+			if alive_allies.is_empty():
 				if resolver.battle_log:
-					resolver.battle_log.add_entry("Рик: %s атакує разом з Оцієм!" % ally_helper.name)
+					resolver.battle_log.add_entry("Рик: %s +1 горіння (союзників немає)." % target.name)
+			else:
+				var ally_helper = alive_allies[randi() % alive_allies.size()]
+				var hp_before_e: int = target.current_hp if is_instance_valid(target) else 0
+				if resolver.battle_log:
+					resolver.battle_log.add_entry("Рик: %s +1 горіння. %s атакує разом з Оцієм → %s!" % [target.name, ally_helper.name, target.name])
 				await execute_skill(resolver, ally_helper, target, "Q")
+				if resolver.battle_log and is_instance_valid(target):
+					var hp_after_e: int = target.current_hp
+					resolver.battle_log.add_entry("  → %s [Q]: HP %s: %d → %d (%s)" % [
+						ally_helper.name, target.name, hp_before_e, hp_after_e,
+						"загинув!" if target.is_dead else "-%d" % (hp_before_e - hp_after_e)
+					])
 
 
 static func check_otsii_passive_death(resolver, dead_ward) -> void:
@@ -656,19 +669,15 @@ static func check_otsii_passive_death(resolver, dead_ward) -> void:
 			resolver.battle_log.add_entry("Оцій (пасивна): немає скілів на КД.")
 		return
 
-	var max_cd: int = 0
-	for entry in cd_skills:
-		if entry.cd > max_cd:
-			max_cd = entry.cd
-
-	var top_skills: Array = cd_skills.filter(func(e): return e.cd == max_cd)
-	var chosen = top_skills[randi() % top_skills.size()]
+	var chosen = cd_skills[randi() % cd_skills.size()]
 	var new_cd: int = max(0, chosen.cd - 2)
 	chosen.ward._current_cd[chosen.skill] = new_cd
+	chosen.ward._sync_cd_buttons()
 	if resolver.battle_log:
 		resolver.battle_log.add_entry(
 			"Оцій (пасивна): %s скіл %s — КД -2 (залишок: %d)" % [chosen.ward.name, chosen.skill, new_cd]
 		)
+		resolver.battle_log.add_effect(chosen.ward.name, chosen.ward.team, "КД %s -2 (=Оцій)" % chosen.skill)
 
 
 # =============================================================================
@@ -768,13 +777,15 @@ static func _execute_zhnets(resolver, attacker, target, skill_key: String) -> vo
 		"E":
 			if target == null: return
 			if attacker.has_meta("zhnets_e_target"):
-				resolver.battle_log.add_entry("Жнива вже активна — дочекайся наступного ходу!")
+				if resolver.battle_log:
+					resolver.battle_log.add_entry("Жнива вже активна — дочекайся наступного ходу!")
 				return
 			target.add_status("reaping", 1)
 			target._update_status_visuals()
 			attacker.set_meta("zhnets_e_target", target)
+			attacker.set_meta("zhnets_e_just_used", true)
 			if resolver.battle_log:
-				resolver.battle_log.add_entry("Жнива: %s позначений! Атака на наступному ході." % target.name)
+				resolver.battle_log.add_entry("Жнива: %s позначений! Атака в кінці наступного ходу Жнеця." % target.name)
 				resolver.battle_log.add_effect(target.name, target.team, "Жнива (наступний хід Жнеця)")
 
 
@@ -894,3 +905,58 @@ static func _execute_adoneia(resolver, attacker, target, skill_key: String) -> v
 				resolver.battle_log.add_entry("⚙ Форма Голема! %s перетворюється на Кам'яного Голема!" % attacker.name)
 				resolver.battle_log.add_entry("HP: %d → %d | Макс. HP: %d → %d" % [hp_was, attacker.current_hp, max_was, attacker.max_hp])
 				resolver.battle_log.add_effect(attacker.name, attacker.team, "Форма Голема (2 ходи, +100 HP)")
+
+
+# =============================================================================
+# FIZITA (Фізіта)
+# =============================================================================
+# P — Тяжіння: старт бою +2 стаки (одноразово); початок ходу +2/+3/+4…  стаки (cap=4+2×раунд).
+# Q — Шквал: витрачає всі стаки, 40 фіз за кожен стак.
+# W — Стіна (КД 1): союзник (не себе) отримує стіну HP=40×стаки; поглинає всі удари.
+# E — Сметіння: 70 фіз; ціль отримує Сметіння (12×стаки)% шанс промаху свого скіла.
+
+static func _execute_fizita(resolver, attacker, target, skill_key: String) -> void:
+	var stacks: int = attacker.get_status("gravity")
+
+	match skill_key:
+		"Q":
+			if stacks <= 0:
+				if resolver.battle_log:
+					resolver.battle_log.add_entry("Шквал: немає стаків Тяжіння!")
+				return
+			if target == null: return
+			var q_dmg: int = 40 * stacks
+			attacker.remove_status("gravity", stacks)
+			attacker._update_status_visuals()
+			if resolver.battle_log:
+				resolver.battle_log.add_entry("Шквал: %s випускає %d стак(и) — %d фіз шкоди!" % [attacker.name, stacks, q_dmg])
+			await resolver.deal_damage_with_modifiers(attacker, target, q_dmg, skill_key, "phys")
+
+		"W":
+			if target == null: return
+			if stacks <= 0:
+				if resolver.battle_log:
+					resolver.battle_log.add_entry("Стіна: немає стаків Тяжіння!")
+				return
+			var wall_hp: int = 40 * stacks
+			attacker.remove_status("gravity", stacks)
+			attacker._update_status_visuals()
+			target.add_status("phisita_wall", wall_hp)
+			target._update_status_visuals()
+			if resolver.battle_log:
+				resolver.battle_log.add_entry("Стіна: %s захищений кам'яною стіною (%d HP)!" % [target.name, wall_hp])
+				resolver.battle_log.add_effect(target.name, target.team, "Кам'яна стіна (%d HP)" % wall_hp)
+
+		"E":
+			if target == null: return
+			var e_chance: int = 12 * stacks
+			attacker.remove_status("gravity", stacks)
+			attacker._update_status_visuals()
+			await resolver.deal_damage_with_modifiers(attacker, target, 70, skill_key, "phys")
+			if not target.is_dead and stacks > 0:
+				target.add_status("phisita_e", 1)
+				target.set_meta("phisita_e_chance", e_chance)
+				target._update_status_visuals()
+				if resolver.battle_log:
+					resolver.battle_log.add_entry("Сметіння: %s тепер має %d%% шанс промаху свого скіла!" % [target.name, e_chance])
+					resolver.battle_log.add_effect(target.name, target.team, "Сметіння (%d%%)" % e_chance)

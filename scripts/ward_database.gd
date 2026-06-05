@@ -154,7 +154,7 @@ var WARDS: Dictionary = {
 			"P": { "id": "fizita_p", "damage_type": "passive", "name": "Тяжіння",  "cd": 0, "icon": "res://Основа/char/earth/Phisita/p.png", "desc": "", "desc_full": "" },
 			"Q": { "id": "fizita_q", "damage_type": "earth",   "name": "Шквал",    "cd": 0, "icon": "res://Основа/char/earth/Phisita/q.png", "desc": "", "desc_full": "" },
 			"W": { "id": "fizita_w", "damage_type": "earth",   "name": "Стіна",    "cd": 1, "icon": "res://Основа/char/earth/Phisita/w.png", "desc": "", "desc_full": "" },
-			"E": { "id": "fizita_e", "damage_type": "earth",   "name": "Смятіння", "cd": 0, "icon": "res://Основа/char/earth/Phisita/e.png", "desc": "", "desc_full": "" },
+			"E": { "id": "fizita_e", "damage_type": "earth",   "name": "Сметіння", "cd": 0, "icon": "res://Основа/char/earth/Phisita/e.png", "desc": "Завдає 70 фіз. та накладає Сметіння (12%×N промаху) на ціль. N = стаки Тяжіння.", "desc_full": "Завдає 70 фіз. шкоди. Знімає всі стаки Тяжіння: якщо було N стаків — накладає на ціль Сметіння з шансом промаху 12%×N. Вард зі Сметінням при наступному скілі може промахнутися — скіл перенаправиться на іншого варда (не на атакера і не на початкову ціль)." },
 		}
 	},
 	"shusima": {

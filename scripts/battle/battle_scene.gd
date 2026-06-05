@@ -364,6 +364,14 @@ func _start_battle() -> void:
 	turn_manager.reset_turn_indices()
 
 	battle_log.add_entry("Бій почався")
+
+	# Фізіта отримує 2 початкових стеки Тяжіння (одноразово на старті)
+	for w in ally_wards + enemy_wards:
+		if w.ward_id == "fizita" and not w.is_dead:
+			w.add_status("gravity", 2)
+			w._update_status_visuals()
+			battle_log.add_entry("Тяжіння: %s отримує 2 початкових стеки" % w.name)
+
 	_start_turn()
 
 
@@ -431,6 +439,22 @@ func _start_turn() -> void:
 	battle_log.add_entry("====== ХІД ======")
 	battle_log.add_entry(current_ward.name)
 	battle_log.add_entry(current_ward.team)
+
+	# === ПАСИВКА ФІЗІТИ: Тяжіння — +2 стаки на початку ходу ===
+	if current_ward.ward_id == "fizita" and not current_ward.is_dead:
+		var fizita_turns: int = current_ward.get_meta("fizita_gravity_turns", 0)
+		var stacks_to_add: int = fizita_turns + 2  # хід 1: +2, хід 2: +3, хід 3: +4…
+		var grav_cap: int = 4 + 2 * fizita_turns
+		var current_grav: int = current_ward.get_status("gravity")
+		var actual_add: int = mini(stacks_to_add, grav_cap - current_grav)
+		if actual_add > 0:
+			current_ward.add_status("gravity", actual_add)
+			current_ward._update_status_visuals()
+			battle_log.add_entry("Тяжіння: %s +%d стак(и) (разом: %d, макс: %d)" % [
+				current_ward.name, actual_add, current_ward.get_status("gravity"), grav_cap
+			])
+			battle_log.add_effect(current_ward.name, current_ward.team, "Тяжіння +%d (всього: %d)" % [actual_add, current_ward.get_status("gravity")])
+		current_ward.set_meta("fizita_gravity_turns", fizita_turns + 1)
 
 	# === ПАСИВКА СЬОМОГО: 2 стаки горіння рандомному варду ===
 	if current_ward.ward_id == "siomyi":
@@ -693,6 +717,14 @@ func _on_ward_clicked(ward) -> void:
 		var w_type = SkillExecW.get_skill_target_type(selected_attacker.ward_id, selected_skill, selected_attacker)
 		if w_type == "single_ally" or w_type == "single_any":
 			if ward.is_dead: return
+			if ward.has_meta("untargetable") and ward.get_meta("untargetable"):
+				battle_log.add_entry("Ця ціль наразі не вразлива!")
+				return
+			# Фізіта W: не можна застосувати на себе
+			if selected_attacker.ward_id == "fizita" and selected_skill == "W" and ward == selected_attacker:
+				battle_log.add_entry("Стіна: не можна застосувати на себе!")
+				AnimationCode.skill_blocked_animation(_get_skill_button(selected_attacker, selected_skill))
+				return
 			hide_target_arrow()
 			waiting_for_target = false
 			_turn_locked = true
@@ -849,11 +881,15 @@ func _enemy_attack(enemy_ward) -> void:
 			target = valid_targets.pick_random()
 	elif target_type == "single_ally":
 		var alive_allies = battle_resolver.get_alive_wards(enemy_wards)
+		# Фізіта W: не може таргетити себе
+		if enemy_ward.ward_id == "fizita" and random_skill == "W":
+			alive_allies = alive_allies.filter(func(w): return w != enemy_ward)
 		target = alive_allies.pick_random() if not alive_allies.is_empty() else enemy_ward
 	elif target_type == "single_any":
-		# AI: атакує ворога (пріоритет — ті з горінням)
-		var burn_targets = alive_targets.filter(func(w): return w.get_status("burning") > 0)
-		target = burn_targets.pick_random() if not burn_targets.is_empty() else alive_targets.pick_random()
+		var valid_any = alive_targets.filter(func(w): return not (w.has_meta("untargetable") and w.get_meta("untargetable")))
+		if valid_any.is_empty(): valid_any = alive_targets
+		var burn_targets = valid_any.filter(func(w): return w.get_status("burning") > 0)
+		target = burn_targets.pick_random() if not burn_targets.is_empty() else valid_any.pick_random()
 	elif target_type == "etesena_w":
 		# AI Єтесени: W атакує 3 рандомних живих вороги (союзників гравця)
 		var w_pool: Array = alive_targets.duplicate()
@@ -905,6 +941,10 @@ func _enemy_attack(enemy_ward) -> void:
 func _try_zhnets_harvest() -> void:
 	if current_ward == null or current_ward.ward_id != "zhnets": return
 	if not current_ward.has_meta("zhnets_e_target"): return
+	# Пропускаємо хід коли E щойно використали — запускаємо лише на НАСТУПНОМУ ході
+	if current_ward.has_meta("zhnets_e_just_used"):
+		current_ward.remove_meta("zhnets_e_just_used")
+		return
 	var harvest_target = current_ward.get_meta("zhnets_e_target")
 	current_ward.remove_meta("zhnets_e_target")
 	if is_instance_valid(harvest_target) and not harvest_target.is_dead:
