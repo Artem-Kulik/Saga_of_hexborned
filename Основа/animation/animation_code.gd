@@ -2,6 +2,7 @@ extends Node
 
 const LIAH_Q = preload("res://Основа/char/water/Liah/q_anim/liah_q.tscn")
 const LIAH_W = preload("res://Основа/char/water/Liah/liah_w/liah_w.tscn")
+const RICKER_Q = preload("res://Основа/char/water/Ricker/ricker_q.tscn")
 
 func animation_take_damage(node: CanvasItem):
 	if node == null:
@@ -80,9 +81,11 @@ func skill_blocked_animation(node: CanvasItem) -> void:
 	tween.set_parallel(false)
 
 	# Жовте підсвічування + перший ривок одночасно
-	tween.parallel().tween_property(node, "modulate", Color(1.0, 0.82, 0.05, 1.0), 0.06)
+	tween.parallel().tween_property(node, "modulate", Color(0.863, 0.0, 0.0, 1.0), 0.06)
 	tween.parallel().tween_property(node, "position",  orig_pos + Vector2(-4, 0),   0.06)
 	# Тряска
+	play_error_sound()
+	
 	tween.tween_property(node, "position", orig_pos + Vector2(4, 0),  0.05)
 	tween.tween_property(node, "position", orig_pos + Vector2(-3, 0), 0.05)
 	tween.tween_property(node, "position", orig_pos + Vector2(2, 0),  0.04)
@@ -364,12 +367,15 @@ func anim_liah_w(attacker, target, on_hit: Callable) -> void:
 		return
 
 	var start_pos: Vector2 = attacker_visual.global_position
+
+	# Запам'ятовуємо старі значення
 	var old_z_index: int = attacker.z_index
 	var old_z_as_relative: bool = attacker.z_as_relative
 
 	var center_pos: Vector2 = Vector2(903, 542)
 	var effect_pos: Vector2 = Vector2(903, 542)
 
+	# Піднімаємо поверх всіх
 	attacker.z_as_relative = false
 	attacker.z_index = 999
 
@@ -414,6 +420,25 @@ func anim_liah_w(attacker, target, on_hit: Callable) -> void:
 
 	await return_tween.finished
 
+	# Повертаємо як було
 	attacker_visual.global_position = start_pos
 	attacker.z_index = old_z_index
 	attacker.z_as_relative = old_z_as_relative
+func play_error_sound() -> void:
+	var battle_scene = get_tree().current_scene
+
+	if battle_scene != null and battle_scene.has_method("play_error_sound"):
+		battle_scene.play_error_sound()
+
+func anim_ricker_q(attacker, target, on_hit: Callable) -> void:
+	if attacker == null or target == null:
+		return
+	var effect = LIAH_Q.instantiate()
+	get_tree().current_scene.add_child(effect)
+	effect.global_position = attacker.global_position
+	effect.set_direction(target.global_position - attacker.global_position)
+	effect.hit_moment.connect(func():
+		if on_hit.is_valid():
+			on_hit.call()
+	)
+	effect.play()

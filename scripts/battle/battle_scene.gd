@@ -32,6 +32,8 @@ const BattleReorderManagerScript = preload("res://scripts/battle/battle_reorder_
 @onready var defeat_smoke: GPUParticles2D = $EndGameOverlay/CenterContainer/DefeatSmoke
 @onready var defeat_ash: GPUParticles2D = $EndGameOverlay/CenterContainer/DefeatAsh
 @onready var result_player: AudioStreamPlayer2D = $ResultPlayer
+@onready var error_sound: AudioStreamPlayer2D = $error
+
 var defeat_music := preload ("res://Основа/audio/audio_effects/defeat.mp3")
 var victory_music := preload ("res://Основа/audio/audio_effects/victory.mp3")
 
@@ -1048,7 +1050,12 @@ func clear_taunt_on_death(dead_ward) -> void:
 			battle_log.add_entry(w.name + ": провокацію знято (провокатор загинув).")
 
 
-
+func play_error_sound():
+	error_sound.stop()
+	error_sound.play()
+	
+	
+	
 ## Застосовує КД і логує його, якщо КД > 0
 func _apply_and_log_cd(ward, skill_key: String) -> void:
 	if ward == null:

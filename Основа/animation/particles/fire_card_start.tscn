@@ -639,10 +639,10 @@ offset_right = 40.0
 offset_bottom = 40.0
 
 [node name="air_card_start_animation" type="AnimatedSprite2D" parent="Air_card" unique_id=2092165687]
-position = Vector2(333, 476)
+position = Vector2(314.5, 441.5)
+scale = Vector2(0.9638672, 0.9228515)
 sprite_frames = SubResource("SpriteFrames_o3jjn")
-frame = 22
-frame_progress = 0.005616734
+frame_progress = 0.53180087
 speed_scale = 2.8
 
 [node name="AudioStreamPlayer2D" type="AudioStreamPlayer2D" parent="Air_card" unique_id=179663032]
