@@ -119,6 +119,7 @@ var WARDS: Dictionary = {
 	},
 	"kromius": {
 		"name": "Кроміус",
+		"hidden": true,
 		"element": "earth",
 		"portrait": "res://Основа/char/earth/Chromius/Chromius.png",
 		"short_desc_file": "res://Основа/char/earth/Chromius/skills_short.txt",
@@ -159,15 +160,16 @@ var WARDS: Dictionary = {
 	},
 	"shusima": {
 		"name": "Шусіма",
+		"hp": 350,
 		"element": "earth",
 		"portrait": "res://Основа/char/earth/ShuSima/ShuSima.png",
 		"short_desc_file": "res://Основа/char/earth/ShuSima/skills_short.txt",
 		"full_desc_file":  "res://Основа/char/earth/ShuSima/skills_full.txt",
 		"skills": {
-			"P": { "id": "shusima_p", "damage_type": "passive", "name": "Розсипання",   "cd": 0, "icon": "res://Основа/char/earth/ShuSima/p.png", "desc": "", "desc_full": "" },
-			"Q": { "id": "shusima_q", "damage_type": "earth",   "name": "Висушення",    "cd": 0, "icon": "res://Основа/char/earth/ShuSima/q.png", "desc": "", "desc_full": "" },
-			"W": { "id": "shusima_w", "damage_type": "earth",   "name": "Зибучі піски", "cd": 0, "icon": "res://Основа/char/earth/ShuSima/w.png", "desc": "", "desc_full": "" },
-			"E": { "id": "shusima_e", "damage_type": "earth",   "name": "Розпад",       "cd": 3, "icon": "res://Основа/char/earth/ShuSima/e.png", "desc": "", "desc_full": "" },
+			"P": { "id": "shusima_p", "damage_type": "passive", "name": "Розсипання",   "cd": 0, "icon": "res://Основа/char/earth/ShuSima/p.png", "desc": "На початку ходу — 90 фіз шкоди собі.", "desc_full": "На початку кожного свого ходу Шусіма отримує 90 фіз. шкоди." },
+			"Q": { "id": "shusima_q", "damage_type": "phys",    "name": "Висушення",    "cd": 0, "icon": "res://Основа/char/earth/ShuSima/q.png", "desc": "40 фіз ворогу. +реген 20 HP/хід на 2 ходи собі.", "desc_full": "Атакує ворога — 40 фіз. шкоди. Себе отримує регенерацію: 20 HP на початку кожного з 2 наступних ходів." },
+			"W": { "id": "shusima_w", "damage_type": "phys",    "name": "Зибучі піски", "cd": 0, "icon": "res://Основа/char/earth/ShuSima/w.png", "desc": "150 фіз всім вардам. Союзники (та Шусіма) отримують реген 70 HP/хід на 2 ходи.", "desc_full": "Атакує всіх вардів на полі (і союзників, і ворогів, і себе) — 150 фіз. шкоди кожному. Виживші союзники отримують регенерацію 70 HP/хід на 2 ходи." },
+			"E": { "id": "shusima_e", "damage_type": "phys",    "name": "Розпад",       "cd": 3, "icon": "res://Основа/char/earth/ShuSima/e.png", "desc": "Рандомному ворогу — фіз шкоди рівну поточному HP Шусіми.", "desc_full": "Завдає випадковому живому ворогу фіз. шкоди, рівну поточному HP Шусіми. Перезарядка — 3 ходи." },
 		}
 	},
 	"iskoris": {
@@ -209,6 +211,31 @@ var WARDS: Dictionary = {
 			"E": { "id": "shopey_e", "damage_type": "phys",    "name": "Наскок",          "cd": 3, "icon": "res://Основа/char/air/Shopey/shopey_e.png", "desc": "", "desc_full": "" },
 		}
 	},
+
+	# ===== СТИХІЯ СЯЙВО — сюжетні боти, гравець НЕ обирає =====
+	# Щоб додати нового Варда Сяйва, скопіюй шаблон нижче і заповни:
+	#
+	# "ward_id": {
+	#     "name": "Назва",
+	#     "element": "light",          # ОБОВ'ЯЗКОВО "light"
+	#     "enemy_only": true,          # ОБОВ'ЯЗКОВО — не показується у виборі
+	#     "hp": 300,                   # якщо відрізняється від 200
+	#     "portrait": "res://...",
+	#     "short_desc_file": "res://...",
+	#     "full_desc_file": "res://...",
+	#     "skills": {
+	#         "P": { "id": "ward_p", "damage_type": "passive", "name": "...", "cd": 0, "icon": "res://...", "desc": "", "desc_full": "" },
+	#         "Q": { "id": "ward_q", "damage_type": "light",   "name": "...", "cd": 0, "icon": "res://...", "desc": "", "desc_full": "" },
+	#         "W": { "id": "ward_w", "damage_type": "light",   "name": "...", "cd": 2, "icon": "res://...", "desc": "", "desc_full": "" },
+	#         "E": { "id": "ward_e", "damage_type": "light",   "name": "...", "cd": 3, "icon": "res://...", "desc": "", "desc_full": "" },
+	#     }
+	# },
+	#
+	# Модифікатори вже в ELEMENT_MULTIPLIERS (battle_resolver.gd):
+	#   — Сяйво (light) по вогню/воді/повітрю/землі → ×2.0
+	#   — Вогонь/вода/повітря по Сяйву → ×2.0
+	#   — Фіз по Сяйву → ×1.0 (немає модифікатора, бо phys виключений)
+	#   — Сяйво по Сяйву → ×4.0
 }
 
 
@@ -246,7 +273,7 @@ func get_data(id: String) -> Dictionary:
 func get_by_element(element: String) -> Array:
 	var result: Array = []
 	for id in WARDS:
-		if WARDS[id]["element"] == element and not WARDS[id].get("hidden", false):
+		if WARDS[id]["element"] == element and not _is_player_hidden(id):
 			result.append(id)
 	return result
 
@@ -254,6 +281,22 @@ func get_by_element(element: String) -> Array:
 func get_all_ids() -> Array:
 	var result: Array = []
 	for id in WARDS:
-		if not WARDS[id].get("hidden", false):
+		if not _is_player_hidden(id):
+			result.append(id)
+	return result
+
+
+# Варди з "enemy_only": true — сюжетні боти, гравець не може обрати.
+# Варди з "hidden": true   — тимчасово приховані, повернуться пізніше.
+func _is_player_hidden(id: String) -> bool:
+	return WARDS[id].get("hidden", false) or WARDS[id].get("enemy_only", false)
+
+
+# Повертає всіх вардів стихії "light" для сюжетних битв.
+# Використовувати у battle_scene для наповнення enemy_wards ботами-суперниками.
+func get_light_wards() -> Array:
+	var result: Array = []
+	for id in WARDS:
+		if WARDS[id].get("element", "") == "light":
 			result.append(id)
 	return result

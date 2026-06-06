@@ -297,6 +297,15 @@ func get_status(effect_name: String) -> int:
 		return total
 	return status_effects.get(effect_name, 0)
 
+func set_status_max(effect_name: String, value: int) -> void:
+	var current: int = get_status(effect_name)
+	if value <= current:
+		return
+	if current > 0:
+		remove_status(effect_name, current)
+	add_status(effect_name, value)
+	_update_status_visuals()
+
 func clear_statuses() -> void:
 	status_effects.clear()
 	burning_applications.clear()
@@ -419,12 +428,12 @@ func _update_status_visuals() -> void:
 		if effect == "burning":
 			continue
 		var count: int = status_effects[effect]
-		var draw_count: int = 1 if effect in ["armor", "fire_circle", "barrier", "regen", "parasitism", "reaping", "phisita_wall", "phisita_e"] else count
+		var draw_count: int = 1 if effect in ["armor", "fire_circle", "barrier", "regen", "parasitism", "reaping", "phisita_wall", "phisita_e", "counterattack"] else count
 		var node_name: String = _STATUS_NODE.get(effect, "")
 		if node_name == "":
 			continue
 		for i in range(draw_count):
-			var badge: String = str(count) if effect == "phisita_wall" else ""
+			var badge: String = str(count) if effect in ["phisita_wall", "counterattack"] else ""
 			_add_status_icon(container, lib, node_name, _get_status_tooltip(effect, count), badge)
 
 	if has_meta("fire_shield") and get_meta("fire_shield"):
@@ -473,7 +482,8 @@ func _get_status_tooltip(effect: String, count: int) -> String:
 		"stun":
 			return "Оглушення (%d ходів)\nПропускає хід." % count
 		"regen":
-			return "Регенерація (%d ход(и))\n+100 HP на початку кожного ходу." % count
+			var regen_val: int = get_meta("regen_amount", 100) if has_meta("regen_amount") else 100
+			return "Регенерація (%d ход(и))\n+%d HP на початку кожного ходу." % [count, regen_val]
 		"fire_shield":
 			return "Вогняний щит\nАтакуючий отримує 2 стаки горіння, щит зникає."
 		"cuts":
@@ -483,7 +493,7 @@ func _get_status_tooltip(effect: String, count: int) -> String:
 		"barrier":
 			return "Бар'єр (%d ход(и))\nПоглинає до 30 шкоди від наступного удару.\nАтакуючий отримує 1 стак горіння." % count
 		"counterattack":
-			return "Контратака (%d стак(и))\nПри отриманні удару — б'є атакуючого двічі по 30 фіз.\nСпрацьовує один раз за хід ворога." % count
+			return "Контратака (%d ход(и))\nПри отриманні удару — б'є атакуючого двічі по 30 фіз.\nСпрацьовує один раз за хід ворога.\nТікає на початку власного ходу." % count
 		"fire_seventh":
 			return "Вогонь сьомого (%d стак(и))\nНа початку ходу: %d вогняної шкоди усій команді." % [count, 150 * count]
 		"reaping":
@@ -617,7 +627,7 @@ func die() -> void:
 	clear_statuses()
 	for m in ["untargetable", "phisita_e_chance", "fizita_gravity_turns", "golem_form",
 			"fire_shield", "countered_this_turn", "riker_passive_used",
-			"zhnets_e_target", "zhnets_e_just_used"]:
+			"zhnets_e_target", "zhnets_e_just_used", "regen_amount"]:
 		if has_meta(m):
 			remove_meta(m)
 	if death_sound:

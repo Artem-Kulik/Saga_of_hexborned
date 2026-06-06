@@ -48,6 +48,9 @@ static func get_skill_target_type(ward_id: String, skill_key: String, attacker =
 			return "single_enemy"
 		"fizita":
 			if skill_key == "W": return "single_ally"
+		"shusima":
+			if skill_key == "W": return "self"
+			if skill_key == "E": return "self"
 
 	return "single_enemy"
 
@@ -84,6 +87,8 @@ static func execute_skill(resolver, attacker, target, skill_key: String) -> void
 			await _execute_adoneia(resolver, attacker, target, skill_key)
 		"fizita":
 			await _execute_fizita(resolver, attacker, target, skill_key)
+		"shusima":
+			await _execute_shusima(resolver, attacker, target, skill_key)
 		_:
 			# Стандартна атака для всіх інших поки що
 			await _execute_basic_attack(resolver, attacker, target, skill_key, base_damage)
@@ -886,11 +891,15 @@ static func _execute_adoneia(resolver, attacker, target, skill_key: String) -> v
 					if resolver.battle_log:
 						resolver.battle_log.add_entry("Майстер кулачного бою: %s спровокований!" % target.name)
 						resolver.battle_log.add_effect(target.name, target.team, "Провокація (1 хід)")
-				attacker.add_status("counterattack", 1)
+				var _ca_old_w: int = attacker.get_status("counterattack")
+				var _ca_new_w: int = max(_ca_old_w, 1)
+				if _ca_old_w > 0:
+					attacker.remove_status("counterattack", _ca_old_w)
+				attacker.add_status("counterattack", _ca_new_w)
 				attacker._update_status_visuals()
 				if resolver.battle_log:
-					resolver.battle_log.add_entry("Контратака: %s готова відповісти!" % attacker.name)
-					resolver.battle_log.add_effect(attacker.name, attacker.team, "Контратака +1 стак")
+					resolver.battle_log.add_entry("Контратака: %s готова відповісти — діє %d хід!" % [attacker.name, _ca_new_w])
+					resolver.battle_log.add_effect(attacker.name, attacker.team, "Контратака %d хід" % _ca_new_w)
 
 		"E":
 			var hp_was: int = attacker.current_hp
@@ -960,3 +969,57 @@ static func _execute_fizita(resolver, attacker, target, skill_key: String) -> vo
 				if resolver.battle_log:
 					resolver.battle_log.add_entry("Сметіння: %s тепер має %d%% шанс промаху свого скіла!" % [target.name, e_chance])
 					resolver.battle_log.add_effect(target.name, target.team, "Сметіння (%d%%)" % e_chance)
+
+
+# =============================================================================
+# SHUSIMA (Шусіма)
+# =============================================================================
+# P — Розсипання: 90 фіз шкоди собі на початку ходу (у battle_scene.gd).
+# Q — Висушення: 40 фіз ворогу + реген 20 HP/хід на 2 ходи собі.
+# W — Зибучі піски: 150 фіз ВСІМ вардам (союзники+вороги+себе); виживші союзники реген 70 HP/хід на 2 ходи.
+# E — Розпад (КД 3): рандомному ворогу фіз шкода рівна поточному HP Шусіми.
+
+static func _execute_shusima(resolver, attacker, target, skill_key: String) -> void:
+	var enemy_side: Array = resolver.battle_scene.enemy_wards if attacker.team == "ally" else resolver.battle_scene.ally_wards
+	var ally_side: Array  = resolver.battle_scene.ally_wards  if attacker.team == "ally" else resolver.battle_scene.enemy_wards
+
+	match skill_key:
+		"Q":
+			if target == null: return
+			await resolver.deal_damage_with_modifiers(attacker, target, 40, skill_key, "phys")
+			if attacker.is_dead: return
+			var prev_regen_q: int = attacker.get_meta("regen_amount", 0) if attacker.has_meta("regen_amount") else 0
+			attacker.add_status("regen", 2)
+			attacker.set_meta("regen_amount", max(prev_regen_q, 20))
+			attacker._update_status_visuals()
+			if resolver.battle_log:
+				resolver.battle_log.add_entry("Висушення: %s відновлює сили — реген 20 HP/хід на 2 ходи." % attacker.name)
+				resolver.battle_log.add_effect(attacker.name, attacker.team, "Регенерація 20 HP (2 ходи)")
+
+		"W":
+			if resolver.battle_log:
+				resolver.battle_log.add_entry("Зибучі піски: %s атакує всіх вардів — 150 фіз кожному!" % attacker.name)
+			var all_wards: Array = resolver.battle_scene.ally_wards + resolver.battle_scene.enemy_wards
+			for w in all_wards:
+				if not w.is_dead:
+					await resolver.deal_damage_with_modifiers(attacker, w, 150, skill_key, "phys", true)
+			var alive_allies: Array = resolver.get_alive_wards(ally_side)
+			var regen_count: int = 0
+			for ally in alive_allies:
+				var prev_regen_w: int = ally.get_meta("regen_amount", 0) if ally.has_meta("regen_amount") else 0
+				ally.add_status("regen", 2)
+				ally.set_meta("regen_amount", max(prev_regen_w, 70))
+				ally._update_status_visuals()
+				resolver.battle_log.add_effect(ally.name, ally.team, "Регенерація 70 HP (2 ходи)")
+				regen_count += 1
+			if resolver.battle_log and regen_count > 0:
+				resolver.battle_log.add_entry("Зибучі піски: %d союзник(ів) отримали реген 70 HP/хід на 2 ходи." % regen_count)
+
+		"E":
+			var alive_enemies: Array = resolver.get_alive_wards(enemy_side)
+			if alive_enemies.is_empty(): return
+			var e_target = alive_enemies[randi() % alive_enemies.size()]
+			var e_dmg: int = attacker.current_hp
+			if resolver.battle_log:
+				resolver.battle_log.add_entry("Розпад: %s концентрує %d HP → завдає %d фіз шкоди %s!" % [attacker.name, e_dmg, e_dmg, e_target.name])
+			await resolver.deal_damage_with_modifiers(attacker, e_target, e_dmg, skill_key, "phys")
