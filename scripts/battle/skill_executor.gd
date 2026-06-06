@@ -892,14 +892,14 @@ static func _execute_adoneia(resolver, attacker, target, skill_key: String) -> v
 						resolver.battle_log.add_entry("Майстер кулачного бою: %s спровокований!" % target.name)
 						resolver.battle_log.add_effect(target.name, target.team, "Провокація (1 хід)")
 				var _ca_old_w: int = attacker.get_status("counterattack")
-				var _ca_new_w: int = max(_ca_old_w, 2)
+				var _ca_new_w: int = max(_ca_old_w, 1)
 				if _ca_old_w > 0:
 					attacker.remove_status("counterattack", _ca_old_w)
 				attacker.add_status("counterattack", _ca_new_w)
 				attacker._update_status_visuals()
 				if resolver.battle_log:
-					resolver.battle_log.add_entry("Контратака: %s готова відповісти — діє %d ход(и)!" % [attacker.name, _ca_new_w])
-					resolver.battle_log.add_effect(attacker.name, attacker.team, "Контратака %d ход(и)" % _ca_new_w)
+					resolver.battle_log.add_entry("Контратака: %s готова відповісти — діє %d хід!" % [attacker.name, _ca_new_w])
+					resolver.battle_log.add_effect(attacker.name, attacker.team, "Контратака %d хід" % _ca_new_w)
 
 		"E":
 			var hp_was: int = attacker.current_hp
