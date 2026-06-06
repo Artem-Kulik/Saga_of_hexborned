@@ -33,8 +33,10 @@ func host_game() -> Error:
 	multiplayer.multiplayer_peer = peer
 	is_multiplayer = true
 	is_host = true
-	multiplayer.peer_connected.connect(_on_peer_connected)
-	multiplayer.peer_disconnected.connect(_on_peer_disconnected)
+	if not multiplayer.peer_connected.is_connected(_on_peer_connected):
+		multiplayer.peer_connected.connect(_on_peer_connected)
+	if not multiplayer.peer_disconnected.is_connected(_on_peer_disconnected):
+		multiplayer.peer_disconnected.connect(_on_peer_disconnected)
 	print("[NET] Сервер запущено на порту ", PORT)
 	return OK
 
@@ -46,9 +48,12 @@ func join_game(ip: String) -> Error:
 	multiplayer.multiplayer_peer = peer
 	is_multiplayer = true
 	is_host = false
-	multiplayer.connected_to_server.connect(_on_connected_to_server)
-	multiplayer.connection_failed.connect(_on_connection_failed_cb)
-	multiplayer.server_disconnected.connect(_on_server_disconnected)
+	if not multiplayer.connected_to_server.is_connected(_on_connected_to_server):
+		multiplayer.connected_to_server.connect(_on_connected_to_server)
+	if not multiplayer.connection_failed.is_connected(_on_connection_failed_cb):
+		multiplayer.connection_failed.connect(_on_connection_failed_cb)
+	if not multiplayer.server_disconnected.is_connected(_on_server_disconnected):
+		multiplayer.server_disconnected.connect(_on_server_disconnected)
 	print("[NET] Підключаємося до ", ip, ":", PORT)
 	return OK
 
@@ -65,8 +70,11 @@ func disconnect_game() -> void:
 
 func get_local_ip() -> String:
 	for addr in IP.get_local_addresses():
-		if addr.begins_with("192.168.") or addr.begins_with("10."):
-			return addr
+		if addr.contains(":"):  # пропускаємо IPv6
+			continue
+		if addr.begins_with("127."):  # пропускаємо loopback
+			continue
+		return addr
 	return "127.0.0.1"
 
 # ─── Ward selection sync ───────────────────────────────────────────────────
