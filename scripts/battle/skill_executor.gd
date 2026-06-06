@@ -61,6 +61,12 @@ static func get_skill_target_type(ward_id: String, skill_key: String, attacker =
 		"velodiy":
 			if skill_key == "W": return "self"
 			if skill_key == "E": return "self"
+		"ashayah":
+			if skill_key == "W": return "all_enemies"
+			if skill_key == "E":
+				if attacker != null and attacker.has_meta("ashayah_e_used"):
+					return "all_enemies"
+				return "single_enemy"
 
 	return "single_enemy"
 
@@ -103,6 +109,8 @@ static func execute_skill(resolver, attacker, target, skill_key: String) -> void
 			await _execute_asteyah(resolver, attacker, target, skill_key)
 		"velodiy":
 			await _execute_velodiy(resolver, attacker, target, skill_key)
+		"ashayah":
+			await _execute_ashayah(resolver, attacker, target, skill_key)
 		_:
 			# Стандартна атака для всіх інших поки що
 			await _execute_basic_attack(resolver, attacker, target, skill_key, base_damage)
@@ -120,7 +128,7 @@ static func _execute_liah(resolver, attacker, target, skill_key: String, _base_d
 			if target == null: return
 			var was_full_hp = (target.current_hp == target.max_hp)
 			if was_full_hp:
-				resolver.battle_log.add_entry("Течія: додатковий водяний удар!")
+				resolver.battle_log.add_info("Течія: додатковий водяний удар!")
 			var d1 = resolver.calc_damage_only(attacker, target, 50, "Q", "phys")
 			var d2_callable := Callable()
 			if was_full_hp:
@@ -160,7 +168,7 @@ static func _execute_liah(resolver, attacker, target, skill_key: String, _base_d
 					trigger_again = true
 
 			if trigger_again:
-				resolver.battle_log.add_entry("Кола на воді: ефект спрацював повторно!")
+				resolver.battle_log.add_info("Кола на воді: ефект спрацював повторно!")
 				enemies = resolver.get_alive_wards(enemy_side_w)
 				for enemy in enemies:
 					await resolver.deal_damage_with_modifiers(attacker, enemy, 35, skill_key, "", true)
@@ -174,7 +182,7 @@ static func _execute_liah(resolver, attacker, target, skill_key: String, _base_d
 		"E":
 			# Загороджуючий водопад: Стає невибираною як ціль до свого наступного ходу.
 			target = attacker  # E завжди на себе
-			resolver.battle_log.add_entry("Лія активує Загороджуючий водопад!")
+			resolver.battle_log.add_info("Лія активує Загороджуючий водопад!")
 			attacker.set_meta("untargetable", true)
 			attacker.modulate.a = 0.5 # Трішки прозора
 			
@@ -187,7 +195,7 @@ static func check_liah_passive(resolver, attacker, target_died: bool) -> void:
 	if attacker == null: return
 	if attacker.ward_id == "liah" and target_died:
 		var allies = resolver.get_alive_wards(resolver.battle_scene.ally_wards if attacker.team == "ally" else resolver.battle_scene.enemy_wards)
-		resolver.battle_log.add_entry("Спокій (Пасивка): Лія лікує союзників!")
+		resolver.battle_log.add_info("Спокій (Пасивка): Лія лікує союзників!")
 		for ally in allies:
 			var hp_before = ally.current_hp
 			ally.health.heal(50)
@@ -201,7 +209,7 @@ static func check_rage_passive(resolver, target) -> void:
 		return
 	target._rage_gained_this_turn = true
 	target.add_status("rage", 1)
-	resolver.battle_log.add_entry("Майстер Оічі отримує стак Ражу!")
+	resolver.battle_log.add_info("Майстер Оічі отримує стак Ражу!")
 
 static func _execute_mais_oichi(resolver, attacker, target, skill_key: String, _base_damage: int) -> void:
 	match skill_key:
@@ -216,12 +224,12 @@ static func _execute_mais_oichi(resolver, attacker, target, skill_key: String, _
 			
 			# Вогняний удар від ражу
 			if fire_damage > 0:
-				resolver.battle_log.add_entry("Додаткова шкода від Ражу: " + str(fire_damage) + " (вогонь)")
+				resolver.battle_log.add_info("Додаткова шкода від Ражу: " + str(fire_damage) + " (вогонь)")
 				await resolver.deal_damage_with_modifiers(attacker, target, fire_damage, "Q_rage", "fire")
 			
 			if rage_stacks > 0:
 				attacker.remove_status("rage", rage_stacks)
-				resolver.battle_log.add_entry("Стаки Ражу скинуто.")
+				resolver.battle_log.add_info("Стаки Ражу скинуто.")
 				
 		"W":
 			# Жар: Накладає на себе щит з ВОГНЮ, котрий дає 30 броні.
@@ -229,7 +237,7 @@ static func _execute_mais_oichi(resolver, attacker, target, skill_key: String, _
 			attacker.set_meta("fire_shield", true)
 			attacker._update_status_visuals()
 			if resolver.battle_log:
-				resolver.battle_log.add_entry(
+				resolver.battle_log.add_info(
 					"Жар: +30 броні (разом: %d). Вогняний щит активний!" % attacker.health.current_armor
 				)
 				resolver.battle_log.add_effect(attacker.name, attacker.team, "Вогняний щит + Броня +30 (разом: %d)" % attacker.health.current_armor)
@@ -237,7 +245,7 @@ static func _execute_mais_oichi(resolver, attacker, target, skill_key: String, _
 		"E":
 			# Чесний бій: Провокує ціль на 1 хід. Збільшує свою броню на 100.
 			if target == null: return
-			resolver.battle_log.add_entry("Майстер Оічі провокує ворога і отримує +100 броні!")
+			resolver.battle_log.add_info("Майстер Оічі провокує ворога і отримує +100 броні!")
 			attacker.health.add_armor(100)
 
 			target.add_status("taunt", 1)
@@ -290,7 +298,7 @@ static func _execute_shopey(resolver, attacker, target, skill_key: String, _base
 				await _shopey_passive_check(resolver, attacker, target)
 			attacker.set_meta("shopey_hydra_ready", true)
 			if resolver.battle_log:
-				resolver.battle_log.add_entry("Шопей: наступна здібність гарантовано викличе Відсічену Гідру!")
+				resolver.battle_log.add_info("Шопей: наступна здібність гарантовано викличе Відсічену Гідру!")
 				resolver.battle_log.add_effect(attacker.name, attacker.team, "Наскок (гарантована гідра)")
 
 
@@ -312,7 +320,7 @@ static func _shopey_trigger_hydra(resolver, attacker, exclude_target) -> void:
 	if hydra_target == null:
 		return
 	if resolver.battle_log:
-		resolver.battle_log.add_entry("Відсічена Голова Гідри атакує " + hydra_target.name + "!")
+		resolver.battle_log.add_info("Відсічена Голова Гідри атакує " + hydra_target.name + "!")
 	await resolver.deal_damage_with_modifiers(attacker, hydra_target, 45, "P", "air")
 
 
@@ -324,7 +332,7 @@ static func _shopey_passive_check(resolver, attacker, attacked_target) -> void:
 	if hydra_target == null:
 		return
 	if resolver.battle_log:
-		resolver.battle_log.add_entry("Пасивка Відсічена Гідра: атакує " + hydra_target.name + "!")
+		resolver.battle_log.add_info("Пасивка Відсічена Гідра: атакує " + hydra_target.name + "!")
 	await resolver.deal_damage_with_modifiers(attacker, hydra_target, 45, "P", "air")
 
 
@@ -352,7 +360,7 @@ static func _execute_grump(resolver, attacker, target, skill_key: String, _base_
 			if not target.is_dead:
 				target.add_status("stun", 1)
 				if resolver.battle_log:
-					resolver.battle_log.add_entry(target.name + " оглушений на 1 хід!")
+					resolver.battle_log.add_info(target.name + " оглушений на 1 хід!")
 					resolver.battle_log.add_effect(target.name, target.team, "Оглушення (1 хід)")
 
 		"E":
@@ -360,7 +368,7 @@ static func _execute_grump(resolver, attacker, target, skill_key: String, _base_
 			var armor: int = attacker.health.current_armor
 			var total_damage: int = 25 + armor
 			if resolver.battle_log:
-				resolver.battle_log.add_entry(
+				resolver.battle_log.add_info(
 					"Вибух породи: %d пошкоджень (25 + %d броні) по всіх!" % [total_damage, armor]
 				)
 			for enemy in resolver.get_alive_wards(enemy_side):
@@ -368,7 +376,7 @@ static func _execute_grump(resolver, attacker, target, skill_key: String, _base_
 			attacker.health.current_armor = 0
 			attacker.update_armor_status(0)
 			if resolver.battle_log:
-				resolver.battle_log.add_entry("Броня Грумпа скинута до 0.")
+				resolver.battle_log.add_info("Броня Грумпа скинута до 0.")
 
 	# Пасивка: +25 броні наприкінці кожного ходу
 	_grump_end_of_turn_passive(resolver, attacker)
@@ -378,7 +386,7 @@ static func _grump_end_of_turn_passive(resolver, attacker) -> void:
 	attacker.health.add_armor(25)
 	attacker.update_armor_status(attacker.health.current_armor)
 	if resolver.battle_log:
-		resolver.battle_log.add_entry(
+		resolver.battle_log.add_info(
 			"Наростання породи: +25 броні. Всього броні: %d" % attacker.health.current_armor
 		)
 		resolver.battle_log.add_effect(
@@ -408,19 +416,19 @@ static func _execute_riker(resolver, attacker, target, skill_key: String) -> voi
 			if last == "Q":
 				if target == null: return
 				if resolver.battle_log:
-					resolver.battle_log.add_entry("Стиль Доломедес: три удари по цілі!")
+					resolver.battle_log.add_info("Стиль Доломедес: три удари по цілі!")
 				for i in 3:
 					if target.is_dead: break
 					await resolver.deal_damage_with_modifiers(attacker, target, 45, skill_key, "water")
 			elif last == "E":
 				if resolver.battle_log:
-					resolver.battle_log.add_entry("Стиль Доломедес: удар по всіх ворогах!")
+					resolver.battle_log.add_info("Стиль Доломедес: удар по всіх ворогах!")
 				var enemy_side: Array = resolver.battle_scene.enemy_wards if attacker.team == "ally" else resolver.battle_scene.ally_wards
 				for enemy in resolver.get_alive_wards(enemy_side):
 					await resolver.deal_damage_with_modifiers(attacker, enemy, 60, skill_key, "water", true)
 			else:
 				if resolver.battle_log:
-					resolver.battle_log.add_entry("Стиль Доломедес: потрібно спочатку використати Q або E!")
+					resolver.battle_log.add_info("Стиль Доломедес: потрібно спочатку використати Q або E!")
 			attacker.set_meta("riker_w_last_variant", last)
 			attacker.set_meta("riker_last_skill", "W")
 
@@ -430,7 +438,7 @@ static func _execute_riker(resolver, attacker, target, skill_key: String) -> voi
 			var neighbor = _riker_get_neighbor(resolver, attacker, target)
 			if neighbor != null and not neighbor.is_dead:
 				if resolver.battle_log:
-					resolver.battle_log.add_entry("Кігті: б'є сусідній варт — %s!" % neighbor.name)
+					resolver.battle_log.add_info("Кігті: б'є сусідній варт — %s!" % neighbor.name)
 				await resolver.deal_damage_with_modifiers(attacker, neighbor, 60, skill_key, "water")
 			attacker.set_meta("riker_last_skill", "E")
 
@@ -495,7 +503,7 @@ static func _iskoris_hit(resolver, attacker, target, base_dmg: int, skill_key: S
 	var passive_dmg: int = 20
 
 	if resolver.battle_log and stacks > 0:
-		resolver.battle_log.add_entry(
+		resolver.battle_log.add_info(
 			"Тисяча Порізів: %d стак(и) → скіл +%d" % [stacks, 10 * stacks]
 		)
 
@@ -552,7 +560,7 @@ static func _execute_etesena(resolver, attacker, target, skill_key: String) -> v
 					1:
 						t.add_status("stun", 1)
 						if resolver.battle_log:
-							resolver.battle_log.add_entry(t.name + " оглушений!")
+							resolver.battle_log.add_info(t.name + " оглушений!")
 							resolver.battle_log.add_effect(t.name, t.team, "Оглушення (1 хід)")
 					2:
 						await resolver.deal_damage_with_modifiers(attacker, t, 45, skill_key, "phys")
@@ -567,7 +575,7 @@ static func _execute_etesena(resolver, attacker, target, skill_key: String) -> v
 			if not target.is_dead and target.get_status("stun") > 0:
 				target.add_status("stun", 1)
 				if resolver.battle_log:
-					resolver.battle_log.add_entry("Північні вітри: оглушення продовжено +1 хід!")
+					resolver.battle_log.add_info("Північні вітри: оглушення продовжено +1 хід!")
 
 
 # Пасивка: 33% шанс пробити оглушену ціль і нанести таку ж шкоду сусідній.
@@ -578,7 +586,7 @@ static func _etesena_passive_check(resolver, attacker, target, damage: int, enem
 	var neighbor = _etesena_get_neighbor(enemy_side, target)
 	if neighbor == null or neighbor.is_dead: return
 	if resolver.battle_log:
-		resolver.battle_log.add_entry("Пасивна: голка пробиває оглушеного і б'є %s!" % neighbor.name)
+		resolver.battle_log.add_info("Пасивна: голка пробиває оглушеного і б'є %s!" % neighbor.name)
 	await resolver.deal_damage_with_modifiers(attacker, neighbor, damage, "P_etesena", "phys")
 
 
@@ -618,7 +626,7 @@ static func _execute_otsii(resolver, attacker, target, skill_key: String) -> voi
 			t.add_status("burning", 1)
 			t._update_status_visuals()
 			if resolver.battle_log:
-				resolver.battle_log.add_entry("Вигорання: " + t.name + " отримує 1 стак горіння!")
+				resolver.battle_log.add_info("Вигорання: " + t.name + " отримує 1 стак горіння!")
 				resolver.battle_log.add_effect(t.name, t.team, "Горіння (1 стак)")
 
 		"W":
@@ -627,7 +635,7 @@ static func _execute_otsii(resolver, attacker, target, skill_key: String) -> voi
 			target.add_status("fire_circle", 2)
 			target._update_status_visuals()
 			if resolver.battle_log:
-				resolver.battle_log.add_entry("Коло пекельного вогню: %s очищений і захищений на 2 ходи!" % target.name)
+				resolver.battle_log.add_info("Коло пекельного вогню: %s очищений і захищений на 2 ходи!" % target.name)
 				resolver.battle_log.add_effect(target.name, target.team, "Коло пекельного вогню (2 ходи)")
 
 		"E":
@@ -638,16 +646,16 @@ static func _execute_otsii(resolver, attacker, target, skill_key: String) -> voi
 			var alive_allies: Array = resolver.get_alive_wards(ally_side).filter(func(w): return w != attacker)
 			if alive_allies.is_empty():
 				if resolver.battle_log:
-					resolver.battle_log.add_entry("Рик: %s +1 горіння (союзників немає)." % target.name)
+					resolver.battle_log.add_info("Рик: %s +1 горіння (союзників немає)." % target.name)
 			else:
 				var ally_helper = alive_allies[randi() % alive_allies.size()]
 				var hp_before_e: int = target.current_hp if is_instance_valid(target) else 0
 				if resolver.battle_log:
-					resolver.battle_log.add_entry("Рик: %s +1 горіння. %s атакує разом з Оцієм → %s!" % [target.name, ally_helper.name, target.name])
+					resolver.battle_log.add_info("Рик: %s +1 горіння. %s атакує разом з Оцієм → %s!" % [target.name, ally_helper.name, target.name])
 				await execute_skill(resolver, ally_helper, target, "Q")
 				if resolver.battle_log and is_instance_valid(target):
 					var hp_after_e: int = target.current_hp
-					resolver.battle_log.add_entry("  → %s [Q]: HP %s: %d → %d (%s)" % [
+					resolver.battle_log.add_info("  → %s [Q]: HP %s: %d → %d (%s)" % [
 						ally_helper.name, target.name, hp_before_e, hp_after_e,
 						"загинув!" if target.is_dead else "-%d" % (hp_before_e - hp_after_e)
 					])
@@ -664,7 +672,7 @@ static func check_otsii_passive_death(resolver, dead_ward) -> void:
 			lucky.add_status("fire_circle", 2)
 			lucky._update_status_visuals()
 			if resolver.battle_log:
-				resolver.battle_log.add_entry("Оцій: передає Коло пекельного вогню " + lucky.name + "!")
+				resolver.battle_log.add_info("Оцій: передає Коло пекельного вогню " + lucky.name + "!")
 				resolver.battle_log.add_effect(lucky.name, lucky.team, "Коло пекельного вогню (2 ходи)")
 		return
 
@@ -687,7 +695,7 @@ static func check_otsii_passive_death(resolver, dead_ward) -> void:
 
 	if cd_skills.is_empty():
 		if resolver.battle_log:
-			resolver.battle_log.add_entry("Оцій (пасивна): немає скілів на КД.")
+			resolver.battle_log.add_info("Оцій (пасивна): немає скілів на КД.")
 		return
 
 	var chosen = cd_skills[randi() % cd_skills.size()]
@@ -695,7 +703,7 @@ static func check_otsii_passive_death(resolver, dead_ward) -> void:
 	chosen.ward._current_cd[chosen.skill] = new_cd
 	chosen.ward._sync_cd_buttons()
 	if resolver.battle_log:
-		resolver.battle_log.add_entry(
+		resolver.battle_log.add_info(
 			"Оцій (пасивна): %s скіл %s — КД -2 (залишок: %d)" % [chosen.ward.name, chosen.skill, new_cd]
 		)
 		resolver.battle_log.add_effect(chosen.ward.name, chosen.ward.team, "КД %s -2 (=Оцій)" % chosen.skill)
@@ -716,17 +724,17 @@ static func _execute_siomyi(resolver, attacker, target, skill_key: String) -> vo
 			var total_burn: int = target.get_status("burning")
 			if total_burn <= 0:
 				if resolver.battle_log:
-					resolver.battle_log.add_entry("Покарання: %s не має стаків горіння." % target.name)
+					resolver.battle_log.add_info("Покарання: %s не має стаків горіння." % target.name)
 				return
 			if target.team != attacker.team:
 				target.extend_burning(1)
 				if resolver.battle_log:
-					resolver.battle_log.add_entry("Покарання: %s — тривалість всіх стаків горіння +1 хід! (стаків: %d)" % [target.name, total_burn])
+					resolver.battle_log.add_info("Покарання: %s — тривалість всіх стаків горіння +1 хід! (стаків: %d)" % [target.name, total_burn])
 					resolver.battle_log.add_effect(target.name, target.team, "Горіння: тривалість +1 хід (%d стаків)" % total_burn)
 			else:
 				target.reduce_burning_turns(1)
 				if resolver.battle_log:
-					resolver.battle_log.add_entry("Покарання: %s — тривалість всіх стаків горіння -1 хід! (стаків: %d)" % [target.name, total_burn])
+					resolver.battle_log.add_info("Покарання: %s — тривалість всіх стаків горіння -1 хід! (стаків: %d)" % [target.name, total_burn])
 					resolver.battle_log.add_effect(target.name, target.team, "Горіння: тривалість -1 хід (%d стаків)" % total_burn)
 
 		"W":
@@ -734,7 +742,7 @@ static func _execute_siomyi(resolver, attacker, target, skill_key: String) -> vo
 			target.add_status("barrier", 2)
 			target._update_status_visuals()
 			if resolver.battle_log:
-				resolver.battle_log.add_entry("Бар'єр: %s захищений щитом (30 HP, 2 ходи)!" % target.name)
+				resolver.battle_log.add_info("Бар'єр: %s захищений щитом (30 HP, 2 ходи)!" % target.name)
 				resolver.battle_log.add_effect(target.name, target.team, "Бар'єр (2 ходи, 30 HP)")
 
 		"E":
@@ -742,12 +750,12 @@ static func _execute_siomyi(resolver, attacker, target, skill_key: String) -> vo
 			var burn_total: int = target.get_status("burning")
 			if burn_total < 5:
 				if resolver.battle_log:
-					resolver.battle_log.add_entry("Вогонь сьомого: потрібно мінімум 5 стаків горіння! (зараз: %d)" % burn_total)
+					resolver.battle_log.add_info("Вогонь сьомого: потрібно мінімум 5 стаків горіння! (зараз: %d)" % burn_total)
 				return
 			# Активуємо всі стаки горіння — вони завдають урону і зникають
 			var burn_dmg: int = target.activate_all_burning()
 			if resolver.battle_log:
-				resolver.battle_log.add_entry(
+				resolver.battle_log.add_info(
 					"Вогонь сьомого: активує %d стаків горіння — %d вогняного урону!" % [burn_total, burn_dmg]
 				)
 			if burn_dmg > 0:
@@ -758,7 +766,7 @@ static func _execute_siomyi(resolver, attacker, target, skill_key: String) -> vo
 			target.add_status("fire_seventh", vos)
 			target._update_status_visuals()
 			if resolver.battle_log:
-				resolver.battle_log.add_entry(
+				resolver.battle_log.add_info(
 					"Вогонь сьомого: %s позначений! +%d стак(и) — вся команда ворога горітиме!" % [target.name, vos]
 				)
 				resolver.battle_log.add_effect(target.name, target.team, "Вогонь сьомого (%d стак(и))" % vos)
@@ -786,27 +794,27 @@ static func _execute_zhnets(resolver, attacker, target, skill_key: String) -> vo
 					if resolver.battle_log:
 						resolver.battle_log.add_effect(enemy.name, enemy.team, "Горіння +1 стак (2 ходи)")
 			if resolver.battle_log:
-				resolver.battle_log.add_entry("Прокляття жнеця: всі вороги — 20 вогню + 1 горіння (2 ходи)!")
+				resolver.battle_log.add_info("Прокляття жнеця: всі вороги — 20 вогню + 1 горіння (2 ходи)!")
 
 		"W":
 			if target == null: return
 			target.add_burning(3, 2)
 			if resolver.battle_log:
-				resolver.battle_log.add_entry("Маска горгони: %s — 3 стаки горіння (2 ходи)!" % target.name)
+				resolver.battle_log.add_info("Маска горгони: %s — 3 стаки горіння (2 ходи)!" % target.name)
 				resolver.battle_log.add_effect(target.name, target.team, "Горіння (3 стаки, 2 ходи)")
 
 		"E":
 			if target == null: return
 			if attacker.has_meta("zhnets_e_target"):
 				if resolver.battle_log:
-					resolver.battle_log.add_entry("Жнива вже активна — дочекайся наступного ходу!")
+					resolver.battle_log.add_info("Жнива вже активна — дочекайся наступного ходу!")
 				return
 			target.add_status("reaping", 1)
 			target._update_status_visuals()
 			attacker.set_meta("zhnets_e_target", target)
 			attacker.set_meta("zhnets_e_just_used", true)
 			if resolver.battle_log:
-				resolver.battle_log.add_entry("Жнива: %s позначений! Атака в кінці наступного ходу Жнеця." % target.name)
+				resolver.battle_log.add_info("Жнива: %s позначений! Атака в кінці наступного ходу Жнеця." % target.name)
 				resolver.battle_log.add_effect(target.name, target.team, "Жнива (наступний хід Жнеця)")
 
 
@@ -828,7 +836,7 @@ static func _execute_parasyt(resolver, attacker, target, skill_key: String) -> v
 		"W":
 			if target == null: return
 			if resolver.battle_log:
-				resolver.battle_log.add_entry("Асиміляція: %s вплітається у %s (-35 HP собі)!" % [attacker.name, target.name])
+				resolver.battle_log.add_info("Асиміляція: %s вплітається у %s (-35 HP собі)!" % [attacker.name, target.name])
 			await resolver.deal_damage_with_modifiers(null, attacker, 35, "self_damage", "phys")
 			if attacker.is_dead: return
 			target.add_status("parasitism", 1)
@@ -838,7 +846,7 @@ static func _execute_parasyt(resolver, attacker, target, skill_key: String) -> v
 
 		"E":
 			if resolver.battle_log:
-				resolver.battle_log.add_entry("Плач чаші: %s жертвує 195 HP — набирається сил!" % attacker.name)
+				resolver.battle_log.add_info("Плач чаші: %s жертвує 195 HP — набирається сил!" % attacker.name)
 			await resolver.deal_damage_with_modifiers(null, attacker, 195, "self_damage", "phys")
 			if attacker.is_dead: return
 			attacker.add_status("regen", 3)
@@ -865,13 +873,13 @@ static func _execute_adoneia(resolver, attacker, target, skill_key: String) -> v
 		"Q":
 			if in_golem:
 				if resolver.battle_log:
-					resolver.battle_log.add_entry("Пролом (Голем): %s дробить усіх ворогів! (60 фіз)" % attacker.name)
+					resolver.battle_log.add_info("Пролом (Голем): %s дробить усіх ворогів! (60 фіз)" % attacker.name)
 				for enemy in resolver.get_alive_wards(enemy_side):
 					await resolver.deal_damage_with_modifiers(attacker, enemy, 60, skill_key, "phys", true)
 			else:
 				if target == null: return
 				if resolver.battle_log:
-					resolver.battle_log.add_entry("Пролом: %s б'є двічі по 30!" % attacker.name)
+					resolver.battle_log.add_info("Пролом: %s б'є двічі по 30!" % attacker.name)
 				await resolver.deal_damage_with_modifiers(attacker, target, 30, skill_key, "phys")
 				if not target.is_dead:
 					await resolver.deal_damage_with_modifiers(attacker, target, 30, skill_key, "phys")
@@ -879,7 +887,7 @@ static func _execute_adoneia(resolver, attacker, target, skill_key: String) -> v
 		"W":
 			if in_golem:
 				if resolver.battle_log:
-					resolver.battle_log.add_entry("Гром кулаків (Голем): %s завдає 3 удари по рандомних цілях!" % attacker.name)
+					resolver.battle_log.add_info("Гром кулаків (Голем): %s завдає 3 удари по рандомних цілях!" % attacker.name)
 				var taunted_set: Dictionary = {}
 				for i in 3:
 					var alive: Array = resolver.get_alive_wards(enemy_side)
@@ -896,7 +904,7 @@ static func _execute_adoneia(resolver, attacker, target, skill_key: String) -> v
 						if resolver.battle_log:
 							resolver.battle_log.add_effect(t.name, t.team, "Провокація (Голем Адонеї)")
 				if resolver.battle_log and not taunted_set.is_empty():
-					resolver.battle_log.add_entry("Гром кулаків: поранені вороги спровоковані!")
+					resolver.battle_log.add_info("Гром кулаків: поранені вороги спровоковані!")
 			else:
 				if target == null: return
 				await resolver.deal_damage_with_modifiers(attacker, target, 40, skill_key, "phys")
@@ -905,7 +913,7 @@ static func _execute_adoneia(resolver, attacker, target, skill_key: String) -> v
 					target.taunted_by = attacker.ward_id
 					target._update_status_visuals()
 					if resolver.battle_log:
-						resolver.battle_log.add_entry("Майстер кулачного бою: %s спровокований!" % target.name)
+						resolver.battle_log.add_info("Майстер кулачного бою: %s спровокований!" % target.name)
 						resolver.battle_log.add_effect(target.name, target.team, "Провокація (1 хід)")
 				var _ca_old_w: int = attacker.get_status("counterattack")
 				var _ca_new_w: int = max(_ca_old_w, 1)
@@ -914,7 +922,7 @@ static func _execute_adoneia(resolver, attacker, target, skill_key: String) -> v
 				attacker.add_status("counterattack", _ca_new_w)
 				attacker._update_status_visuals()
 				if resolver.battle_log:
-					resolver.battle_log.add_entry("Контратака: %s готова відповісти — діє %d хід!" % [attacker.name, _ca_new_w])
+					resolver.battle_log.add_info("Контратака: %s готова відповісти — діє %d хід!" % [attacker.name, _ca_new_w])
 					resolver.battle_log.add_effect(attacker.name, attacker.team, "Контратака %d хід" % _ca_new_w)
 
 		"E":
@@ -927,8 +935,8 @@ static func _execute_adoneia(resolver, attacker, target, skill_key: String) -> v
 			if attacker.get("health") != null:
 				attacker.health.setup(attacker.max_hp, attacker.current_hp, attacker.hp_bar)
 			if resolver.battle_log:
-				resolver.battle_log.add_entry("⚙ Форма Голема! %s перетворюється на Кам'яного Голема!" % attacker.name)
-				resolver.battle_log.add_entry("HP: %d → %d | Макс. HP: %d → %d" % [hp_was, attacker.current_hp, max_was, attacker.max_hp])
+				resolver.battle_log.add_info("⚙ Форма Голема! %s перетворюється на Кам'яного Голема!" % attacker.name)
+				resolver.battle_log.add_info("HP: %d → %d | Макс. HP: %d → %d" % [hp_was, attacker.current_hp, max_was, attacker.max_hp])
 				resolver.battle_log.add_effect(attacker.name, attacker.team, "Форма Голема (2 ходи, +100 HP)")
 
 
@@ -947,21 +955,21 @@ static func _execute_fizita(resolver, attacker, target, skill_key: String) -> vo
 		"Q":
 			if stacks <= 0:
 				if resolver.battle_log:
-					resolver.battle_log.add_entry("Шквал: немає стаків Тяжіння!")
+					resolver.battle_log.add_info("Шквал: немає стаків Тяжіння!")
 				return
 			if target == null: return
 			var q_dmg: int = 40 * stacks
 			attacker.remove_status("gravity", stacks)
 			attacker._update_status_visuals()
 			if resolver.battle_log:
-				resolver.battle_log.add_entry("Шквал: %s випускає %d стак(и) — %d фіз шкоди!" % [attacker.name, stacks, q_dmg])
+				resolver.battle_log.add_info("Шквал: %s випускає %d стак(и) — %d фіз шкоди!" % [attacker.name, stacks, q_dmg])
 			await resolver.deal_damage_with_modifiers(attacker, target, q_dmg, skill_key, "phys")
 
 		"W":
 			if target == null: return
 			if stacks <= 0:
 				if resolver.battle_log:
-					resolver.battle_log.add_entry("Стіна: немає стаків Тяжіння!")
+					resolver.battle_log.add_info("Стіна: немає стаків Тяжіння!")
 				return
 			var wall_hp: int = 40 * stacks
 			attacker.remove_status("gravity", stacks)
@@ -969,7 +977,7 @@ static func _execute_fizita(resolver, attacker, target, skill_key: String) -> vo
 			target.add_status("phisita_wall", wall_hp)
 			target._update_status_visuals()
 			if resolver.battle_log:
-				resolver.battle_log.add_entry("Стіна: %s захищений кам'яною стіною (%d HP)!" % [target.name, wall_hp])
+				resolver.battle_log.add_info("Стіна: %s захищений кам'яною стіною (%d HP)!" % [target.name, wall_hp])
 				resolver.battle_log.add_effect(target.name, target.team, "Кам'яна стіна (%d HP)" % wall_hp)
 
 		"E":
@@ -983,7 +991,7 @@ static func _execute_fizita(resolver, attacker, target, skill_key: String) -> vo
 				target.set_meta("phisita_e_chance", e_chance)
 				target._update_status_visuals()
 				if resolver.battle_log:
-					resolver.battle_log.add_entry("Сметіння: %s тепер має %d%% шанс промаху свого скіла!" % [target.name, e_chance])
+					resolver.battle_log.add_info("Сметіння: %s тепер має %d%% шанс промаху свого скіла!" % [target.name, e_chance])
 					resolver.battle_log.add_effect(target.name, target.team, "Сметіння (%d%%)" % e_chance)
 
 
@@ -1009,12 +1017,12 @@ static func _execute_shusima(resolver, attacker, target, skill_key: String) -> v
 			attacker.set_meta("regen_amount", max(prev_regen_q, 20))
 			attacker._update_status_visuals()
 			if resolver.battle_log:
-				resolver.battle_log.add_entry("Висушення: %s відновлює сили — реген 20 HP/хід на 2 ходи." % attacker.name)
+				resolver.battle_log.add_info("Висушення: %s відновлює сили — реген 20 HP/хід на 2 ходи." % attacker.name)
 				resolver.battle_log.add_effect(attacker.name, attacker.team, "Регенерація 20 HP (2 ходи)")
 
 		"W":
 			if resolver.battle_log:
-				resolver.battle_log.add_entry("Зибучі піски: %s атакує всіх вардів — 150 фіз кожному!" % attacker.name)
+				resolver.battle_log.add_info("Зибучі піски: %s атакує всіх вардів — 150 фіз кожному!" % attacker.name)
 			var all_wards: Array = resolver.battle_scene.ally_wards + resolver.battle_scene.enemy_wards
 			for w in all_wards:
 				if not w.is_dead:
@@ -1029,7 +1037,7 @@ static func _execute_shusima(resolver, attacker, target, skill_key: String) -> v
 				resolver.battle_log.add_effect(ally.name, ally.team, "Регенерація 70 HP (2 ходи)")
 				regen_count += 1
 			if resolver.battle_log and regen_count > 0:
-				resolver.battle_log.add_entry("Зибучі піски: %d союзник(ів) отримали реген 70 HP/хід на 2 ходи." % regen_count)
+				resolver.battle_log.add_info("Зибучі піски: %d союзник(ів) отримали реген 70 HP/хід на 2 ходи." % regen_count)
 
 		"E":
 			var alive_enemies: Array = resolver.get_alive_wards(enemy_side)
@@ -1037,7 +1045,7 @@ static func _execute_shusima(resolver, attacker, target, skill_key: String) -> v
 			var e_target = alive_enemies[randi() % alive_enemies.size()]
 			var e_dmg: int = attacker.current_hp
 			if resolver.battle_log:
-				resolver.battle_log.add_entry("Розпад: %s концентрує %d HP → завдає %d фіз шкоди %s!" % [attacker.name, e_dmg, e_dmg, e_target.name])
+				resolver.battle_log.add_info("Розпад: %s концентрує %d HP → завдає %d фіз шкоди %s!" % [attacker.name, e_dmg, e_dmg, e_target.name])
 			await resolver.deal_damage_with_modifiers(attacker, e_target, e_dmg, skill_key, "phys")
 
 
@@ -1063,7 +1071,7 @@ static func _execute_asteyah(resolver, attacker, target, skill_key: String) -> v
 			target._current_cd[chosen_cd] = new_cd
 			target._sync_cd_buttons()
 			if resolver.battle_log:
-				resolver.battle_log.add_entry("Кенсел: %s відправляє скіл %s [%s] на перезарядку — КД: %d хід(и)!" % [
+				resolver.battle_log.add_info("Кенсел: %s відправляє скіл %s [%s] на перезарядку — КД: %d хід(и)!" % [
 					attacker.name, chosen_cd, target.name, new_cd
 				])
 				resolver.battle_log.add_effect(target.name, target.team, "КД %s → %d (Кенсел)" % [chosen_cd, new_cd])
@@ -1074,20 +1082,20 @@ static func _execute_asteyah(resolver, attacker, target, skill_key: String) -> v
 			attacker.set_meta("regen_amount", max(prev_regen, 60))
 			attacker._update_status_visuals()
 			if resolver.battle_log:
-				resolver.battle_log.add_entry("Таємні знання: %s накладає на себе регенерацію 60 HP/хід на 2 ходи." % attacker.name)
+				resolver.battle_log.add_info("Таємні знання: %s накладає на себе регенерацію 60 HP/хід на 2 ходи." % attacker.name)
 				resolver.battle_log.add_effect(attacker.name, attacker.team, "Реген 60 HP (2 ходи)")
-				resolver.battle_log.add_entry("Таємні знання: %s ходить ще раз!" % attacker.name)
+				resolver.battle_log.add_info("Таємні знання: %s ходить ще раз!" % attacker.name)
 
 		"E":
 			if not attacker.has_meta("asteyah_memory"):
 				if resolver.battle_log:
-					resolver.battle_log.add_entry("Пам'ять: %s ще нічого не запам'ятала!" % attacker.name)
+					resolver.battle_log.add_info("Пам'ять: %s ще нічого не запам'ятала!" % attacker.name)
 				return
 			var mem: Dictionary = attacker.get_meta("asteyah_memory")
 			var mem_ward_id: String = mem.get("ward_id", "")
 			var mem_skill: String  = mem.get("skill_key", "Q")
 			if resolver.battle_log:
-				resolver.battle_log.add_entry("Пам'ять: %s відтворює [%s → %s]!" % [attacker.name, mem_ward_id, mem_skill])
+				resolver.battle_log.add_info("Пам'ять: %s відтворює [%s → %s]!" % [attacker.name, mem_ward_id, mem_skill])
 			var _temp_riker_meta: bool = false
 			if mem_ward_id == "riker" and mem_skill == "W":
 				attacker.set_meta("riker_last_skill", mem.get("riker_last_skill", ""))
@@ -1120,7 +1128,7 @@ static func _execute_velodiy(resolver, attacker, target, skill_key: String) -> v
 					splash_target = candidates.pick_random()
 			if splash_target != null:
 				if resolver.battle_log:
-					resolver.battle_log.add_entry("Вода камінь точить: бризки — 45 фіз по %s!" % splash_target.name)
+					resolver.battle_log.add_info("Вода камінь точить: бризки — 45 фіз по %s!" % splash_target.name)
 				await resolver.deal_damage_with_modifiers(attacker, splash_target, 45, "Q_splash", "phys", true)
 
 		"W":
@@ -1128,14 +1136,106 @@ static func _execute_velodiy(resolver, attacker, target, skill_key: String) -> v
 			attacker.add_status("phalanx", 2)
 			attacker._update_status_visuals()
 			if resolver.battle_log:
-				resolver.battle_log.add_entry("Фаланга: %s приймає захисне положення — контратака 2 ходи, вхідна шкода +50%% на 2 ходи." % attacker.name)
+				resolver.battle_log.add_info("Фаланга: %s приймає захисне положення — контратака 2 ходи, вхідна шкода +50%% на 2 ходи." % attacker.name)
 				resolver.battle_log.add_effect(attacker.name, attacker.team, "Контратака 2 | Фаланга 2")
 
 		"E":
 			resolver.battle_scene._activate_oath_of_rain(attacker)
 			if resolver.battle_log:
-				resolver.battle_log.add_entry("Клятва рицаря дощу Арная: %s викликає дощ на 4 раунди!" % attacker.name)
+				resolver.battle_log.add_info("Клятва рицаря дощу Арная: %s викликає дощ на 4 раунди!" % attacker.name)
 				resolver.battle_log.add_effect(attacker.name, attacker.team, "Клятва дощу 4 раунди")
+
+
+# =============================================================================
+# АШАНА (ashayah)
+# =============================================================================
+# P — Крилатий трофей: при першому W краде 1 позитивний статус кожного ворога.
+# Q — Пікирування: 60 фіз обраній цілі + 60 фіз рандомній іншій.
+# W — Східний вітер (КД 5): 30 повітря всім ворогам, знімає 1 позит. статус кожному.
+# E — Громовий спис (КД 3): 1-й раз: 150 повітря цілі + 50 іншим + оглушення 2; далі: 50 всім.
+
+static func _execute_ashayah(resolver, attacker, target, skill_key: String) -> void:
+	match skill_key:
+		"Q":
+			if target == null: return
+			await resolver.deal_damage_with_modifiers(attacker, target, 60, skill_key, "phys")
+			var enemy_side: Array = resolver.battle_scene.ally_wards if attacker.team == "enemy" else resolver.battle_scene.enemy_wards
+			var others: Array = resolver.get_alive_wards(enemy_side).filter(func(w): return w != target)
+			if not others.is_empty():
+				var second = others[randi() % others.size()]
+				if resolver.battle_log:
+					resolver.battle_log.add_info("Пікирування: другий удар по %s!" % second.name)
+				await resolver.deal_damage_with_modifiers(attacker, second, 60, "Q_second", "phys")
+
+		"W":
+			var enemy_side: Array = resolver.battle_scene.ally_wards if attacker.team == "enemy" else resolver.battle_scene.enemy_wards
+			var is_first_w: bool = not attacker.has_meta("ashayah_w_first_used")
+			for enemy in resolver.get_alive_wards(enemy_side):
+				# Зберігаємо перший позитивний статус ДО нанесення шкоди
+				var stolen_status: String = _ashayah_first_positive_status(enemy)
+				var stolen_count: int = enemy.get_status(stolen_status) if stolen_status != "" else 0
+				await resolver.deal_damage_with_modifiers(attacker, enemy, 30, skill_key, "air", true)
+				# Знімаємо статус якщо ворог вижив (мертвий — вже чищений при смерті)
+				if stolen_status != "" and not enemy.is_dead:
+					enemy.remove_status(stolen_status, stolen_count)
+					enemy._update_status_visuals()
+					if resolver.battle_log:
+						resolver.battle_log.add_info("Східний вітер: знято [%s] з %s." % [stolen_status, enemy.name])
+				elif stolen_status != "" and resolver.battle_log:
+					resolver.battle_log.add_info("Східний вітер: %s загинув — [%s] розсіявся." % [enemy.name, stolen_status])
+				# Пасивка P: краде статус при першому W
+				if is_first_w and stolen_status != "":
+					_ashayah_steal_status(resolver, attacker, enemy, stolen_status, stolen_count)
+					if resolver.battle_log:
+						resolver.battle_log.add_info("Крилатий трофей: Ошая краде [%s] (%d)!" % [stolen_status, stolen_count])
+			if is_first_w:
+				attacker.set_meta("ashayah_w_first_used", true)
+
+		"E":
+			var enemy_side: Array = resolver.battle_scene.ally_wards if attacker.team == "enemy" else resolver.battle_scene.enemy_wards
+			if not attacker.has_meta("ashayah_e_used"):
+				# Перший раз: 150 основній + 50 іншим + оглушення собі
+				if target == null: return
+				await resolver.deal_damage_with_modifiers(attacker, target, 150, skill_key, "air")
+				for enemy in resolver.get_alive_wards(enemy_side):
+					if enemy == target: continue
+					await resolver.deal_damage_with_modifiers(attacker, enemy, 50, "E_aoe", "air", true)
+				attacker.add_status("stun", 2)
+				attacker._update_status_visuals()
+				attacker.set_meta("ashayah_e_used", true)
+				if resolver.battle_log:
+					resolver.battle_log.add_info("Громовий спис: гнів неба обрушено! Ошая оглушена на 2 ходи.")
+					resolver.battle_log.add_effect(attacker.name, attacker.team, "Оглушення 2 ходи")
+			else:
+				# Повторні рази: 50 всім
+				if resolver.battle_log:
+					resolver.battle_log.add_info("Громовий спис: повторний розряд по всіх ворогах!")
+				for enemy in resolver.get_alive_wards(enemy_side):
+					await resolver.deal_damage_with_modifiers(attacker, enemy, 50, skill_key, "air", true)
+
+
+static func _ashayah_first_positive_status(ward) -> String:
+	var positive: Array[String] = ["barrier", "counterattack", "regen", "fire_circle",
+		"phisita_wall", "velodiy_oath", "phalanx", "prayers_barrier", "rage"]
+	for s in positive:
+		if ward.get_status(s) > 0:
+			return s
+	return ""
+
+
+static func _ashayah_steal_status(resolver, ashayah, source, status: String, count: int) -> void:
+	if status == "velodiy_oath":
+		resolver.battle_scene._steal_oath_as_carrier(ashayah, count)
+		return
+	if status == "regen":
+		var source_amount: int = source.get_meta("regen_amount", 100) if source != null and source.has_meta("regen_amount") else 100
+		var cur: int = ashayah.get_meta("regen_amount", 0) if ashayah.has_meta("regen_amount") else 0
+		ashayah.set_meta("regen_amount", max(cur, source_amount))
+		ashayah.add_status("regen", count)
+		ashayah._update_status_visuals()
+		return
+	ashayah.add_status(status, count)
+	ashayah._update_status_visuals()
 
 
 static func _asteyah_execute_memory(resolver, attacker, target, ward_id: String, skill_key: String) -> void:
@@ -1156,6 +1256,7 @@ static func _asteyah_execute_memory(resolver, attacker, target, ward_id: String,
 		"shusima":  await _execute_shusima(resolver, attacker, target, skill_key)
 		"asteyah":  await _execute_asteyah(resolver, attacker, target, skill_key)
 		"velodiy":  await _execute_velodiy(resolver, attacker, target, skill_key)
+		"ashayah": await _execute_ashayah(resolver, attacker, target, skill_key)
 		_:
 			if target != null:
 				await resolver.deal_damage_with_modifiers(attacker, target, 50, skill_key)

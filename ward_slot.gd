@@ -630,12 +630,12 @@ func die() -> void:
 		return
 
 	is_dead = true
-	clear_statuses()
 	for m in ["untargetable", "phisita_e_chance", "fizita_gravity_turns", "golem_form",
 			"fire_shield", "countered_this_turn", "riker_passive_used",
 			"zhnets_e_target", "zhnets_e_just_used", "regen_amount"]:
 		if has_meta(m):
 			remove_meta(m)
+	clear_statuses()
 	if death_sound:
 		death_sound.play()
 	current_hp = 0

@@ -49,6 +49,7 @@ var music_tracks: Array[AudioStream] = [
 ]
 
 var turn_number: int = 0
+var round_number: int = 0
 var turn_manager
 var battle_log
 var battle_resolver
@@ -62,6 +63,10 @@ var waiting_for_target: bool = false
 
 var battle_finished: bool = false
 var battle_started: bool = false
+
+var _turn_timeout_timer: Timer = null
+var _turn_tick_timer: Timer = null
+var _turn_timer_secs: int = 30
 
 # Блокує нові скіл-кліки під час анімації атаки — запобігає паралельним атакам
 var _turn_locked: bool = false
@@ -322,6 +327,18 @@ func _create_battle_systems() -> void:
 	add_child(battle_log)
 	battle_log.setup_ui(get_node_or_null("BattleLog"))
 
+	_turn_timeout_timer = Timer.new()
+	_turn_timeout_timer.one_shot = true
+	_turn_timeout_timer.wait_time = 45.0
+	_turn_timeout_timer.timeout.connect(_on_turn_timeout)
+	add_child(_turn_timeout_timer)
+
+	_turn_tick_timer = Timer.new()
+	_turn_tick_timer.one_shot = false
+	_turn_tick_timer.wait_time = 1.0
+	_turn_tick_timer.timeout.connect(_on_turn_tick)
+	add_child(_turn_tick_timer)
+
 	turn_manager = TurnManagerScript.new()
 	add_child(turn_manager)
 
@@ -371,14 +388,14 @@ func _start_battle() -> void:
 	battle_started = true
 	turn_manager.reset_turn_indices()
 
-	battle_log.add_entry("Бій почався")
+	battle_log.add_info("⚔ Бій почався!")
 
 	# Фізіта отримує 2 початкових стеки Тяжіння (одноразово на старті)
 	for w in ally_wards + enemy_wards:
 		if w.ward_id == "fizita" and not w.is_dead:
 			w.add_status("gravity", 2)
 			w._update_status_visuals()
-			battle_log.add_entry("Тяжіння: %s отримує 2 початкових стеки" % w.name)
+			battle_log.add_info("Тяжіння: %s отримує 2 початкових стеки" % w.name)
 
 	# Шусіма E: стартує на перезарядці 3
 	for w in ally_wards + enemy_wards:
@@ -411,9 +428,12 @@ func _start_turn() -> void:
 		_finish_battle("ПЕРЕМОГА")
 		return
 	
-	turn_number += 1
-	battle_log.start_turn(turn_number)
+	# Лічильник раунду: інкремент коли союзники повертаються до першого варда
+	if turn_manager.current_team == "ally" and turn_manager.ally_turn_index == 0:
+		round_number += 1
+		battle_log.update_round(round_number)
 
+	turn_number += 1
 	selected_attacker = null
 	selected_skill = ""
 	waiting_for_target = false
@@ -428,20 +448,31 @@ func _start_turn() -> void:
 		_next_turn()
 		return
 
+	battle_log.start_turn(turn_number, current_ward.name, current_ward.team)
+
 	if current_ward.has_meta("untargetable") and current_ward.get_meta("untargetable"):
 		current_ward.set_meta("untargetable", false)
 		current_ward.modulate.a = 1.0
-		battle_log.add_entry("%s: Загороджуючий водопад спав — знову доступний як ціль." % current_ward.name)
+		battle_log.add_info("Загороджуючий водопад спав — %s знову вразливий." % current_ward.name)
 
-	# Підсвічуємо поточний Вард ДО перевірки оглушення —
-	# щоб гравець бачив іконку стану на ньому до моменту пропуску
 	_update_active_ward_visual()
+
+	# === ТАЙМЕР ХОДУ ===
+	_turn_timeout_timer.stop()
+	_turn_tick_timer.stop()
+	if turn_manager.current_team == "ally":
+		_turn_timer_secs = 45
+		battle_log.update_timer(_turn_timer_secs)
+		_turn_timeout_timer.start(45.0)
+		_turn_tick_timer.start(1.0)
+	else:
+		battle_log.update_timer(-1)
 
 	# === ОБРОБКА ОГЛУШЕННЯ ===
 	# Оглушений Вард пропускає хід; хід переходить до наступного Варда ТІЄї ж команди.
 	# Жодна команда не може ходити двічі поспіль.
 	if current_ward.get_status("stun") > 0:
-		battle_log.add_entry(current_ward.name + " оглушений — пропускає хід!")
+		battle_log.add_info("⚡ " + current_ward.name + " оглушений — пропускає хід!", Color("#c88020"))
 		await get_tree().create_timer(0.6).timeout
 		current_ward.remove_status("stun", 1)
 		if current_ward.has_method("tick_cooldowns"):
@@ -458,11 +489,6 @@ func _start_turn() -> void:
 		_start_turn()
 		return
 
-	battle_log.add_empty_line()
-	battle_log.add_entry("====== ХІД ======")
-	battle_log.add_entry(current_ward.name)
-	battle_log.add_entry(current_ward.team)
-
 	# === ПАСИВКА ФІЗІТИ: Тяжіння — +2 стаки на початку ходу ===
 	if current_ward.ward_id == "fizita" and not current_ward.is_dead:
 		var fizita_turns: int = current_ward.get_meta("fizita_gravity_turns", 0)
@@ -473,7 +499,7 @@ func _start_turn() -> void:
 		if actual_add > 0:
 			current_ward.add_status("gravity", actual_add)
 			current_ward._update_status_visuals()
-			battle_log.add_entry("Тяжіння: %s +%d стак(и) (разом: %d, макс: %d)" % [
+			battle_log.add_info("Тяжіння: %s +%d стак(и) (разом: %d, макс: %d)" % [
 				current_ward.name, actual_add, current_ward.get_status("gravity"), grav_cap
 			])
 			battle_log.add_effect(current_ward.name, current_ward.team, "Тяжіння +%d (всього: %d)" % [actual_add, current_ward.get_status("gravity")])
@@ -481,7 +507,7 @@ func _start_turn() -> void:
 
 	# === ПАСИВКА ШУСІМИ: Розсипання — 90 фіз шкоди собі ===
 	if current_ward.ward_id == "shusima" and not current_ward.is_dead:
-		battle_log.add_entry("Розсипання: %s розсипається — 90 фіз шкоди собі!" % current_ward.name)
+		battle_log.add_info("💀 Розсипання: %s — 90 фіз шкоди собі!" % current_ward.name, Color("#c84030"))
 		await battle_resolver.deal_damage_with_modifiers(current_ward, current_ward, 90, "P", "phys")
 		if current_ward.is_dead:
 			_next_turn()
@@ -497,24 +523,22 @@ func _start_turn() -> void:
 			var lucky = all_active[randi() % all_active.size()]
 			lucky.add_status("burning", 2)
 			lucky._update_status_visuals()
-			battle_log.add_entry("З пилу жару: %s отримує 2 стаки горіння!" % lucky.name)
+			battle_log.add_info("🔥 З пилу жару: %s отримує 2 стаки горіння!" % lucky.name, Color("#c86030"))
 			battle_log.add_effect(lucky.name, lucky.team, "Горіння +2 стаки (пасивка Сьомого)")
 
 	# === ПАСИВКА АСТЕЇ: Пам'ять — показуємо що скопійовано в E ===
 	if current_ward.ward_id == "asteyah" and not current_ward.is_dead:
 		if current_ward.has_meta("asteyah_memory"):
 			var _mem: Dictionary = current_ward.get_meta("asteyah_memory")
-			battle_log.add_entry("Пам'ять (%s): в E скопійовано [%s] від %s." % [
-				current_ward.name, _mem.get("skill_key", "?"), _mem.get("ward_id", "?")
-			])
+			battle_log.add_info("🧠 Пам'ять: E = [%s] від %s" % [_mem.get("skill_key", "?"), _mem.get("ward_id", "?")])
 		else:
-			battle_log.add_entry("Пам'ять (%s): E порожня — ще нічого не запам'ятано." % current_ward.name)
+			battle_log.add_info("🧠 Пам'ять: E порожня")
 
 	# === ВОГОНЬ СЬОМОГО: шкода всій команді ===
 	var fs_stacks: int = current_ward.get_status("fire_seventh")
 	if fs_stacks > 0:
 		var fs_team: Array = ally_wards if current_ward.team == "ally" else enemy_wards
-		battle_log.add_entry("Вогонь сьомого спалахує! %d стак(и) → %d вогняної шкоди кожному!" % [fs_stacks, 150 * fs_stacks])
+		battle_log.add_info("🔥 Вогонь сьомого спалахує! %d стак(и) → %d вогняного кожному!" % [fs_stacks, 150 * fs_stacks], Color("#c86030"))
 		for w in fs_team:
 			if not w.is_dead:
 				await battle_resolver.deal_damage_with_modifiers(null, w, 150 * fs_stacks, "fire_seventh", "fire")
@@ -533,7 +557,7 @@ func _start_turn() -> void:
 	# === ОБРОБКА ГОРІННЯ ===
 	if current_ward.get_status("burning") > 0:
 		var burn_dmg: int = current_ward.tick_burning()
-		battle_log.add_entry("Горіння! " + current_ward.name + " отримує %d вогняної шкоди." % burn_dmg)
+		battle_log.add_info("🔥 Горіння: %s отримує %d вогню." % [current_ward.name, burn_dmg], Color("#c86030"))
 		await battle_resolver.deal_damage_with_modifiers(null, current_ward, burn_dmg, "burning", "fire")
 		if current_ward.is_dead:
 			_next_turn()
@@ -544,25 +568,25 @@ func _start_turn() -> void:
 		current_ward.remove_status("counterattack", 1)
 		current_ward._update_status_visuals()
 		if current_ward.get_status("counterattack") == 0:
-			battle_log.add_entry("Контратака (%s): вичерпалась." % current_ward.name)
+			battle_log.add_info("Контратака (%s): вичерпалась." % current_ward.name)
 		else:
-			battle_log.add_entry("Контратака (%s): залишилось %d ход(и)." % [current_ward.name, current_ward.get_status("counterattack")])
+			battle_log.add_info("Контратака (%s): ще %d хід(и)." % [current_ward.name, current_ward.get_status("counterattack")])
 
 	# === ТІК ФАЛАНГИ ВЕЛОДІЯ ===
 	if current_ward.get_status("phalanx") > 0:
 		current_ward.remove_status("phalanx", 1)
 		current_ward._update_status_visuals()
 		if current_ward.get_status("phalanx") == 0:
-			battle_log.add_entry("Фаланга (%s): вичерпалась." % current_ward.name)
+			battle_log.add_info("Фаланга (%s): вичерпалась." % current_ward.name)
 		else:
-			battle_log.add_entry("Фаланга (%s): залишилось %d ход(и)." % [current_ward.name, current_ward.get_status("phalanx")])
+			battle_log.add_info("Фаланга (%s): ще %d хід(и)." % [current_ward.name, current_ward.get_status("phalanx")])
 
 	# === ТІК ПАСИВКИ ВЕЛОДІЯ (Захисний рефлекс) ===
 	if current_ward.ward_id == "velodiy" and current_ward.has_meta("velodiy_p_cd"):
 		var _p_cd: int = current_ward.get_meta("velodiy_p_cd") - 1
 		if _p_cd <= 0:
 			current_ward.remove_meta("velodiy_p_cd")
-			battle_log.add_entry("Захисний рефлекс (%s): пасивка знову готова!" % current_ward.name)
+			battle_log.add_info("Захисний рефлекс (%s): пасивка знову готова!" % current_ward.name)
 		else:
 			current_ward.set_meta("velodiy_p_cd", _p_cd)
 
@@ -580,17 +604,17 @@ func _start_turn() -> void:
 		if current_ward.get_status("regen") == 0:
 			if current_ward.has_meta("regen_amount"):
 				current_ward.remove_meta("regen_amount")
-			battle_log.add_entry(current_ward.name + ": регенерація завершилась.")
+			battle_log.add_info(current_ward.name + ": регенерація завершилась.")
 
 	# Тік кола пекельного вогню та бар'єру
 	if current_ward.get_status("fire_circle") > 0:
 		current_ward.remove_status("fire_circle", 1)
 		if current_ward.get_status("fire_circle") == 0:
-			battle_log.add_entry(current_ward.name + ": Коло пекельного вогню згасло.")
+			battle_log.add_info(current_ward.name + ": Коло пекельного вогню згасло.")
 	if current_ward.get_status("barrier") > 0:
 		current_ward.remove_status("barrier", 1)
 		if current_ward.get_status("barrier") == 0:
-			battle_log.add_entry(current_ward.name + ": Бар'єр згас.")
+			battle_log.add_info(current_ward.name + ": Бар'єр згас.")
 
 	# === КЛЯТВА РИЦАРЯ ДОЩУ АРНАЯ (E Велодія) ===
 	if _oath_active:
@@ -612,15 +636,14 @@ func _start_turn() -> void:
 						var _ohp: int = _w.current_hp
 						_w.health.heal(75)
 						battle_log.add_heal(_w.name, _w.team, _ohp, _w.current_hp, _w.max_hp)
-						battle_log.add_entry("Клятва дощу: %s +75 HP." % _w.name)
-				# Броня лише Велодію (носієм може бути тільки він або його спадкоємець)
-				if current_ward.ward_id == "velodiy":
+						battle_log.add_info("💧 Клятва дощу: %s +75 HP." % _w.name, Color("#4090c0"))
+				# Броня носієві: Велодій або Ошая (якщо вкрала Клятву)
+				if current_ward.ward_id == "velodiy" or current_ward.ward_id == "ashayah":
 					current_ward.health.add_armor(75)
 					current_ward._update_status_visuals()
-					battle_log.add_entry("Клятва дощу: %s +75 броні!" % current_ward.name)
+					battle_log.add_info("💧 Клятва дощу: %s +75 броні!" % current_ward.name, Color("#4090c0"))
 				_oath_rounds_left -= 1
 				_oath_triggered_this_round = true
-				# Оновлюємо значок (кількість раундів)
 				_oath_carrier.remove_status("velodiy_oath", _oath_carrier.get_status("velodiy_oath"))
 				if _oath_rounds_left > 0:
 					_oath_carrier.add_status("velodiy_oath", _oath_rounds_left)
@@ -628,14 +651,14 @@ func _start_turn() -> void:
 				if _oath_rounds_left <= 0:
 					_oath_active = false
 					_oath_carrier = null
-					battle_log.add_entry("Клятва рицаря дощу Арная завершилась!")
+					battle_log.add_info("Клятва рицаря дощу завершилась!")
 				else:
-					battle_log.add_entry("Клятва дощу: залишилось %d раунд(и)." % _oath_rounds_left)
+					battle_log.add_info("Клятва дощу: ще %d раунд(и)." % _oath_rounds_left)
 
 	# === ПАРАЗИТУВАННЯ: авто-атака союзника ===
 	if current_ward.get_status("parasitism") > 0:
 		current_ward.remove_status("parasitism", current_ward.get_status("parasitism"))
-		battle_log.add_entry("Паразитування! %s атакує свого союзника!" % current_ward.name)
+		battle_log.add_info("🦠 Паразитування! %s атакує свого союзника!" % current_ward.name, Color("#a060d0"))
 		var SkillExecP = preload("res://scripts/battle/skill_executor.gd")
 		var same_team: Array = ally_wards if current_ward.team == "ally" else enemy_wards
 		var alive_allies: Array = battle_resolver.get_alive_wards(same_team).filter(
@@ -650,18 +673,18 @@ func _start_turn() -> void:
 		if not available_skills.is_empty() and not alive_allies.is_empty():
 			var chosen_sk: String = available_skills[randi() % available_skills.size()]
 			var target_ally = alive_allies[randi() % alive_allies.size()]
-			battle_log.add_entry("%s застосовує %s проти %s!" % [current_ward.name, chosen_sk, target_ally.name])
+			battle_log.add_info("%s застосовує %s проти %s!" % [current_ward.name, chosen_sk, target_ally.name], Color("#a060d0"))
 			_turn_locked = true
 			await battle_resolver.attack(current_ward, target_ally, chosen_sk)
 		else:
-			battle_log.add_entry("Паразитування: немає доступних скілів або союзників.")
+			battle_log.add_info("Паразитування: немає доступних скілів або союзників.")
 		if battle_resolver.is_team_dead(enemy_wards): _finish_battle("ПЕРЕМОГА"); return
 		if battle_resolver.is_team_dead(ally_wards):  _finish_battle("ПОРАЗКА");  return
 		_next_turn()
 		return
 
 	if turn_manager.current_team == "enemy":
-		await get_tree().create_timer(0.8).timeout
+		await get_tree().create_timer(2.0).timeout
 
 		if battle_finished:
 			return
@@ -671,8 +694,6 @@ func _start_turn() -> void:
 			return
 
 		await _enemy_attack(current_ward)
-	else:
-		battle_log.add_entry("Обери Q/W/E")
 
 
 func _on_skill_clicked(ward, skill_key: String) -> void:
@@ -737,20 +758,14 @@ func _on_skill_clicked(ward, skill_key: String) -> void:
 			show_target_arrow(
 				pressed_button.global_position + pressed_button.size * 0.5
 			)
-		battle_log.add_entry("Обраний скіл: " + skill_key)
-		battle_log.add_entry("Обери ворога")
 	elif target_type == "single_ally":
 		waiting_for_target = true
 		if pressed_button:
 			AnimationCode.skill_pressed_animation(pressed_button)
-		battle_log.add_entry("Обраний скіл: " + skill_key)
-		battle_log.add_entry("Обери союзника (або себе)")
 	elif target_type == "single_any":
 		waiting_for_target = true
 		if pressed_button:
 			AnimationCode.skill_pressed_animation(pressed_button)
-		battle_log.add_entry("Обраний скіл: " + skill_key)
-		battle_log.add_entry("Обери будь-яку ціль")
 	elif target_type == "etesena_w":
 		var alive_count: int = battle_resolver.get_alive_wards(enemy_wards).size()
 		if alive_count == 0:
@@ -791,7 +806,6 @@ func _on_skill_clicked(ward, skill_key: String) -> void:
 				
 		if pressed_button:
 			AnimationCode.skill_pressed_animation(pressed_button)
-		battle_log.add_entry("Обраний скіл: " + skill_key)
 		_turn_locked = true
 		await battle_resolver.attack(selected_attacker, null, selected_skill)
 		_apply_and_log_cd(selected_attacker, selected_skill)
@@ -1012,6 +1026,10 @@ func _enemy_attack(enemy_ward) -> void:
 		enemy_ward.set_meta("etesena_w_targets", w_pool.slice(0, mini(3, w_pool.size())))
 		# target залишається null — execute_skill читає з meta
 
+	if battle_log:
+		var _tname: String = target.name if target != null else "всіх"
+		battle_log.add_info("▶ %s [%s] → %s" % [enemy_ward.name, random_skill, _tname], Color("#d06040"))
+
 	await battle_resolver.attack(
 		enemy_ward,
 		target,
@@ -1088,17 +1106,17 @@ func _try_zhnets_harvest() -> void:
 		var burn_total_before: int = harvest_target.get_status("burning")
 		harvest_target.remove_status("reaping", harvest_target.get_status("reaping"))
 		harvest_target._update_status_visuals()
-		battle_log.add_entry("Жнива! Жнець атакує %s! Знімає ефект Жнива." % harvest_target.name)
+		battle_log.add_info("🔥 Жнива! Жнець атакує %s!" % harvest_target.name, Color("#c86030"))
 		var burn_dmg: int = harvest_target.activate_all_burning()
 		if burn_dmg > 0:
-			battle_log.add_entry("Жнива: активує %d стаків горіння — %d вогняної шкоди! Горіння знято." % [burn_total_before, burn_dmg])
+			battle_log.add_info("Жнива: %d стаків горіння → %d вогняної шкоди!" % [burn_total_before, burn_dmg], Color("#c86030"))
 			await battle_resolver.deal_damage_with_modifiers(current_ward, harvest_target, burn_dmg, "burning", "fire")
 		if is_instance_valid(harvest_target) and not harvest_target.is_dead:
 			await battle_resolver.deal_damage_with_modifiers(current_ward, harvest_target, 80, "zhnets_e", "phys")
 	else:
 		if is_instance_valid(harvest_target):
 			harvest_target.remove_status("reaping", harvest_target.get_status("reaping"))
-		battle_log.add_entry("Жнива: ціль вже мертва.")
+		battle_log.add_info("Жнива: ціль вже мертва.")
 
 
 func _adoneia_set_form(ward, is_golem: bool) -> void:
@@ -1165,7 +1183,7 @@ func _try_adoneia_golem_tick() -> void:
 		current_ward.set_meta("golem_form", turns_left)
 		current_ward._sync_cd_buttons()
 		if battle_log:
-			battle_log.add_entry("Форма Голема (%s): залишився %d хід(и)." % [current_ward.name, turns_left])
+			battle_log.add_info("⚙ Форма Голема (%s): ще %d хід(и)." % [current_ward.name, turns_left])
 		return
 	# Форма Голема завершується
 	current_ward.remove_meta("golem_form")
@@ -1183,9 +1201,8 @@ func _try_adoneia_golem_tick() -> void:
 	current_ward.add_status("stun", 2)
 	current_ward._update_status_visuals()
 	if battle_log:
-		battle_log.add_entry("Форма Голема завершена! %s повертається до звичайної форми." % current_ward.name)
-		battle_log.add_entry("HP: %d → %d | Макс. HP: %d → %d" % [hp_was, current_ward.current_hp, max_was, current_ward.max_hp])
-		battle_log.add_entry("Оглушення: %s на 2 ходи!" % current_ward.name)
+		battle_log.add_info("⚙ Форма Голема завершена! %s повертається + оглушення 2 ходи." % current_ward.name)
+		battle_log.add_info("HP: %d → %d | Макс: %d → %d" % [hp_was, current_ward.current_hp, max_was, current_ward.max_hp])
 		battle_log.add_effect(current_ward.name, current_ward.team, "Оглушення 2 ходи (завершення Голема)")
 
 
@@ -1304,6 +1321,23 @@ func _activate_oath_of_rain(caster) -> void:
 	caster._update_status_visuals()
 
 
+func _steal_oath_as_carrier(new_carrier, rounds: int) -> void:
+	# Знімаємо статус зі старого носія якщо є
+	if _oath_carrier != null and not _oath_carrier.is_dead:
+		_oath_carrier.remove_status("velodiy_oath", _oath_carrier.get_status("velodiy_oath"))
+		_oath_carrier._update_status_visuals()
+	_oath_active = true
+	_oath_carrier = new_carrier
+	_oath_caster_team = new_carrier.team  # Клятва тепер служить команді Ашани
+	_oath_rounds_left = rounds
+	_oath_triggered_this_round = false
+	_oath_skip_next_carrier_trigger = true  # Не тригерить у цьому ж ході
+	new_carrier.add_status("velodiy_oath", rounds)
+	new_carrier._update_status_visuals()
+	if battle_log:
+		battle_log.add_info("💧 Крилатий трофей: %s перехопила Клятву дощу (%d раунд(и))!" % [new_carrier.name, rounds], Color("#4090c0"))
+
+
 func _transfer_oath_of_rain() -> void:
 	var team_wards: Array = ally_wards if _oath_caster_team == "ally" else enemy_wards
 	var candidates: Array = team_wards.filter(
@@ -1315,7 +1349,7 @@ func _transfer_oath_of_rain() -> void:
 			_oath_carrier.remove_status("velodiy_oath", _oath_carrier.get_status("velodiy_oath"))
 			_oath_carrier._update_status_visuals()
 		_oath_carrier = null
-		battle_log.add_entry("Клятва рицаря дощу згасла — немає живих водяних союзників!")
+		battle_log.add_info("💧 Клятва рицаря дощу згасла — немає водяних союзників.", Color("#4090c0"))
 		return
 	# Знімаємо статус зі старого носія
 	var old_carrier = _oath_carrier
@@ -1327,17 +1361,64 @@ func _transfer_oath_of_rain() -> void:
 	_oath_carrier = new_carrier
 	new_carrier.add_status("velodiy_oath", _oath_rounds_left)
 	new_carrier._update_status_visuals()
-	battle_log.add_entry("Клятва передана → %s несе клятву дощу (%d раунд(и))!" % [new_carrier.name, _oath_rounds_left])
+	battle_log.add_info("💧 Клятва передана → %s (%d раунд(и))." % [new_carrier.name, _oath_rounds_left], Color("#4090c0"))
 
 
 func _next_turn() -> void:
 	if battle_finished:
 		return
 
+	_turn_timeout_timer.stop()
+	_turn_tick_timer.stop()
+	battle_log.update_timer(-1)
+
 	hide_target_arrow()
 
 	turn_manager.switch_team()
 	_start_turn()
+
+
+func _on_turn_tick() -> void:
+	_turn_timer_secs = max(0, _turn_timer_secs - 1)
+	battle_log.update_timer(_turn_timer_secs)
+
+
+func _on_turn_timeout() -> void:
+	if battle_finished or current_ward == null or current_ward.is_dead:
+		return
+	if turn_manager.current_team != "ally":
+		return
+	_turn_tick_timer.stop()
+	battle_log.update_timer(0)
+	waiting_for_target = false
+	selected_skill = ""
+	selected_attacker = null
+	battle_log.add_info("⏱ Час вийшов! Автоматичне Q: %s" % current_ward.name, Color("#c88020"))
+	var valid := _get_auto_q_targets()
+	if valid.is_empty():
+		_next_turn()
+		return
+	var auto_target = valid[randi() % valid.size()]
+	_turn_locked = true
+	await battle_resolver.attack(current_ward, auto_target, "Q")
+	await _try_zhnets_harvest()
+	await _try_adoneia_golem_tick()
+	_turn_locked = false
+	_next_turn()
+
+
+func _get_auto_q_targets() -> Array:
+	var all_enemies: Array = battle_resolver.get_alive_wards(enemy_wards)
+	var valid: Array = all_enemies.filter(func(w): return not (w.has_meta("untargetable") and w.get_meta("untargetable")))
+	if valid.is_empty():
+		valid = all_enemies
+	if current_ward.has_meta("taunted_by"):
+		var tb: String = current_ward.get_meta("taunted_by", "")
+		if tb != "":
+			var taunters: Array = valid.filter(func(w): return w.ward_id == tb)
+			if not taunters.is_empty():
+				return taunters
+	return valid
 
 
 func _update_active_ward_visual() -> void:
@@ -1418,7 +1499,3 @@ func _apply_and_log_cd(ward, skill_key: String) -> void:
 		return
 
 	ward.apply_skill_cooldown(skill_key)
-
-	var cd_turns: int = ward._max_cd.get(skill_key, 0)
-	if cd_turns > 0 and battle_log != null:
-		battle_log.add_cooldown(ward.name, ward.team, skill_key, cd_turns)

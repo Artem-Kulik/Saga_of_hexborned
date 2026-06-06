@@ -11,7 +11,7 @@ const ELEMENT_MULTIPLIERS = {
 	"water": {"fire": 0.5, "water": 1.0, "air": 2.0, "earth": 1.0, "light": 2.0},
 	"air": {"fire": 2.0, "water": 0.5, "air": 1.0, "earth": 1.0, "light": 2.0},
 	"earth": {"fire": 1.0, "water": 1.0, "air": 1.0, "earth": 1.0, "light": 2.0},
-	"light": {"fire": 2.0, "water": 2.0, "air": 2.0, "earth": 2.0, "light": 4.0}
+	"light": {"fire": 2.0, "water": 2.0, "air": 2.0, "earth": 2.0, "light": 1.0}
 }
 
 func setup(log_ref, scene_ref) -> void:
@@ -32,7 +32,7 @@ func attack(attacker, target, skill_key: String = "Q") -> void:
 				if p_cd <= 0 and randf() < 0.35:
 					w.set_meta("velodiy_p_cd", 2)
 					if battle_log:
-						battle_log.add_entry("Захисний рефлекс! %s відміняє [%s → %s]! (КД 2 ходи)" % [w.name, attacker.name, skill_key])
+						battle_log.add_info("🛡 Захисний рефлекс! %s відміняє [%s → %s]! (КД 2 ходи)" % [w.name, attacker.name, skill_key], Color("#7080b0"))
 						battle_log.add_effect(w.name, w.team, "Захисний рефлекс!")
 					return
 				break
@@ -67,9 +67,7 @@ func attack(attacker, target, skill_key: String = "Q") -> void:
 				var redirect = all_alive[randi() % all_alive.size()]
 				if battle_log:
 					var orig_name: String = target.name if target != null else "себе"
-					battle_log.add_entry("Сметіння! %s [%s] промахується: ціль %s → б'є %s" % [
-						attacker.name, skill_key, orig_name, redirect.name
-					])
+					battle_log.add_info("💨 Сметіння! %s промахується — б'є %s замість %s" % [attacker.name, redirect.name, orig_name], Color("#9060a0"))
 				effective_target = redirect
 
 	await SkillExecutor.execute_skill(self, attacker, effective_target, skill_key)
@@ -105,20 +103,31 @@ func deal_damage_with_modifiers(attacker, target, base_damage: int, skill_key: S
 			if def_mults.has(damage_type):
 				mult = def_mults[damage_type]
 
-	var armor_dmg = mini(base_damage, armor)
-	var hp_dmg = base_damage - armor_dmg
-	var final_hp_dmg = int(hp_dmg * mult)
-	final_damage = armor_dmg + final_hp_dmg
+	# Земляні варди: подвійний урон у броню (ефективна броня вдвічі менша)
+	var is_earth_attacker: bool = false
+	if attacker != null and attacker.get("ward_id") and attacker.ward_id != "":
+		var _att_data := WardDatabase.get_data(attacker.ward_id)
+		is_earth_attacker = _att_data.get("element", "") == "earth"
+
+	var armor_effective: int = armor / 2 if (is_earth_attacker and armor > 0) else armor
+	var armor_dmg: int = mini(base_damage, armor_effective)
+	var actual_armor_reduction: int = armor_dmg * 2 if is_earth_attacker else armor_dmg
+	var hp_dmg: int = base_damage - armor_dmg
+	var final_hp_dmg: int = int(hp_dmg * mult)
+	final_damage = actual_armor_reduction + final_hp_dmg
 
 	# === Фаланга Велодія: вхідна шкода +50% ===
 	if target != null and target.get_status("phalanx") > 0:
 		var before_phalanx: int = final_damage
 		final_damage = int(final_damage * 1.5)
 		if battle_log:
-			battle_log.add_entry("Фаланга: %s бере +50%% (%d → %d)!" % [target.name, before_phalanx, final_damage])
+			battle_log.add_info("🛡 Фаланга: %s +50%% шкоди (%d → %d)" % [target.name, before_phalanx, final_damage], Color("#7080b0"))
 
 	if armor_dmg > 0 and battle_log:
-		battle_log.add_entry("    → В броню: %d | У HP: %d" % [armor_dmg, final_hp_dmg])
+		if is_earth_attacker:
+			battle_log.add_info("🪨 Земля×2: броня -%d | До HP: %d" % [actual_armor_reduction, final_hp_dmg])
+		else:
+			battle_log.add_info("  Броня поглинула %d | У HP: %d" % [armor_dmg, final_hp_dmg])
 
 	await apply_damage(
 		attacker,
@@ -147,31 +156,52 @@ func apply_damage(
 		return
 
 	# Бар'єр Сьомого: поглинає до 30 шкоди, атакуючий отримує 1 горіння, бар'єр зникає.
+	# Земляні варди: бар'єр поглинає вдвічі менше (пробивають щит).
 	if damage > 0 and skill_key != "P" and target.get_status("barrier") > 0:
+		var _src_is_earth: bool = false
+		if source != null and source.get("ward_id") and source.ward_id != "":
+			var _src_data := WardDatabase.get_data(source.ward_id)
+			_src_is_earth = _src_data.get("element", "") == "earth"
 		var absorbed: int = mini(damage, 30)
-		damage -= absorbed
+		var absorbed_reduction: int = absorbed / 2 if _src_is_earth else absorbed
+		damage -= absorbed_reduction
 		target.remove_status("barrier", target.get_status("barrier"))
 		target._update_status_visuals()
 		if source != null and is_instance_valid(source) and not source.is_dead:
 			source.add_status("burning", 1)
 			source._update_status_visuals()
 		if battle_log:
-			battle_log.add_entry("Бар'єр: поглинуто %d → В щит: %d | До HP: %d | %s +1 горіння" % [absorbed, absorbed, damage, source.name if source else "?"])
+			var _barrier_log: String
+			if _src_is_earth:
+				_barrier_log = "🪨🔵 Земля пробиває бар'єр: поглинуто %d (×½) | До HP: %d" % [absorbed_reduction, damage]
+			else:
+				_barrier_log = "🔵 Бар'єр: поглинуто %d | До HP: %d" % [absorbed, damage]
+			if source != null and is_instance_valid(source) and not source.is_dead:
+				_barrier_log += " | %s +1 горіння" % source.name
+			battle_log.add_info(_barrier_log, Color("#4878c0"))
 
 	# Кам'яна стіна Фізіти: поглинає весь удар поки жива.
+	# Земляні варди: стіна отримує подвійний урон (швидше руйнується).
 	if damage > 0 and skill_key != "P" and target.get_status("phisita_wall") > 0:
+		var _wall_is_earth: bool = false
+		if source != null and source.get("ward_id") and source.ward_id != "":
+			var _w_data := WardDatabase.get_data(source.ward_id)
+			_wall_is_earth = _w_data.get("element", "") == "earth"
 		var wall_hp: int = target.get_status("phisita_wall")
 		target.remove_status("phisita_wall", wall_hp)
-		var new_wall_hp: int = wall_hp - damage
+		var wall_damage: int = damage * 2 if _wall_is_earth else damage
+		var new_wall_hp: int = wall_hp - wall_damage
 		if new_wall_hp > 0:
 			target.add_status("phisita_wall", new_wall_hp)
 		target._update_status_visuals()
 		if battle_log:
-			var src: String = source.name if source != null else "?"
 			if new_wall_hp <= 0:
-				battle_log.add_entry("Стіна %s [%s → %s]: поглинула %d → стіна: %d→0 HP (зруйновано) | У варда: 0" % [target.name, src, skill_key, damage, wall_hp])
+				if _wall_is_earth:
+					battle_log.add_info("🪨×2 Земля руйнує стіну %s (%d×2=%d)!" % [target.name, damage, wall_damage], Color("#906030"))
+				else:
+					battle_log.add_info("🪨 Стіна %s поглинула %d — зруйновано!" % [target.name, damage], Color("#906030"))
 			else:
-				battle_log.add_entry("Стіна %s [%s → %s]: поглинула %d → стіна: %d→%d HP | У варда: 0" % [target.name, src, skill_key, damage, wall_hp, new_wall_hp])
+				battle_log.add_info("🪨 Стіна %s поглинула %d → лишилось %d HP" % [target.name, damage, new_wall_hp], Color("#906030"))
 		return
 
 	# Пасивка Рікера "На волосині": якщо удар смертельний — відміняє його, авто-використовує E, помирає.
@@ -182,7 +212,7 @@ func apply_damage(
 			if hp_damage >= target.current_hp:
 				target.set_meta("riker_passive_used", true)
 				if battle_log:
-					battle_log.add_entry("На волосині: " + target.name + " відміняє смертельний удар!")
+					battle_log.add_info("💀 На волосині: " + target.name + " відміняє смертельний удар!", Color("#d0a040"))
 					battle_log.add_effect(target.name, target.team, "На волосині")
 				skill_controller.activate("riker", "E", target)
 				if source != null and not source.is_dead:
@@ -258,7 +288,7 @@ func apply_damage(
 
 	var hp_after: int = target.current_hp
 
-	if battle_log:
+	if battle_log and source != null:
 		battle_log.add_attack(
 			source_name,
 			source_team,
@@ -274,7 +304,7 @@ func apply_damage(
 			base_damage,
 			mult
 		)
-	else:
+	elif battle_log == null:
 		print(source_name, " завдав ", damage, " шкоди ", target.name)
 
 	_check_zhnets_passive(target, hp_before, hp_after)
@@ -299,7 +329,7 @@ func _check_parasyt_passive(dead_ward) -> void:
 	var hp_before: int = parasyt_ward.current_hp
 	parasyt_ward.health.heal(75)
 	if battle_log:
-		battle_log.add_entry("Паразитування: %s поглинає силу загиблого!" % parasyt_ward.name)
+		battle_log.add_info("🦠 Паразитування: %s поглинає силу загиблого!" % parasyt_ward.name, Color("#a060d0"))
 		battle_log.add_heal(parasyt_ward.name, parasyt_ward.team, hp_before, parasyt_ward.current_hp, parasyt_ward.max_hp)
 
 func _check_fire_shield(attacker, target) -> void:
@@ -309,7 +339,7 @@ func _check_fire_shield(attacker, target) -> void:
 		target._update_status_visuals()
 		attacker.add_burning(2, 1)
 		if battle_log:
-			battle_log.add_entry("Вогняний щит відбиває атаку! " + attacker.name + " отримує 2 стаки Горіння.")
+			battle_log.add_info("🔥 Вогняний щит відбиває атаку! " + attacker.name + " отримує 2 стаки Горіння.", Color("#c86030"))
 			battle_log.add_effect(attacker.name, attacker.team, "Горіння (2 стаки)")
 
 func _check_fire_circle(attacker, target) -> void:
@@ -318,7 +348,7 @@ func _check_fire_circle(attacker, target) -> void:
 	if target.get_status("fire_circle") > 0:
 		attacker.add_burning(2, 1)
 		if battle_log:
-			battle_log.add_entry("Коло пекельного вогню! " + attacker.name + " отримує 2 стаки горіння.")
+			battle_log.add_info("🔥 Коло пекельного вогню! " + attacker.name + " отримує 2 стаки горіння.", Color("#c86030"))
 			battle_log.add_effect(attacker.name, attacker.team, "Горіння (2 стаки від кола)")
 
 func _check_zhnets_passive(target, hp_before: int, hp_after: int) -> void:
@@ -344,7 +374,7 @@ func _check_zhnets_passive(target, hp_before: int, hp_after: int) -> void:
 		if battle_log:
 			battle_log.add_effect(alive[i].name, alive[i].team, "Горіння +1 стак (Присутність)")
 	if battle_log:
-		battle_log.add_entry("Присутність (%s): %s впав нижче 50%% — %d ворог(и) підпалено!" % [zhnets_ward.name, target.name, cnt])
+		battle_log.add_info("🔥 Присутність (%s): %s впав нижче 50%% — %d ворог(и) підпалено!" % [zhnets_ward.name, target.name, cnt], Color("#c86030"))
 
 func _check_adoneia(target, source, hp_before: int, hp_after: int, damage: int, skill_key: String, source_name: String) -> void:
 	if target == null or target.ward_id != "adoneia": return
@@ -359,7 +389,7 @@ func _check_adoneia(target, source, hp_before: int, hp_after: int, damage: int, 
 		target.add_status("counterattack", _ca_new_p)
 		target._update_status_visuals()
 		if battle_log:
-			battle_log.add_entry("Відповідь (пасивка): %s пробита нижче 50%% HP — Контратака на %d хід(и)!" % [target.name, _ca_new_p])
+			battle_log.add_info("Відповідь (пасивка): %s нижче 50%% HP — Контратака %d хід(и)!" % [target.name, _ca_new_p])
 			battle_log.add_effect(target.name, target.team, "Контратака %d хід(и) (пасивка)" % _ca_new_p)
 
 	# Контратака: використовує Q скіл варда проти атакуючого
@@ -373,7 +403,7 @@ func _check_adoneia(target, source, hp_before: int, hp_after: int, damage: int, 
 	source.set_meta("countered_this_turn", true)  # запобігає контр-контратаці
 	var ca_turns_left: int = target.get_status("counterattack")
 	if battle_log:
-		battle_log.add_entry("Контратака! %s використовує Q проти %s! (залишилось %d ход(и))" % [target.name, source_name, ca_turns_left])
+		battle_log.add_info("⚡ Контратака! %s → Q проти %s! (ще %d хід(и))" % [target.name, source_name, ca_turns_left], Color("#d0a040"))
 		battle_log.add_effect(target.name, target.team, "Контратака Q (%d ход(и))" % ca_turns_left)
 	await SkillExecutor.execute_skill(self, target, source, "Q")
 
@@ -449,7 +479,7 @@ func _check_asteyah_memory(attacker, skill_key: String) -> void:
 				_mem_dict["riker_last_skill"] = attacker.get_meta("riker_w_last_variant", "")
 			w.set_meta("asteyah_memory", _mem_dict)
 			if battle_log:
-				battle_log.add_entry("Пам'ять (%s): запам'ятала [%s → %s]!" % [w.name, attacker.name, skill_key])
+				battle_log.add_info("🧠 Пам'ять: %s запам'ятала [%s → %s]!" % [w.name, attacker.name, skill_key])
 			# Оновлюємо іконку кнопки E на картці варда на полі
 			var mem_icon_path: String = WardDatabase.get_data(attacker.ward_id).get("skills", {}).get(skill_key, {}).get("icon", "")
 			if mem_icon_path != "" and ResourceLoader.exists(mem_icon_path):
