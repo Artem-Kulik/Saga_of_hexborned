@@ -67,7 +67,7 @@ static func play(skill_id: String, attacker, target, on_hit: Callable) -> void:
 		# "liah_e": await AnimationCode.anim_liah_e(attacker, target, on_hit)
 
 		# ── RIKER (Рікер) ─────────────────────────────────────────────────────
-		# "riker_q": await AnimationCode.anim_riker_q(attacker, target, on_hit)
+		"riker_q": await AnimationCode.anim_riker_q(attacker, target, on_hit)
 		# "riker_w": await AnimationCode.anim_riker_w(attacker, target, on_hit)
 		# "riker_e": await AnimationCode.anim_riker_e(attacker, target, on_hit)
 

@@ -1,62 +1,46 @@
 [gd_scene format=3 uid="uid://bjy5bcio3k8bx"]
 
 [ext_resource type="Script" uid="uid://dm72xtsujdob2" path="res://Основа/char/water/Liah/liah_w/liah_w.gd" id="1_1ftla"]
-[ext_resource type="Texture2D" uid="uid://ctywdiius6x0f" path="res://Основа/char/water/Liah/liah_w/liah_w_10003.png" id="1_jpdt5"]
-[ext_resource type="Texture2D" uid="uid://eliv8evwd2lr" path="res://Основа/char/water/Liah/liah_w/liah_w_10004.png" id="2_1ftla"]
-[ext_resource type="Texture2D" uid="uid://chxfu1ohtkt4a" path="res://Основа/char/water/Liah/liah_w/liah_w_10005.png" id="3_wcpup"]
-[ext_resource type="Texture2D" uid="uid://xbcv5xni2p0l" path="res://Основа/char/water/Liah/liah_w/liah_w_10006.png" id="4_r3n5q"]
-[ext_resource type="Texture2D" uid="uid://qttjcgfr7why" path="res://Основа/char/water/Liah/liah_w/liah_w_10007.png" id="5_7ogsc"]
-[ext_resource type="Texture2D" uid="uid://dnqv806epfjgc" path="res://Основа/char/water/Liah/liah_w/liah_w_10008.png" id="6_wnerh"]
-[ext_resource type="Texture2D" uid="uid://cmyc8ckjjfxox" path="res://Основа/char/water/Liah/liah_w/liah_w_10009.png" id="7_srfql"]
-[ext_resource type="Texture2D" uid="uid://dfnbtl81bv66d" path="res://Основа/char/water/Liah/liah_w/liah_w_10010.png" id="8_vp3fv"]
-[ext_resource type="Texture2D" uid="uid://b02nbg8n3nqw3" path="res://Основа/char/water/Liah/liah_w/liah_w_10011.png" id="9_1c60e"]
-[ext_resource type="Texture2D" uid="uid://gvtwa4ar1cxj" path="res://Основа/char/water/Liah/liah_w/liah_w_10012.png" id="10_64mb4"]
-[ext_resource type="Texture2D" uid="uid://bitl6njevw1su" path="res://Основа/char/water/Liah/liah_w/liah_w_10013.png" id="11_qrual"]
-[ext_resource type="Texture2D" uid="uid://4ccunfkh2agk" path="res://Основа/char/water/Liah/liah_w/liah_w_10014.png" id="12_wuyog"]
-[ext_resource type="Texture2D" uid="uid://g3g02s7o6lia" path="res://Основа/char/water/Liah/liah_w/liah_w_10015.png" id="13_kdy8s"]
+[ext_resource type="Texture2D" uid="uid://5r6x8vlchwqg" path="res://Основа/char/water/Liah/liah_w/0.png" id="2_whit1"]
+[ext_resource type="Texture2D" uid="uid://c6nb8kqg6hnfk" path="res://Основа/char/water/Liah/liah_w/1.png" id="3_1a6iq"]
+[ext_resource type="Texture2D" uid="uid://444srkpwgvi1" path="res://Основа/char/water/Liah/liah_w/2.png" id="4_jpdt5"]
+[ext_resource type="Texture2D" uid="uid://dexyp335nfq20" path="res://Основа/char/water/Liah/liah_w/3.png" id="5_1ftla"]
+[ext_resource type="Texture2D" uid="uid://bhu305gpawys6" path="res://Основа/char/water/Liah/liah_w/4.png" id="6_wcpup"]
+[ext_resource type="Texture2D" uid="uid://lhfh5pee4sp2" path="res://Основа/char/water/Liah/liah_w/5.png" id="7_r3n5q"]
+[ext_resource type="Texture2D" uid="uid://1w1uvnuxpk0p" path="res://Основа/char/water/Liah/liah_w/6.png" id="8_7ogsc"]
+[ext_resource type="Texture2D" uid="uid://bjs8ajuftrfnn" path="res://Основа/char/water/Liah/liah_w/7.png" id="9_wnerh"]
+[ext_resource type="Texture2D" uid="uid://dt2pct1cpm3nk" path="res://Основа/char/water/Liah/liah_w/8.png" id="10_srfql"]
 [ext_resource type="Texture2D" uid="uid://bux1f2ufx0a7j" path="res://Основа/animation/particles/drop.png" id="15_wcpup"]
 
-[sub_resource type="SpriteFrames" id="SpriteFrames_buraj"]
+[sub_resource type="SpriteFrames" id="SpriteFrames_vp3fv"]
 animations = [{
 "frames": [{
 "duration": 1.0,
-"texture": ExtResource("1_jpdt5")
+"texture": ExtResource("2_whit1")
 }, {
 "duration": 1.0,
-"texture": ExtResource("2_1ftla")
+"texture": ExtResource("3_1a6iq")
 }, {
 "duration": 1.0,
-"texture": ExtResource("3_wcpup")
+"texture": ExtResource("4_jpdt5")
 }, {
 "duration": 1.0,
-"texture": ExtResource("4_r3n5q")
+"texture": ExtResource("5_1ftla")
 }, {
 "duration": 1.0,
-"texture": ExtResource("5_7ogsc")
+"texture": ExtResource("6_wcpup")
 }, {
 "duration": 1.0,
-"texture": ExtResource("6_wnerh")
+"texture": ExtResource("7_r3n5q")
 }, {
 "duration": 1.0,
-"texture": ExtResource("7_srfql")
+"texture": ExtResource("8_7ogsc")
 }, {
 "duration": 1.0,
-"texture": ExtResource("8_vp3fv")
+"texture": ExtResource("9_wnerh")
 }, {
 "duration": 1.0,
-"texture": ExtResource("9_1c60e")
-}, {
-"duration": 1.0,
-"texture": ExtResource("10_64mb4")
-}, {
-"duration": 1.0,
-"texture": ExtResource("11_qrual")
-}, {
-"duration": 1.0,
-"texture": ExtResource("12_wuyog")
-}, {
-"duration": 1.0,
-"texture": ExtResource("13_kdy8s")
+"texture": ExtResource("10_srfql")
 }],
 "loop": true,
 "name": &"default",
@@ -88,11 +72,11 @@ color_ramp = SubResource("GradientTexture1D_r3n5q")
 script = ExtResource("1_1ftla")
 
 [node name="liah_w" type="AnimatedSprite2D" parent="." unique_id=951074003]
-position = Vector2(7.6293945e-06, 0)
-scale = Vector2(7, 4.711)
-sprite_frames = SubResource("SpriteFrames_buraj")
-frame_progress = 0.4346897
-speed_scale = 4.0
+scale = Vector2(11.374999, 21.226126)
+sprite_frames = SubResource("SpriteFrames_vp3fv")
+frame = 4
+frame_progress = 0.81315064
+speed_scale = 2.5
 
 [node name="3" type="GPUParticles2D" parent="." unique_id=955783567]
 amount = 362
