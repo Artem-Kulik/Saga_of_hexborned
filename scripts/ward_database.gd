@@ -160,6 +160,7 @@ var WARDS: Dictionary = {
 	},
 	"shusima": {
 		"name": "Шусіма",
+		"hp": 350,
 		"element": "earth",
 		"portrait": "res://Основа/char/earth/ShuSima/ShuSima.png",
 		"short_desc_file": "res://Основа/char/earth/ShuSima/skills_short.txt",

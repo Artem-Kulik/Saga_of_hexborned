@@ -465,7 +465,7 @@ func _start_turn() -> void:
 	# === ПАСИВКА ШУСІМИ: Розсипання — 90 фіз шкоди собі ===
 	if current_ward.ward_id == "shusima" and not current_ward.is_dead:
 		battle_log.add_entry("Розсипання: %s розсипається — 90 фіз шкоди собі!" % current_ward.name)
-		await battle_resolver.deal_damage_with_modifiers(null, current_ward, 90, "P", "phys")
+		await battle_resolver.deal_damage_with_modifiers(current_ward, current_ward, 90, "P", "phys")
 		if current_ward.is_dead:
 			_next_turn()
 			return
