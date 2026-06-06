@@ -15,10 +15,14 @@
 [ext_resource type="Texture2D" uid="uid://d0iptobleuyp2" path="res://Основа/char/air/Hiskoris/p.png" id="13_uux2m"]
 [ext_resource type="Texture2D" uid="uid://rhcxbwt2rvjq" path="res://Основа/char/earth/Parazyte/w.png" id="14_iboq1"]
 [ext_resource type="Texture2D" uid="uid://dxtcnl1qqc748" path="res://Основа/char/earth/Adoneya/e.png" id="15_yxmqu"]
-[ext_resource type="Texture2D" uid="uid://bk9mrnf2xvqe6" path="res://Основа/char/fire/Prayer/w.png" id="16_prbr"]
 [ext_resource type="Texture2D" uid="uid://c5xm6hf5dft8w" path="res://Основа/visual/status/counter_attack.png" id="16_78eam"]
+[ext_resource type="Texture2D" uid="uid://ckvumcxn76cm7" path="res://Основа/char/fire/Prayer/w.png" id="16_prbr"]
 [ext_resource type="Texture2D" uid="uid://dur1as0qpe11o" path="res://Основа/char/earth/Phisita/w.png" id="17_ahk5n"]
 [ext_resource type="Texture2D" uid="uid://qhf18gv04ui3" path="res://Основа/char/earth/Phisita/e.png" id="18_uux2m"]
+[ext_resource type="Texture2D" uid="uid://bc1fs3p1k27ip" path="res://Основа/char/NPC/infected radiance/stage_3/e.png" id="20_siysk"]
+[ext_resource type="Texture2D" uid="uid://dqwjm08q1h8pc" path="res://Основа/char/NPC/infected radiance/stage_1/w.png" id="21_5fmjl"]
+[ext_resource type="Texture2D" uid="uid://i2ljdbws4loc" path="res://Основа/char/water/Velodiy/w.png" id="22_xg5r5"]
+[ext_resource type="Texture2D" uid="uid://bkjuu4225ng66" path="res://Основа/char/water/Velodiy/e.png" id="23_g1dnq"]
 
 [node name="status_types" type="Control" unique_id=1469794512]
 layout_mode = 3
@@ -539,6 +543,122 @@ expand_mode = 3
 stretch_mode = 5
 
 [node name="frame" type="TextureRect" parent="phisita_e/e" unique_id=341685502]
+custom_minimum_size = Vector2(46.965, 47.64)
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("2_a7r01")
+expand_mode = 3
+stretch_mode = 5
+
+[node name="radiance_curse" type="Control" parent="." unique_id=1535334030]
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="curse" type="TextureRect" parent="radiance_curse" unique_id=1031746947]
+custom_minimum_size = Vector2(58, 38)
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("20_siysk")
+expand_mode = 3
+stretch_mode = 5
+
+[node name="frame" type="TextureRect" parent="radiance_curse/curse" unique_id=2103637096]
+custom_minimum_size = Vector2(46.965, 47.64)
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("2_a7r01")
+expand_mode = 3
+stretch_mode = 5
+
+[node name="stage_1_curse" type="Control" parent="." unique_id=520302632]
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="curse" type="TextureRect" parent="stage_1_curse" unique_id=1780711403]
+custom_minimum_size = Vector2(58, 38)
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("21_5fmjl")
+expand_mode = 3
+stretch_mode = 5
+
+[node name="frame" type="TextureRect" parent="stage_1_curse/curse" unique_id=1981350301]
+custom_minimum_size = Vector2(46.965, 47.64)
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("2_a7r01")
+expand_mode = 3
+stretch_mode = 5
+
+[node name="velodiy_w" type="Control" parent="." unique_id=1901990352]
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="w" type="TextureRect" parent="velodiy_w" unique_id=416466879]
+custom_minimum_size = Vector2(58, 38)
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("22_xg5r5")
+expand_mode = 3
+stretch_mode = 5
+
+[node name="frame" type="TextureRect" parent="velodiy_w/w" unique_id=241501316]
+custom_minimum_size = Vector2(46.965, 47.64)
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("2_a7r01")
+expand_mode = 3
+stretch_mode = 5
+
+[node name="velodiy_e" type="Control" parent="." unique_id=1408524295]
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="e" type="TextureRect" parent="velodiy_e" unique_id=2100724078]
+custom_minimum_size = Vector2(58, 38)
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("23_g1dnq")
+expand_mode = 3
+stretch_mode = 5
+
+[node name="frame" type="TextureRect" parent="velodiy_e/e" unique_id=1254626236]
 custom_minimum_size = Vector2(46.965, 47.64)
 layout_mode = 1
 anchors_preset = 15
