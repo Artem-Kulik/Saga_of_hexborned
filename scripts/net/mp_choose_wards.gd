@@ -317,14 +317,12 @@ func _refresh_confirm_button() -> void:
 
 func _on_confirm_pressed() -> void:
 	GameState.ally_ward_ids = selected_ids.duplicate()
-	# Скидаємо флаги для повторної гри
-	NetworkManager._my_wards_sent = false
-	NetworkManager._opp_wards_got = false
-	NetworkManager.opponent_ward_ids.clear()
-	NetworkManager.send_my_wards(selected_ids)
 	_confirm_button.disabled = true
 	_confirm_button.text = "⏳ Очікуємо суперника..."
-	NetworkManager.opponent_wards_ready.connect(_on_opponent_ready, CONNECT_ONE_SHOT)
+	# Підключаємо ПЕРЕД send_my_wards — якщо обидва вже надіслали, emit відбудеться одразу
+	if not NetworkManager.opponent_wards_ready.is_connected(_on_opponent_ready):
+		NetworkManager.opponent_wards_ready.connect(_on_opponent_ready, CONNECT_ONE_SHOT)
+	NetworkManager.send_my_wards(selected_ids)
 
 func _on_opponent_ready() -> void:
 	get_tree().change_scene_to_file("res://scripts/net/mp_battle_scene.tscn")
