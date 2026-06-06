@@ -211,6 +211,31 @@ var WARDS: Dictionary = {
 			"E": { "id": "shopey_e", "damage_type": "phys",    "name": "Наскок",          "cd": 3, "icon": "res://Основа/char/air/Shopey/shopey_e.png", "desc": "", "desc_full": "" },
 		}
 	},
+
+	# ===== СТИХІЯ СЯЙВО — сюжетні боти, гравець НЕ обирає =====
+	# Щоб додати нового Варда Сяйва, скопіюй шаблон нижче і заповни:
+	#
+	# "ward_id": {
+	#     "name": "Назва",
+	#     "element": "light",          # ОБОВ'ЯЗКОВО "light"
+	#     "enemy_only": true,          # ОБОВ'ЯЗКОВО — не показується у виборі
+	#     "hp": 300,                   # якщо відрізняється від 200
+	#     "portrait": "res://...",
+	#     "short_desc_file": "res://...",
+	#     "full_desc_file": "res://...",
+	#     "skills": {
+	#         "P": { "id": "ward_p", "damage_type": "passive", "name": "...", "cd": 0, "icon": "res://...", "desc": "", "desc_full": "" },
+	#         "Q": { "id": "ward_q", "damage_type": "light",   "name": "...", "cd": 0, "icon": "res://...", "desc": "", "desc_full": "" },
+	#         "W": { "id": "ward_w", "damage_type": "light",   "name": "...", "cd": 2, "icon": "res://...", "desc": "", "desc_full": "" },
+	#         "E": { "id": "ward_e", "damage_type": "light",   "name": "...", "cd": 3, "icon": "res://...", "desc": "", "desc_full": "" },
+	#     }
+	# },
+	#
+	# Модифікатори вже в ELEMENT_MULTIPLIERS (battle_resolver.gd):
+	#   — Сяйво (light) по вогню/воді/повітрю/землі → ×2.0
+	#   — Вогонь/вода/повітря по Сяйву → ×2.0
+	#   — Фіз по Сяйву → ×1.0 (немає модифікатора, бо phys виключений)
+	#   — Сяйво по Сяйву → ×4.0
 }
 
 
@@ -248,7 +273,7 @@ func get_data(id: String) -> Dictionary:
 func get_by_element(element: String) -> Array:
 	var result: Array = []
 	for id in WARDS:
-		if WARDS[id]["element"] == element and not WARDS[id].get("hidden", false):
+		if WARDS[id]["element"] == element and not _is_player_hidden(id):
 			result.append(id)
 	return result
 
@@ -256,6 +281,22 @@ func get_by_element(element: String) -> Array:
 func get_all_ids() -> Array:
 	var result: Array = []
 	for id in WARDS:
-		if not WARDS[id].get("hidden", false):
+		if not _is_player_hidden(id):
+			result.append(id)
+	return result
+
+
+# Варди з "enemy_only": true — сюжетні боти, гравець не може обрати.
+# Варди з "hidden": true   — тимчасово приховані, повернуться пізніше.
+func _is_player_hidden(id: String) -> bool:
+	return WARDS[id].get("hidden", false) or WARDS[id].get("enemy_only", false)
+
+
+# Повертає всіх вардів стихії "light" для сюжетних битв.
+# Використовувати у battle_scene для наповнення enemy_wards ботами-суперниками.
+func get_light_wards() -> Array:
+	var result: Array = []
+	for id in WARDS:
+		if WARDS[id].get("element", "") == "light":
 			result.append(id)
 	return result

@@ -438,7 +438,16 @@ func _start_turn() -> void:
 		current_ward.remove_status("stun", 1)
 		if current_ward.has_method("tick_cooldowns"):
 			current_ward.tick_cooldowns()
-		_start_turn()  # Та ж команда — наступний Вард, без switch_team()
+		# Якщо більше немає живих вардів на цій команді — передаємо хід суперникам
+		var stunned_team_wards: Array = ally_wards if turn_manager.current_team == "ally" else enemy_wards
+		var has_other_alive: bool = false
+		for w in stunned_team_wards:
+			if w != current_ward and not w.is_dead:
+				has_other_alive = true
+				break
+		if not has_other_alive:
+			turn_manager.switch_team()
+		_start_turn()
 		return
 
 	battle_log.add_empty_line()
