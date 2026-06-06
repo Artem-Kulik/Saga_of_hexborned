@@ -23,6 +23,20 @@ func attack(attacker, target, skill_key: String = "Q") -> void:
 	if attacker == null:
 		return
 
+	# === Пасивка Велодія: Захисний рефлекс — 35% відмінити ворожий скіл ===
+	if skill_key in ["Q", "W", "E"]:
+		var defender_side: Array = battle_scene.ally_wards if attacker.team == "enemy" else battle_scene.enemy_wards
+		for w in defender_side:
+			if w.ward_id == "velodiy" and not w.is_dead:
+				var p_cd: int = w.get_meta("velodiy_p_cd", 0)
+				if p_cd <= 0 and randf() < 0.35:
+					w.set_meta("velodiy_p_cd", 2)
+					if battle_log:
+						battle_log.add_entry("Захисний рефлекс! %s відміняє [%s → %s]! (КД 2 ходи)" % [w.name, attacker.name, skill_key])
+						battle_log.add_effect(w.name, w.team, "Захисний рефлекс!")
+					return
+				break
+
 	skill_controller.activate(attacker.ward_id, skill_key, attacker)
 
 	var pressed_button = null
@@ -61,6 +75,7 @@ func attack(attacker, target, skill_key: String = "Q") -> void:
 	await SkillExecutor.execute_skill(self, attacker, effective_target, skill_key)
 
 	skill_controller.clear()
+	_check_asteyah_memory(attacker, skill_key)
 
 
 func deal_damage_with_modifiers(attacker, target, base_damage: int, skill_key: String, forced_damage_type: String = "", is_aoe: bool = false) -> void:
@@ -94,6 +109,13 @@ func deal_damage_with_modifiers(attacker, target, base_damage: int, skill_key: S
 	var hp_dmg = base_damage - armor_dmg
 	var final_hp_dmg = int(hp_dmg * mult)
 	final_damage = armor_dmg + final_hp_dmg
+
+	# === Фаланга Велодія: вхідна шкода +50% ===
+	if target != null and target.get_status("phalanx") > 0:
+		var before_phalanx: int = final_damage
+		final_damage = int(final_damage * 1.5)
+		if battle_log:
+			battle_log.add_entry("Фаланга: %s бере +50%% (%d → %d)!" % [target.name, before_phalanx, final_damage])
 
 	if armor_dmg > 0 and battle_log:
 		battle_log.add_entry("    → В броню: %d | У HP: %d" % [armor_dmg, final_hp_dmg])
@@ -340,7 +362,7 @@ func _check_adoneia(target, source, hp_before: int, hp_after: int, damage: int, 
 			battle_log.add_entry("Відповідь (пасивка): %s пробита нижче 50%% HP — Контратака на %d хід(и)!" % [target.name, _ca_new_p])
 			battle_log.add_effect(target.name, target.team, "Контратака %d хід(и) (пасивка)" % _ca_new_p)
 
-	# Контратака: спрацьовує раз за хід ворога — НЕ знімається при спрацюванні (тікає по ходах)
+	# Контратака: використовує Q скіл варда проти атакуючого
 	if skill_key == "Q_counter": return
 	if damage <= 0: return
 	if target.get_status("counterattack") <= 0: return
@@ -348,14 +370,12 @@ func _check_adoneia(target, source, hp_before: int, hp_after: int, damage: int, 
 	if source == null or not is_instance_valid(source) or source.is_dead: return
 
 	target.set_meta("countered_this_turn", true)
-	# Не знімаємо стаки — контратака діє до кінця своєї тривалості
+	source.set_meta("countered_this_turn", true)  # запобігає контр-контратаці
 	var ca_turns_left: int = target.get_status("counterattack")
 	if battle_log:
-		battle_log.add_entry("Контратака! %s відповідає — двічі б'є %s по 30! (залишилось %d ход(и))" % [target.name, source_name, ca_turns_left])
-		battle_log.add_effect(target.name, target.team, "Контратака спрацювала (%d ход(и) лишилось)" % ca_turns_left)
-	await deal_damage_with_modifiers(target, source, 30, "Q_counter", "phys")
-	if source != null and is_instance_valid(source) and not source.is_dead:
-		await deal_damage_with_modifiers(target, source, 30, "Q_counter", "phys")
+		battle_log.add_entry("Контратака! %s використовує Q проти %s! (залишилось %d ход(и))" % [target.name, source_name, ca_turns_left])
+		battle_log.add_effect(target.name, target.team, "Контратака Q (%d ход(и))" % ca_turns_left)
+	await SkillExecutor.execute_skill(self, target, source, "Q")
 
 
 func calc_damage_only(attacker, target, base_damage: int, skill_key: String, forced_damage_type: String = "") -> Dictionary:
@@ -413,3 +433,27 @@ func kill_team(wards: Array) -> void:
 				"-",
 				"surrender"
 			)
+
+
+# Пасивка Астеї: запам'ятовує Q/W/E ворога після кожного його ходу.
+# Іконка E на карті варда змінюється на іконку запам'ятаного скіла.
+# Ліва панель опису — завжди з ward_database, не змінюється.
+func _check_asteyah_memory(attacker, skill_key: String) -> void:
+	if attacker == null: return
+	if skill_key not in ["Q", "W", "E"]: return
+	var watcher_side: Array = battle_scene.ally_wards if attacker.team == "enemy" else battle_scene.enemy_wards
+	for w in watcher_side:
+		if w.ward_id == "asteyah" and not w.is_dead:
+			var _mem_dict: Dictionary = {"ward_id": attacker.ward_id, "skill_key": skill_key}
+			if attacker.ward_id == "riker" and skill_key == "W":
+				_mem_dict["riker_last_skill"] = attacker.get_meta("riker_w_last_variant", "")
+			w.set_meta("asteyah_memory", _mem_dict)
+			if battle_log:
+				battle_log.add_entry("Пам'ять (%s): запам'ятала [%s → %s]!" % [w.name, attacker.name, skill_key])
+			# Оновлюємо іконку кнопки E на картці варда на полі
+			var mem_icon_path: String = WardDatabase.get_data(attacker.ward_id).get("skills", {}).get(skill_key, {}).get("icon", "")
+			if mem_icon_path != "" and ResourceLoader.exists(mem_icon_path):
+				var e_icon := w.skill_e.get_node_or_null("Icon") as TextureRect
+				if e_icon:
+					e_icon.texture = load(mem_icon_path)
+			break

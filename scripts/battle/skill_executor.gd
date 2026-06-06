@@ -51,6 +51,16 @@ static func get_skill_target_type(ward_id: String, skill_key: String, attacker =
 		"shusima":
 			if skill_key == "W": return "self"
 			if skill_key == "E": return "self"
+		"asteyah":
+			if skill_key == "W": return "self"
+			if skill_key == "E":
+				if attacker != null and attacker.has_meta("asteyah_memory"):
+					var mem: Dictionary = attacker.get_meta("asteyah_memory")
+					return get_skill_target_type(mem.get("ward_id", ""), mem.get("skill_key", "Q"), attacker)
+				return "single_enemy"
+		"velodiy":
+			if skill_key == "W": return "self"
+			if skill_key == "E": return "self"
 
 	return "single_enemy"
 
@@ -89,6 +99,10 @@ static func execute_skill(resolver, attacker, target, skill_key: String) -> void
 			await _execute_fizita(resolver, attacker, target, skill_key)
 		"shusima":
 			await _execute_shusima(resolver, attacker, target, skill_key)
+		"asteyah":
+			await _execute_asteyah(resolver, attacker, target, skill_key)
+		"velodiy":
+			await _execute_velodiy(resolver, attacker, target, skill_key)
 		_:
 			# Стандартна атака для всіх інших поки що
 			await _execute_basic_attack(resolver, attacker, target, skill_key, base_damage)
@@ -159,6 +173,7 @@ static func _execute_liah(resolver, attacker, target, skill_key: String, _base_d
 
 		"E":
 			# Загороджуючий водопад: Стає невибираною як ціль до свого наступного ходу.
+			target = attacker  # E завжди на себе
 			resolver.battle_log.add_entry("Лія активує Загороджуючий водопад!")
 			attacker.set_meta("untargetable", true)
 			attacker.modulate.a = 0.5 # Трішки прозора
@@ -406,6 +421,7 @@ static func _execute_riker(resolver, attacker, target, skill_key: String) -> voi
 			else:
 				if resolver.battle_log:
 					resolver.battle_log.add_entry("Стиль Доломедес: потрібно спочатку використати Q або E!")
+			attacker.set_meta("riker_w_last_variant", last)
 			attacker.set_meta("riker_last_skill", "W")
 
 		"E":
@@ -1023,3 +1039,123 @@ static func _execute_shusima(resolver, attacker, target, skill_key: String) -> v
 			if resolver.battle_log:
 				resolver.battle_log.add_entry("Розпад: %s концентрує %d HP → завдає %d фіз шкоди %s!" % [attacker.name, e_dmg, e_dmg, e_target.name])
 			await resolver.deal_damage_with_modifiers(attacker, e_target, e_dmg, skill_key, "phys")
+
+
+# =============================================================================
+# ASTEYAH (Астея)
+# =============================================================================
+# P — Пам'ять: запам'ятовує останній Q/W/E ворога → записується в meta
+#     (реалізовано в battle_resolver._check_asteyah_memory).
+# Q — Кенсел: 35 вода + рандомний скіл цілі +1 КД.
+# W — Таємні знання (CD 6): +2 реген (100 HP/хід). Ходить ще раз (battle_scene).
+# E — Пам'ять: виконує запам'ятаний скіл ворога з Астеєю як атакером.
+
+static func _execute_asteyah(resolver, attacker, target, skill_key: String) -> void:
+	match skill_key:
+		"Q":
+			if target == null: return
+			await resolver.deal_damage_with_modifiers(attacker, target, 35, skill_key, "water")
+			if target.is_dead: return
+			var cd_skills: Array = ["Q", "W", "E"]
+			var chosen_cd: String = cd_skills[randi() % cd_skills.size()]
+			var old_cd: int = target._current_cd.get(chosen_cd, 0)
+			var new_cd: int = old_cd + 1
+			target._current_cd[chosen_cd] = new_cd
+			target._sync_cd_buttons()
+			if resolver.battle_log:
+				resolver.battle_log.add_entry("Кенсел: %s відправляє скіл %s [%s] на перезарядку — КД: %d хід(и)!" % [
+					attacker.name, chosen_cd, target.name, new_cd
+				])
+				resolver.battle_log.add_effect(target.name, target.team, "КД %s → %d (Кенсел)" % [chosen_cd, new_cd])
+
+		"W":
+			var prev_regen: int = attacker.get_meta("regen_amount", 0) if attacker.has_meta("regen_amount") else 0
+			attacker.add_status("regen", 2)
+			attacker.set_meta("regen_amount", max(prev_regen, 60))
+			attacker._update_status_visuals()
+			if resolver.battle_log:
+				resolver.battle_log.add_entry("Таємні знання: %s накладає на себе регенерацію 60 HP/хід на 2 ходи." % attacker.name)
+				resolver.battle_log.add_effect(attacker.name, attacker.team, "Реген 60 HP (2 ходи)")
+				resolver.battle_log.add_entry("Таємні знання: %s ходить ще раз!" % attacker.name)
+
+		"E":
+			if not attacker.has_meta("asteyah_memory"):
+				if resolver.battle_log:
+					resolver.battle_log.add_entry("Пам'ять: %s ще нічого не запам'ятала!" % attacker.name)
+				return
+			var mem: Dictionary = attacker.get_meta("asteyah_memory")
+			var mem_ward_id: String = mem.get("ward_id", "")
+			var mem_skill: String  = mem.get("skill_key", "Q")
+			if resolver.battle_log:
+				resolver.battle_log.add_entry("Пам'ять: %s відтворює [%s → %s]!" % [attacker.name, mem_ward_id, mem_skill])
+			var _temp_riker_meta: bool = false
+			if mem_ward_id == "riker" and mem_skill == "W":
+				attacker.set_meta("riker_last_skill", mem.get("riker_last_skill", ""))
+				_temp_riker_meta = true
+			await _asteyah_execute_memory(resolver, attacker, target, mem_ward_id, mem_skill)
+			if _temp_riker_meta and attacker.has_meta("riker_last_skill"):
+				attacker.remove_meta("riker_last_skill")
+
+
+static func _execute_velodiy(resolver, attacker, target, skill_key: String) -> void:
+	match skill_key:
+		"Q":
+			if target == null: return
+			await resolver.deal_damage_with_modifiers(attacker, target, 90, skill_key, "phys")
+			# Удар по сусідній цілі: 45 фіз
+			var target_side: Array = resolver.battle_scene.ally_wards if target.team == "ally" else resolver.battle_scene.enemy_wards
+			var target_pos: int = target_side.find(target)
+			var splash_target = null
+			if target_pos == 0 or target_pos == 2:
+				var center = target_side[1] if target_side.size() > 1 else null
+				if center != null and not center.is_dead and center != target:
+					splash_target = center
+			elif target_pos == 1:
+				var candidates: Array = []
+				if target_side.size() > 0 and not target_side[0].is_dead and target_side[0] != target:
+					candidates.append(target_side[0])
+				if target_side.size() > 2 and not target_side[2].is_dead and target_side[2] != target:
+					candidates.append(target_side[2])
+				if not candidates.is_empty():
+					splash_target = candidates.pick_random()
+			if splash_target != null:
+				if resolver.battle_log:
+					resolver.battle_log.add_entry("Вода камінь точить: бризки — 45 фіз по %s!" % splash_target.name)
+				await resolver.deal_damage_with_modifiers(attacker, splash_target, 45, "Q_splash", "phys", true)
+
+		"W":
+			attacker.add_status("counterattack", 2)
+			attacker.add_status("phalanx", 2)
+			attacker._update_status_visuals()
+			if resolver.battle_log:
+				resolver.battle_log.add_entry("Фаланга: %s приймає захисне положення — контратака 2 ходи, вхідна шкода +50%% на 2 ходи." % attacker.name)
+				resolver.battle_log.add_effect(attacker.name, attacker.team, "Контратака 2 | Фаланга 2")
+
+		"E":
+			resolver.battle_scene._activate_oath_of_rain(attacker)
+			if resolver.battle_log:
+				resolver.battle_log.add_entry("Клятва рицаря дощу Арная: %s викликає дощ на 4 раунди!" % attacker.name)
+				resolver.battle_log.add_effect(attacker.name, attacker.team, "Клятва дощу 4 раунди")
+
+
+static func _asteyah_execute_memory(resolver, attacker, target, ward_id: String, skill_key: String) -> void:
+	match ward_id:
+		"liah":     await _execute_liah(resolver, attacker, target, skill_key, 50)
+		"mais_oichi": await _execute_mais_oichi(resolver, attacker, target, skill_key, 50)
+		"shopey":   await _execute_shopey(resolver, attacker, target, skill_key, 50)
+		"grump":    await _execute_grump(resolver, attacker, target, skill_key, 50)
+		"riker":    await _execute_riker(resolver, attacker, target, skill_key)
+		"iskoris":  await _execute_iskoris(resolver, attacker, target, skill_key)
+		"etesena":  await _execute_etesena(resolver, attacker, target, skill_key)
+		"otsii":    await _execute_otsii(resolver, attacker, target, skill_key)
+		"siomyi":   await _execute_siomyi(resolver, attacker, target, skill_key)
+		"zhnets":   await _execute_zhnets(resolver, attacker, target, skill_key)
+		"parasyt":  await _execute_parasyt(resolver, attacker, target, skill_key)
+		"adoneia":  await _execute_adoneia(resolver, attacker, target, skill_key)
+		"fizita":   await _execute_fizita(resolver, attacker, target, skill_key)
+		"shusima":  await _execute_shusima(resolver, attacker, target, skill_key)
+		"asteyah":  await _execute_asteyah(resolver, attacker, target, skill_key)
+		"velodiy":  await _execute_velodiy(resolver, attacker, target, skill_key)
+		_:
+			if target != null:
+				await resolver.deal_damage_with_modifiers(attacker, target, 50, skill_key)

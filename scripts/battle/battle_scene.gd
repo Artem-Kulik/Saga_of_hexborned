@@ -72,6 +72,14 @@ var _etesena_w_targets: Array = []
 var _etesena_w_labels: Array = []
 var _etesena_w_required: int = 0
 
+# Клятва рицаря дощу Арная (E Велодія)
+var _oath_active: bool = false
+var _oath_carrier = null
+var _oath_caster_team: String = ""
+var _oath_rounds_left: int = 0
+var _oath_triggered_this_round: bool = false
+var _oath_skip_next_carrier_trigger: bool = false
+
 
 
 func _ready() -> void:
@@ -492,6 +500,16 @@ func _start_turn() -> void:
 			battle_log.add_entry("З пилу жару: %s отримує 2 стаки горіння!" % lucky.name)
 			battle_log.add_effect(lucky.name, lucky.team, "Горіння +2 стаки (пасивка Сьомого)")
 
+	# === ПАСИВКА АСТЕЇ: Пам'ять — показуємо що скопійовано в E ===
+	if current_ward.ward_id == "asteyah" and not current_ward.is_dead:
+		if current_ward.has_meta("asteyah_memory"):
+			var _mem: Dictionary = current_ward.get_meta("asteyah_memory")
+			battle_log.add_entry("Пам'ять (%s): в E скопійовано [%s] від %s." % [
+				current_ward.name, _mem.get("skill_key", "?"), _mem.get("ward_id", "?")
+			])
+		else:
+			battle_log.add_entry("Пам'ять (%s): E порожня — ще нічого не запам'ятано." % current_ward.name)
+
 	# === ВОГОНЬ СЬОМОГО: шкода всій команді ===
 	var fs_stacks: int = current_ward.get_status("fire_seventh")
 	if fs_stacks > 0:
@@ -530,6 +548,24 @@ func _start_turn() -> void:
 		else:
 			battle_log.add_entry("Контратака (%s): залишилось %d ход(и)." % [current_ward.name, current_ward.get_status("counterattack")])
 
+	# === ТІК ФАЛАНГИ ВЕЛОДІЯ ===
+	if current_ward.get_status("phalanx") > 0:
+		current_ward.remove_status("phalanx", 1)
+		current_ward._update_status_visuals()
+		if current_ward.get_status("phalanx") == 0:
+			battle_log.add_entry("Фаланга (%s): вичерпалась." % current_ward.name)
+		else:
+			battle_log.add_entry("Фаланга (%s): залишилось %d ход(и)." % [current_ward.name, current_ward.get_status("phalanx")])
+
+	# === ТІК ПАСИВКИ ВЕЛОДІЯ (Захисний рефлекс) ===
+	if current_ward.ward_id == "velodiy" and current_ward.has_meta("velodiy_p_cd"):
+		var _p_cd: int = current_ward.get_meta("velodiy_p_cd") - 1
+		if _p_cd <= 0:
+			current_ward.remove_meta("velodiy_p_cd")
+			battle_log.add_entry("Захисний рефлекс (%s): пасивка знову готова!" % current_ward.name)
+		else:
+			current_ward.set_meta("velodiy_p_cd", _p_cd)
+
 	# Тікаємо КД на початку кожного ходу персонажа
 	if current_ward.has_method("tick_cooldowns"):
 		current_ward.tick_cooldowns()
@@ -555,6 +591,46 @@ func _start_turn() -> void:
 		current_ward.remove_status("barrier", 1)
 		if current_ward.get_status("barrier") == 0:
 			battle_log.add_entry(current_ward.name + ": Бар'єр згас.")
+
+	# === КЛЯТВА РИЦАРЯ ДОЩУ АРНАЯ (E Велодія) ===
+	if _oath_active:
+		# Передача клятви якщо носій мертвий
+		if _oath_carrier != null and _oath_carrier.is_dead:
+			_transfer_oath_of_rain()
+
+		# Клятва спрацьовує ЛИШЕ на початку ходу носія
+		if _oath_active and current_ward == _oath_carrier and not current_ward.is_dead:
+			if _oath_skip_next_carrier_trigger:
+				_oath_skip_next_carrier_trigger = false
+				_oath_triggered_this_round = false
+			else:
+				_oath_triggered_this_round = false
+				# Хіл ВСІМ водяним союзникам одразу
+				var carrier_team_wards: Array = ally_wards if _oath_caster_team == "ally" else enemy_wards
+				for _w in carrier_team_wards:
+					if not _w.is_dead and WardDatabase.get_data(_w.ward_id).get("element", "") == "water":
+						var _ohp: int = _w.current_hp
+						_w.health.heal(75)
+						battle_log.add_heal(_w.name, _w.team, _ohp, _w.current_hp, _w.max_hp)
+						battle_log.add_entry("Клятва дощу: %s +75 HP." % _w.name)
+				# Броня лише Велодію (носієм може бути тільки він або його спадкоємець)
+				if current_ward.ward_id == "velodiy":
+					current_ward.health.add_armor(75)
+					current_ward._update_status_visuals()
+					battle_log.add_entry("Клятва дощу: %s +75 броні!" % current_ward.name)
+				_oath_rounds_left -= 1
+				_oath_triggered_this_round = true
+				# Оновлюємо значок (кількість раундів)
+				_oath_carrier.remove_status("velodiy_oath", _oath_carrier.get_status("velodiy_oath"))
+				if _oath_rounds_left > 0:
+					_oath_carrier.add_status("velodiy_oath", _oath_rounds_left)
+				_oath_carrier._update_status_visuals()
+				if _oath_rounds_left <= 0:
+					_oath_active = false
+					_oath_carrier = null
+					battle_log.add_entry("Клятва рицаря дощу Арная завершилась!")
+				else:
+					battle_log.add_entry("Клятва дощу: залишилось %d раунд(и)." % _oath_rounds_left)
 
 	# === ПАРАЗИТУВАННЯ: авто-атака союзника ===
 	if current_ward.get_status("parasitism") > 0:
@@ -723,6 +799,10 @@ func _on_skill_clicked(ward, skill_key: String) -> void:
 		# Адонея E: не закінчує хід — гравець обирає Q/W у формі Голема
 		if ward.ward_id == "adoneia" and skill_key == "E":
 			_adoneia_set_form(ward, true)
+			_turn_locked = false
+			return
+		# Астея W: не закінчує хід — гравець обирає Q або E ще раз
+		if ward.ward_id == "asteyah" and skill_key == "W":
 			_turn_locked = false
 			return
 		await _try_zhnets_harvest()
@@ -941,6 +1021,28 @@ func _enemy_attack(enemy_ward) -> void:
 	# Застосовуємо КД + логуємо для ворога
 	_apply_and_log_cd(enemy_ward, random_skill)
 	_clear_taunt_after_attack(enemy_ward)
+
+	# Астея W (ворог): не закінчує хід — бот одразу обирає Q або E
+	if enemy_ward.ward_id == "asteyah" and random_skill == "W" and not enemy_ward.is_dead:
+		var bonus_pool: Array = []
+		for sk in ["Q", "E"]:
+			if enemy_ward.is_skill_ready(sk):
+				bonus_pool.append(sk)
+		if bonus_pool.is_empty():
+			bonus_pool = ["Q"]
+		var bonus_sk: String = bonus_pool.pick_random()
+		var bonus_tt: String = SkillExecutor.get_skill_target_type(enemy_ward.ward_id, bonus_sk, enemy_ward)
+		var bonus_target = null
+		if bonus_tt == "single_enemy":
+			var valid_b: Array = battle_resolver.get_alive_wards(ally_wards).filter(
+				func(w): return not (w.has_meta("untargetable") and w.get_meta("untargetable"))
+			)
+			if valid_b.is_empty(): valid_b = battle_resolver.get_alive_wards(ally_wards)
+			if not valid_b.is_empty():
+				bonus_target = valid_b.pick_random()
+		await battle_resolver.attack(enemy_ward, bonus_target, bonus_sk)
+		_apply_and_log_cd(enemy_ward, bonus_sk)
+		_clear_taunt_after_attack(enemy_ward)
 
 	# Адонея E (ворог): не закінчує хід — бот одразу вибирає Q/W у формі Голема
 	if enemy_ward.ward_id == "adoneia" and random_skill == "E" and not enemy_ward.is_dead:
@@ -1189,6 +1291,43 @@ func _etesena_w_clear_labels() -> void:
 		if is_instance_valid(label):
 			label.queue_free()
 	_etesena_w_labels.clear()
+
+
+func _activate_oath_of_rain(caster) -> void:
+	_oath_active = true
+	_oath_carrier = caster
+	_oath_caster_team = caster.team
+	_oath_rounds_left = 4
+	_oath_triggered_this_round = false
+	_oath_skip_next_carrier_trigger = false
+	caster.add_status("velodiy_oath", 4)
+	caster._update_status_visuals()
+
+
+func _transfer_oath_of_rain() -> void:
+	var team_wards: Array = ally_wards if _oath_caster_team == "ally" else enemy_wards
+	var candidates: Array = team_wards.filter(
+		func(w): return not w.is_dead and WardDatabase.get_data(w.ward_id).get("element", "") == "water" and w != _oath_carrier
+	)
+	if candidates.is_empty():
+		_oath_active = false
+		if _oath_carrier != null:
+			_oath_carrier.remove_status("velodiy_oath", _oath_carrier.get_status("velodiy_oath"))
+			_oath_carrier._update_status_visuals()
+		_oath_carrier = null
+		battle_log.add_entry("Клятва рицаря дощу згасла — немає живих водяних союзників!")
+		return
+	# Знімаємо статус зі старого носія
+	var old_carrier = _oath_carrier
+	if old_carrier != null:
+		old_carrier.remove_status("velodiy_oath", old_carrier.get_status("velodiy_oath"))
+		old_carrier._update_status_visuals()
+	var new_carrier = candidates.pick_random()
+	_oath_skip_next_carrier_trigger = _oath_triggered_this_round
+	_oath_carrier = new_carrier
+	new_carrier.add_status("velodiy_oath", _oath_rounds_left)
+	new_carrier._update_status_visuals()
+	battle_log.add_entry("Клятва передана → %s несе клятву дощу (%d раунд(и))!" % [new_carrier.name, _oath_rounds_left])
 
 
 func _next_turn() -> void:

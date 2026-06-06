@@ -20,6 +20,8 @@ const _STATUS_NODE: Dictionary = {
 	"fire_circle":   "ocii_circle_flame",
 	"barrier":       "prayers_barrier",
 	"counterattack": "counter_attack",
+	"phalanx":       "phalanx",
+	"velodiy_oath":  "velodiy_oath",
 	"fire_seventh":  "prayers_fire",
 	"reaping":       "znec_znyva",
 	"parasitism":    "parazyte_assim",
@@ -428,12 +430,12 @@ func _update_status_visuals() -> void:
 		if effect == "burning":
 			continue
 		var count: int = status_effects[effect]
-		var draw_count: int = 1 if effect in ["armor", "fire_circle", "barrier", "regen", "parasitism", "reaping", "phisita_wall", "phisita_e", "counterattack"] else count
+		var draw_count: int = 1 if effect in ["armor", "fire_circle", "barrier", "regen", "parasitism", "reaping", "phisita_wall", "phisita_e", "counterattack", "phalanx", "velodiy_oath"] else count
 		var node_name: String = _STATUS_NODE.get(effect, "")
 		if node_name == "":
 			continue
 		for i in range(draw_count):
-			var badge: String = str(count) if effect in ["phisita_wall", "counterattack"] else ""
+			var badge: String = str(count) if effect in ["phisita_wall", "counterattack", "phalanx", "velodiy_oath"] else ""
 			_add_status_icon(container, lib, node_name, _get_status_tooltip(effect, count), badge)
 
 	if has_meta("fire_shield") and get_meta("fire_shield"):
@@ -493,7 +495,11 @@ func _get_status_tooltip(effect: String, count: int) -> String:
 		"barrier":
 			return "Бар'єр (%d ход(и))\nПоглинає до 30 шкоди від наступного удару.\nАтакуючий отримує 1 стак горіння." % count
 		"counterattack":
-			return "Контратака (%d ход(и))\nПри отриманні удару — б'є атакуючого двічі по 30 фіз.\nСпрацьовує один раз за хід ворога.\nТікає на початку власного ходу." % count
+			return "Контратака (%d ход(и))\nПри отриманні удару — використовує Q скіл проти атакуючого.\nСпрацьовує один раз за хід ворога." % count
+		"phalanx":
+			return "Фаланга (%d ход(и))\nВесь вхідний урон збільшено на 50%%." % count
+		"velodiy_oath":
+			return "Клятва рицаря дощу (%d раунд(и))\nВсі водяні союзники +75 HP на початку цього ходу.\nВелодій (носій) +75 броні на початку цього ходу." % count
 		"fire_seventh":
 			return "Вогонь сьомого (%d стак(и))\nНа початку ходу: %d вогняної шкоди усій команді." % [count, 150 * count]
 		"reaping":

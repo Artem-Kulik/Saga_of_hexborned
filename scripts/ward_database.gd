@@ -53,6 +53,19 @@ var WARDS: Dictionary = {
 			"E": { "id": "siomyi_e", "damage_type": "fire",    "name": "Вогонь сьомого", "cd": 7, "icon": "res://Основа/char/fire/Prayer/e.png", "desc": "", "desc_full": "" },
 		}
 	},
+	"velodiy": {
+		"name": "Велодій",
+		"element": "water",
+		"portrait": "res://Основа/char/water/Velodiy/Vilodiy.png",
+		"short_desc_file": "res://Основа/char/water/Velodiy/skills_short.txt",
+		"full_desc_file":  "res://Основа/char/water/Velodiy/skills_full.txt",
+		"skills": {
+			"P": { "id": "velodiy_p", "damage_type": "passive", "name": "Захисний рефлекс",           "cd": 2, "icon": "res://Основа/char/water/Velodiy/p.png", "desc": "35% відмінити скіл ворога. Після проку КД: 2.", "desc_full": "Щоразу коли ворог використовує скіл — є 35% шанс повністю відмінити його (ворог витрачає хід, ефект не відбувається). Після спрацювання пасивка іде на КД 2 ходи." },
+			"Q": { "id": "velodiy_q", "damage_type": "phys",    "name": "Вода камінь точить",         "cd": 0, "icon": "res://Основа/char/water/Velodiy/q.png", "desc": "90 фіз цілі + 45 фіз сусідній.", "desc_full": "Завдає 90 фіз. шкоди вибраному ворогу. Також завдає 45 фіз. шкоди сусідній цілі (крайній б'є центр, центральний б'є рандомного крайнього)." },
+			"W": { "id": "velodiy_w", "damage_type": "passive", "name": "Фаланга",                    "cd": 5, "icon": "res://Основа/char/water/Velodiy/w.png", "desc": "+2 контратака. Вхідна шкода +50% на 2 ходи. КД: 5.", "desc_full": "Приймає захисне положення. Накладає на себе контратаку на 2 ходи (при отриманні удару — використовує Q скіл проти атакуючого) та Фалангу на 2 ходи (весь вхідний урон збільшено на 50%). Перезарядка: 5 ходів." },
+			"E": { "id": "velodiy_e", "damage_type": "passive", "name": "Клятва рицаря дощу Арная",   "cd": 9, "icon": "res://Основа/char/water/Velodiy/e.png", "desc": "4 раунди: водяні союзники +75 HP/хід. Велодій +75 броні/хід. КД: 9.", "desc_full": "Викликає дощ на 4 раунди. На початку ходу носія: всі живі водяні союзники +75 HP, Велодій +75 броні. Якщо Велодій гине — клятва передається рандомному водяному союзнику (без бонусу броні). Перезарядка: 9 ходів." },
+		}
+	},
 	"liah": {
 		"name": "Лія",
 		"element": "water",
@@ -64,6 +77,19 @@ var WARDS: Dictionary = {
 			"Q": { "id": "liah_q", "damage_type": "phys",    "name": "Течія",                 "cd": 0, "icon": "res://Основа/char/water/Liah/liah_q.png", "desc": "", "desc_full": "" },
 			"W": { "id": "liah_w", "damage_type": "water",   "name": "Кола на воді",          "cd": 2, "icon": "res://Основа/char/water/Liah/liah_w.png", "desc": "", "desc_full": "" },
 			"E": { "id": "liah_e", "damage_type": "water",   "name": "Загороджуючий водопад", "cd": 3, "icon": "res://Основа/char/water/Liah/liah_e.png", "desc": "", "desc_full": "" },
+		}
+	},
+	"asteyah": {
+		"name": "Астея",
+		"element": "water",
+		"portrait": "res://Основа/char/water/Asteyah/Asteyah.png",
+		"short_desc_file": "res://Основа/char/water/Asteyah/skills_short.txt",
+		"full_desc_file":  "res://Основа/char/water/Asteyah/skills_full.txt",
+		"skills": {
+			"P": { "id": "asteyah_p", "damage_type": "passive", "name": "Пам'ять",         "cd": 0, "icon": "res://Основа/char/water/Asteyah/p.png", "desc": "Запам'ятовує останній скіл ворога, копіює його в E.", "desc_full": "" },
+			"Q": { "id": "asteyah_q", "damage_type": "water",   "name": "Кенсел",          "cd": 0, "icon": "res://Основа/char/water/Asteyah/q.png", "desc": "35 вода. Випадковий скіл цілі +1 КД.",              "desc_full": "" },
+			"W": { "id": "asteyah_w", "damage_type": "passive", "name": "Таємні знання",   "cd": 6, "icon": "res://Основа/char/water/Asteyah/w.png", "desc": "+2 реген (60 HP/хід). Ходить ще раз.",              "desc_full": "" },
+			"E": { "id": "asteyah_e", "damage_type": "passive", "name": "Пам'ять (E)",     "cd": 0, "icon": "res://Основа/char/water/Asteyah/e.png", "desc": "Використовує запам'ятаний скіл ворога.",             "desc_full": "" },
 		}
 	},
 	"riker": {

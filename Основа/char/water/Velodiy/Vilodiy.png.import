@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://dg3c2u8aorwyx"
-path="res://.godot/imported/Ocii.png-df38fcc6ab50e8c164487961ce17d652.ctex"
+uid="uid://3a4ctocv7tcr"
+path="res://.godot/imported/Vilodiy.png-5ba7381928e3bec92386a32123a22960.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://Основа/char/fire/Ocii/Ocii.png"
-dest_files=["res://.godot/imported/Ocii.png-df38fcc6ab50e8c164487961ce17d652.ctex"]
+source_file="res://Основа/char/water/Velodiy/Vilodiy.png"
+dest_files=["res://.godot/imported/Vilodiy.png-5ba7381928e3bec92386a32123a22960.ctex"]
 
 [params]
 
