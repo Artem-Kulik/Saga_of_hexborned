@@ -82,6 +82,7 @@ func send_my_wards(ward_ids: Array) -> void:
 	my_ward_ids = ward_ids.duplicate()
 	_my_wards_sent = true
 	var target_id := 2 if is_host else 1
+	print("[NET] send_my_wards → target=%d peers=%s" % [target_id, str(multiplayer.get_peers())])
 	_rpc_receive_wards.rpc_id(target_id, ward_ids)
 	_check_both_wards_ready()
 
@@ -89,11 +90,13 @@ func send_my_wards(ward_ids: Array) -> void:
 func _rpc_receive_wards(ward_ids: Array) -> void:
 	opponent_ward_ids = ward_ids.duplicate()
 	_opp_wards_got = true
-	print("[NET] Отримано варди суперника: ", opponent_ward_ids)
+	print("[NET] _rpc_receive_wards отримано: ", opponent_ward_ids)
 	_check_both_wards_ready()
 
 func _check_both_wards_ready() -> void:
+	print("[NET] _check_both_wards_ready: sent=%s got=%s" % [_my_wards_sent, _opp_wards_got])
 	if _my_wards_sent and _opp_wards_got:
+		print("[NET] opponent_wards_ready.emit()")
 		opponent_wards_ready.emit()
 
 # ─── Battle: host → client state sync ─────────────────────────────────────
