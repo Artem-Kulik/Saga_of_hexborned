@@ -313,8 +313,18 @@ func _refresh_confirm_button() -> void:
 	_confirm_button.visible = selected_ids.size() == 3
 
 
-# --- Перехід до бою ---
+# --- Перехід до бою (мультиплеєр) ---
 
 func _on_confirm_pressed() -> void:
 	GameState.ally_ward_ids = selected_ids.duplicate()
-	get_tree().change_scene_to_file("res://battle_scene.tscn")
+	# Скидаємо флаги для повторної гри
+	NetworkManager._my_wards_sent = false
+	NetworkManager._opp_wards_got = false
+	NetworkManager.opponent_ward_ids.clear()
+	NetworkManager.send_my_wards(selected_ids)
+	_confirm_button.disabled = true
+	_confirm_button.text = "⏳ Очікуємо суперника..."
+	NetworkManager.opponent_wards_ready.connect(_on_opponent_ready, CONNECT_ONE_SHOT)
+
+func _on_opponent_ready() -> void:
+	get_tree().change_scene_to_file("res://scripts/net/mp_battle_scene.tscn")

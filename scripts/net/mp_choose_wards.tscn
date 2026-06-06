@@ -1,0 +1,7 @@
+[gd_scene format=3 uid="uid://mp_choose_wards1"]
+
+[ext_resource type="PackedScene" uid="uid://ddnh02ix83qq1" path="res://choose_wards_stage.tscn" id="1_base"]
+[ext_resource type="Script" path="res://scripts/net/mp_choose_wards.gd" id="2_scr"]
+
+[node name="choose_wards_stage" instance=ExtResource("1_base")]
+script = ExtResource("2_scr")

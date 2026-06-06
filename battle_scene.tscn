@@ -18,6 +18,7 @@
 [ext_resource type="Texture2D" uid="uid://ccmi1jrtt83kk" path="res://Основа/visual/green_highlight.png" id="18_tgk4g"]
 [ext_resource type="Texture2D" uid="uid://ba33v6fda80cs" path="res://Основа/animation/particles/particle_win.png" id="19_05lyd"]
 [ext_resource type="Script" uid="uid://ddwu4f3tqyuf2" path="res://Основа/visual/endgame/click_button_restart.gd" id="19_vmq30"]
+[ext_resource type="Script" uid="uid://click_btn_back1" path="res://Основа/visual/endgame/click_button_back.gd" id="26_back1"]
 [ext_resource type="Texture2D" uid="uid://dgyyog2c044oq" path="res://Основа/visual/endgame/victory_title.png" id="20_05lyd"]
 [ext_resource type="Texture2D" uid="uid://dq6ku4ylkg1wl" path="res://Основа/animation/particles/ash_particles.png" id="20_vsfrs"]
 [ext_resource type="Texture2D" uid="uid://cmxy4xcxdtlxt" path="res://Основа/animation/particles/ember_particles.png" id="21_05lyd"]
@@ -693,6 +694,74 @@ theme_override_styles/disabled = SubResource("StyleBoxEmpty_0p0ur")
 theme_override_styles/focus = SubResource("StyleBoxEmpty_ep84i")
 flat = true
 script = ExtResource("19_vmq30")
+
+[node name="BackButton" type="Control" parent="EndGameOverlay" unique_id=473348315]
+anchors_preset = 0
+offset_left = 768.0
+offset_top = 791.0
+offset_right = 1088.0
+offset_bottom = 863.0
+mouse_filter = 2
+
+[node name="Glow" type="TextureRect" parent="EndGameOverlay/BackButton" unique_id=1099539041]
+material = SubResource("CanvasItemMaterial_vsfrs")
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -59.0
+offset_top = -48.0
+offset_right = 55.0
+offset_bottom = 51.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+texture = ExtResource("18_tgk4g")
+expand_mode = 1
+
+[node name="RestartBG" type="TextureRect" parent="EndGameOverlay/BackButton" unique_id=92311037]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+texture = ExtResource("6_x76d4")
+expand_mode = 1
+
+[node name="Label" type="Label" parent="EndGameOverlay/BackButton" unique_id=1632973716]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -0.5
+offset_top = -11.5
+offset_right = 0.5
+offset_bottom = 11.5
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(0.23921569, 0.6431373, 0, 1)
+theme_override_fonts/font = ExtResource("7_wy2mt")
+theme_override_font_sizes/font_size = 35
+text = "МЕНЮ"
+
+[node name="ClickButton" type="Button" parent="EndGameOverlay/BackButton" unique_id=49509082]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/normal = SubResource("StyleBoxEmpty_suxjl")
+theme_override_styles/pressed = SubResource("StyleBoxEmpty_r2yls")
+theme_override_styles/hover = SubResource("StyleBoxEmpty_7h64b")
+theme_override_styles/disabled = SubResource("StyleBoxEmpty_0p0ur")
+theme_override_styles/focus = SubResource("StyleBoxEmpty_ep84i")
+flat = true
+script = ExtResource("26_back1")
 
 [node name="ResultPlayer" type="AudioStreamPlayer2D" parent="." unique_id=1933343620]
 volume_db = 15.0

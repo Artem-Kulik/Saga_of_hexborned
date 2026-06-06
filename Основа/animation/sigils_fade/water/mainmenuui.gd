@@ -127,17 +127,23 @@ func _on_button_mouse_exited(button: Button, highlight: CanvasItem) -> void:
 func _on_button_pressed(button_name: String) -> void:
 	print("Натиснута кнопка: ", button_name)
 
+	# COLLECTION (air) → екран вибору вардів (офлайн, боти)
+	if button_name == "air":
+		get_tree().change_scene_to_file("res://choose_wards_stage.tscn")
+		return
+
+	# DUEL (fire) → лобі мультиплеєра
+	if button_name == "fire":
+		get_tree().change_scene_to_file("res://scripts/net/mp_lobby.tscn")
+		return
+
 	var scene_path := ""
 
 	match button_name:
 		"earth":
 			scene_path = earth_scene_path
-		"air":
-			scene_path = air_scene_path
 		"water":
 			scene_path = water_scene_path
-		"fire":
-			scene_path = fire_scene_path
 		_:
 			push_warning("Невідома кнопка: " + button_name)
 			return

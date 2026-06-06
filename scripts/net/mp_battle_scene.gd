@@ -95,15 +95,27 @@ func _ready() -> void:
 	_roll_first_turn()
 	play_random_track()
 	music_player.finished.connect(_on_music_finished)
+	if NetworkManager.is_multiplayer:
+		var hook = preload("res://scripts/net/mp_battle_hook.gd").new()
+		hook.name = "MPBattleHook"
+		add_child(hook)
 
 
 func _apply_ward_data() -> void:
 	if GameState.ally_ward_ids.is_empty():
 		return
 
+	# Власні варди
 	for i in range(mini(GameState.ally_ward_ids.size(), ally_wards.size())):
 		ally_wards[i].setup_ward(GameState.ally_ward_ids[i])
 
+	# Мультиплеєр: ворог — це реальні варди суперника (отримані через мережу)
+	if NetworkManager.is_multiplayer:
+		for i in range(mini(NetworkManager.opponent_ward_ids.size(), enemy_wards.size())):
+			enemy_wards[i].setup_ward(NetworkManager.opponent_ward_ids[i])
+		return
+
+	# Офлайн: рандомні вороги з різних стихій
 	var all_enemy_ids: Array = WardDatabase.get_all_ids().filter(
 		func(id: String) -> bool: return not GameState.ally_ward_ids.has(id)
 	)
@@ -118,11 +130,9 @@ func _apply_ward_data() -> void:
 		if not used_elements.has(elem):
 			used_elements.append(elem)
 			final_enemy_pool.append(id)
-		
 		if final_enemy_pool.size() == 3:
 			break
-			
-	# На випадок якщо 3 різних стихій не знайшлося (добираємо будь-яких)
+
 	if final_enemy_pool.size() < 3:
 		for id in all_enemy_ids:
 			if not final_enemy_pool.has(id):
@@ -368,7 +378,12 @@ func _connect_wards() -> void:
 
 
 func _roll_first_turn() -> void:
-	var first_team: String = turn_manager.roll_first_team()
+	var first_team: String
+	if NetworkManager.is_multiplayer:
+		# Завжди починає хост ("ally") — однаково для обох гравців, без рандому
+		first_team = "ally"
+	else:
+		first_team = turn_manager.roll_first_team()
 
 	battle_log.add_entry("Першим ходить: " + first_team)
 
@@ -688,6 +703,17 @@ func _start_turn() -> void:
 		return
 
 	if turn_manager.current_team == "enemy":
+		# HOST у мультиплеєрі: "enemy" = клієнтські варди — чекаємо RPC замість AI
+		if NetworkManager.is_multiplayer and NetworkManager.is_host:
+			var hook = get_tree().get_first_node_in_group("mp_battle_hook")
+			if hook:
+				hook.host_wait_for_client(current_ward)
+				return
+
+		# CLIENT у мультиплеєрі: заблокуємо AI — клієнт лише реагує на сигнали хоста
+		if NetworkManager.is_multiplayer and not NetworkManager.is_host:
+			return
+
 		await get_tree().create_timer(2.0).timeout
 
 		if battle_finished:
@@ -710,8 +736,16 @@ func _on_skill_clicked(ward, skill_key: String) -> void:
 	if _turn_locked:
 		return
 
-	if turn_manager.current_team != "ally":
-		return
+	# CLIENT: перевіряємо через hook, а не через локальний turn_manager
+	if NetworkManager.is_multiplayer and not NetworkManager.is_host:
+		var _hk = get_tree().get_first_node_in_group("mp_battle_hook")
+		if not _hk or not _hk._client_turn_active:
+			battle_log.add_entry("⏳ Не ваш хід")
+			AnimationCode.skill_blocked_animation(_get_skill_button(ward, skill_key))
+			return
+	else:
+		if turn_manager.current_team != "ally":
+			return
 
 	if ward != current_ward:
 		battle_log.add_entry("Зараз ходить інший Вард")
@@ -749,6 +783,17 @@ func _on_skill_clicked(ward, skill_key: String) -> void:
 	selected_skill = skill_key
 	waiting_for_target = false
 	hide_target_arrow()
+
+	# Клієнт у мультиплеєрі: no-target скіли одразу надсилаємо хосту
+	if NetworkManager.is_multiplayer and not NetworkManager.is_host:
+		var _SkillExecutorMP = preload("res://scripts/battle/skill_executor.gd")
+		var _ttype = _SkillExecutorMP.get_skill_target_type(ward.ward_id, skill_key, ward)
+		if _ttype not in ["single_enemy", "single_ally", "single_any", "etesena_w"]:
+			_turn_locked = true  # блокуємо до підтвердження від хоста
+			var _hook = get_tree().get_first_node_in_group("mp_battle_hook")
+			if _hook and _hook.intercept_skill_click(ward, skill_key, null):
+				return
+			_turn_locked = false  # intercept не відпрацював — скасовуємо блок
 
 	var pressed_button = _get_skill_button(ward, skill_key)
 
@@ -842,6 +887,24 @@ func _on_ward_clicked(ward) -> void:
 		return
 
 	if not waiting_for_target:
+		return
+
+	# CLIENT у мультиплеєрі: надсилаємо ціль хосту замість локального виконання
+	if NetworkManager.is_multiplayer and not NetworkManager.is_host:
+		var _mp_h = get_tree().get_first_node_in_group("mp_battle_hook")
+		if _mp_h and selected_attacker != null:
+			var _atk_i := ally_wards.find(selected_attacker)
+			var _tgt_i: int
+			if ward.team == "enemy":
+				_tgt_i = enemy_wards.find(ward)       # >= 0: ворожий вард хоста
+			else:
+				_tgt_i = -10 - ally_wards.find(ward)  # <= -10: власний союзник клієнта
+			_turn_locked = true  # блокуємо до підтвердження від хоста
+			_mp_h._client_turn_active = false
+			waiting_for_target = false
+			hide_target_arrow()
+			NetworkManager.client_send_action(selected_skill, _atk_i, _tgt_i)
+			battle_log.add_info("⏳ Очікуємо відповідь від хоста...", Color("#888888"))
 		return
 
 	# Скіли на союзника (single_ally / single_any)
@@ -1379,6 +1442,11 @@ func _next_turn() -> void:
 	hide_target_arrow()
 
 	turn_manager.switch_team()
+
+	# Хост сигналізує клієнту теж переключити хід
+	if NetworkManager.is_multiplayer and NetworkManager.is_host:
+		NetworkManager.signal_host_turn_done(current_ward.name if current_ward else "")
+
 	_start_turn()
 
 
@@ -1390,8 +1458,14 @@ func _on_turn_tick() -> void:
 func _on_turn_timeout() -> void:
 	if battle_finished or current_ward == null or current_ward.is_dead:
 		return
-	if turn_manager.current_team != "ally":
-		return
+	if NetworkManager.is_multiplayer and not NetworkManager.is_host:
+		# Клієнт: перевіряємо через хук — turn_manager може бути не синхронізований
+		var _hk_t = get_tree().get_first_node_in_group("mp_battle_hook")
+		if not _hk_t or not _hk_t._client_turn_active:
+			return
+	else:
+		if turn_manager.current_team != "ally":
+			return
 	_turn_tick_timer.stop()
 	battle_log.update_timer(0)
 	waiting_for_target = false
