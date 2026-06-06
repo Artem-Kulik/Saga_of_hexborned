@@ -81,11 +81,11 @@ func get_local_ip() -> String:
 func send_my_wards(ward_ids: Array) -> void:
 	my_ward_ids = ward_ids.duplicate()
 	_my_wards_sent = true
-	# Надсилаємо супернику
-	if is_host:
-		_rpc_receive_wards.rpc_id(2, ward_ids)
+	var target_id := 2 if is_host else 1
+	if target_id in multiplayer.get_peers():
+		_rpc_receive_wards.rpc_id(target_id, ward_ids)
 	else:
-		_rpc_receive_wards.rpc_id(1, ward_ids)
+		push_warning("[NET] send_my_wards: peer %d не готовий" % target_id)
 	_check_both_wards_ready()
 
 @rpc("any_peer", "call_remote", "reliable")

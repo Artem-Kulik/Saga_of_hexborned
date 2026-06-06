@@ -893,7 +893,7 @@ func _on_ward_clicked(ward) -> void:
 	if NetworkManager.is_multiplayer and not NetworkManager.is_host:
 		var _mp_h = get_tree().get_first_node_in_group("mp_battle_hook")
 		if _mp_h and selected_attacker != null:
-			var _atk_i := ally_wards.find(selected_attacker)
+			var _atk_i: int = ally_wards.find(selected_attacker)
 			var _tgt_i: int
 			if ward.team == "enemy":
 				_tgt_i = enemy_wards.find(ward)       # >= 0: ворожий вард хоста
