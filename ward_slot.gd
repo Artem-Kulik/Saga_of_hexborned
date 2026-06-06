@@ -96,6 +96,9 @@ var taunted_by: String = "" # ID варда, який спровокував
 # Горіння: кожне накладення має власний таймер [{"count": N, "turns": T}, ...]
 var burning_applications: Array = []
 
+# Регенерація: аналогічна система [{count: N, turns: T}], кожен стак = +50 HP/хід
+var regen_applications: Array = []
+
 # ====== COOLDOWN SYSTEM ======
 var _current_cd: Dictionary = {"Q": 0, "W": 0, "E": 0}
 var _max_cd: Dictionary = {"Q": 0, "W": 0, "E": 0}
@@ -297,6 +300,11 @@ func get_status(effect_name: String) -> int:
 		for app in burning_applications:
 			total += app.count
 		return total
+	if effect_name == "regen":
+		var total: int = 0
+		for app in regen_applications:
+			total += app.count
+		return total
 	return status_effects.get(effect_name, 0)
 
 func set_status_max(effect_name: String, value: int) -> void:
@@ -311,6 +319,7 @@ func set_status_max(effect_name: String, value: int) -> void:
 func clear_statuses() -> void:
 	status_effects.clear()
 	burning_applications.clear()
+	regen_applications.clear()
 	taunted_by = ""
 	_update_status_visuals()
 
@@ -396,6 +405,27 @@ func _sync_burning_to_status() -> void:
 	elif status_effects.has("burning"):
 		status_effects.erase("burning")
 
+# ====== REGEN SYSTEM ======
+func add_regen(count: int, turns: int = 1) -> void:
+	for i in range(regen_applications.size()):
+		if regen_applications[i].turns == turns:
+			regen_applications[i].count += count
+			_update_status_visuals()
+			return
+	regen_applications.append({"count": count, "turns": turns})
+	_update_status_visuals()
+
+func tick_regen() -> int:
+	var total_hp: int = 0
+	var remaining: Array = []
+	for app in regen_applications:
+		total_hp += 50 * app.count
+		if app.turns - 1 > 0:
+			remaining.append({"count": app.count, "turns": app.turns - 1})
+	regen_applications = remaining
+	_update_status_visuals()
+	return total_hp
+
 func update_armor_status(armor_value: int) -> void:
 	if armor_value > 0:
 		status_effects["armor"] = 1
@@ -414,29 +444,41 @@ func _update_status_visuals() -> void:
 
 	var lib := _STATUS_TYPES.instantiate()
 
-	# Горіння: одна іконка на стак, всі мають однаковий тултіп з усіма групами
+	# Горіння: одна іконка на ГРУПУ (за тривалістю), бейдж = кількість стаків
 	if not burning_applications.is_empty():
 		var lines: Array = []
 		for app in burning_applications:
-			lines.append("%d стак(и) діють %d хід(ів)" % [app.count, app.turns])
+			lines.append("%d стак(и) × %d хід(ів) = %d вогню/хід" % [app.count, app.turns, 50 * app.count])
 		var shared_tooltip: String = "Горіння:\n" + "\n".join(lines)
-		var total_stacks: int = 0
 		for app in burning_applications:
-			total_stacks += app.count
-		for _i in range(total_stacks):
-			_add_status_icon(container, lib, "burning", shared_tooltip)
+			var badge: String = "×%d" % app.count
+			_add_status_icon(container, lib, "burning", shared_tooltip, badge)
+
+	# Регенерація: одна іконка на ГРУПУ (за тривалістю), бейдж = кількість стаків
+	if not regen_applications.is_empty():
+		var lines: Array = []
+		for app in regen_applications:
+			lines.append("%d стак(и) × %d хід(ів) = +%d HP/хід" % [app.count, app.turns, 50 * app.count])
+		var shared_tooltip: String = "Регенерація:\n" + "\n".join(lines)
+		for app in regen_applications:
+			var badge: String = "×%d" % app.count
+			_add_status_icon(container, lib, "regeneration", shared_tooltip, badge)
 
 	for effect in status_effects.keys():
-		if effect == "burning":
+		if effect == "burning" or effect == "regen":
 			continue
 		var count: int = status_effects[effect]
-		var draw_count: int = 1 if effect in ["armor", "fire_circle", "barrier", "regen", "parasitism", "reaping", "phisita_wall", "phisita_e", "counterattack", "phalanx", "velodiy_oath"] else count
 		var node_name: String = _STATUS_NODE.get(effect, "")
 		if node_name == "":
 			continue
-		for i in range(draw_count):
-			var badge: String = str(count) if effect in ["phisita_wall", "counterattack", "phalanx", "velodiy_oath"] else ""
-			_add_status_icon(container, lib, node_name, _get_status_tooltip(effect, count), badge)
+		# Завжди 1 іконка; бейдж залежить від типу ефекту
+		var badge: String = ""
+		match effect:
+			"cuts", "rage", "gravity", "fire_seventh":
+				badge = "×%d" % count
+			"stun", "taunt", "phisita_wall", "counterattack", "phalanx", "velodiy_oath":
+				badge = str(count)
+		_add_status_icon(container, lib, node_name, _get_status_tooltip(effect, count), badge)
 
 	if has_meta("fire_shield") and get_meta("fire_shield"):
 		_add_status_icon(container, lib, "oichi_flame_shield",
@@ -484,8 +526,10 @@ func _get_status_tooltip(effect: String, count: int) -> String:
 		"stun":
 			return "Оглушення (%d ходів)\nПропускає хід." % count
 		"regen":
-			var regen_val: int = get_meta("regen_amount", 100) if has_meta("regen_amount") else 100
-			return "Регенерація (%d ход(и))\n+%d HP на початку кожного ходу." % [count, regen_val]
+			var total_hp: int = 0
+			for app in regen_applications:
+				total_hp += 50 * app.count
+			return "Регенерація (%d стак(и))\n+%d HP на початку ходу." % [count, total_hp]
 		"fire_shield":
 			return "Вогняний щит\nАтакуючий отримує 2 стаки горіння, щит зникає."
 		"cuts":
@@ -632,7 +676,7 @@ func die() -> void:
 	is_dead = true
 	for m in ["untargetable", "phisita_e_chance", "fizita_gravity_turns", "golem_form",
 			"fire_shield", "countered_this_turn", "riker_passive_used",
-			"zhnets_e_target", "zhnets_e_just_used", "regen_amount"]:
+			"zhnets_e_target", "zhnets_e_just_used"]:
 		if has_meta(m):
 			remove_meta(m)
 	clear_statuses()

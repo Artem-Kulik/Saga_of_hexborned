@@ -329,7 +329,8 @@ func _check_parasyt_passive(dead_ward) -> void:
 	var hp_before: int = parasyt_ward.current_hp
 	parasyt_ward.health.heal(75)
 	if battle_log:
-		battle_log.add_info("🦠 Паразитування: %s поглинає силу загиблого!" % parasyt_ward.name, Color("#a060d0"))
+		battle_log.add_info("🦠 Паразитування: %s поглинає силу загиблого +75 HP!" % parasyt_ward.name, Color("#a060d0"))
+		battle_log.add_effect(parasyt_ward.name, parasyt_ward.team, "Паразитування (пасивка)")
 		battle_log.add_heal(parasyt_ward.name, parasyt_ward.team, hp_before, parasyt_ward.current_hp, parasyt_ward.max_hp)
 
 func _check_fire_shield(attacker, target) -> void:
@@ -353,15 +354,17 @@ func _check_fire_circle(attacker, target) -> void:
 
 func _check_zhnets_passive(target, hp_before: int, hp_after: int) -> void:
 	if target == null or target.is_dead: return
-	# Перетин порогу: був вище 50%, став нижче або рівно 50%
+	# Лише при перетині порогу 50% HP ВНИЗ (від вищого до нижчого або рівного 50%)
 	if not (hp_before * 2 > target.max_hp and hp_after * 2 <= target.max_hp): return
-	# Шукаємо живого Жнеця у грі, для якого target — ворог
+	# Шукаємо живого Жнеця, для якого target — ворог (target.team != zhnets.team)
 	var zhnets_ward = null
 	for w in battle_scene.ally_wards + battle_scene.enemy_wards:
 		if w.ward_id == "zhnets" and not w.is_dead and w.team != target.team:
 			zhnets_ward = w
 			break
 	if zhnets_ward == null: return
+	# Явна перевірка: target має бути ворогом Жнеця
+	if target.team == zhnets_ward.team: return
 	# 1 стак горіння (2 ходи) двом рандомним живим ворогам Жнеця
 	var enemy_side: Array = battle_scene.enemy_wards if zhnets_ward.team == "ally" else battle_scene.ally_wards
 	var alive: Array = get_alive_wards(enemy_side)
@@ -372,9 +375,10 @@ func _check_zhnets_passive(target, hp_before: int, hp_after: int) -> void:
 		alive[i].add_burning(1, 2)
 		alive[i]._update_status_visuals()
 		if battle_log:
-			battle_log.add_effect(alive[i].name, alive[i].team, "Горіння +1 стак (Присутність)")
+			battle_log.add_effect(alive[i].name, alive[i].team, "Горіння +1 (Присутність Жнеця)")
 	if battle_log:
 		battle_log.add_info("🔥 Присутність (%s): %s впав нижче 50%% — %d ворог(и) підпалено!" % [zhnets_ward.name, target.name, cnt], Color("#c86030"))
+		battle_log.add_effect(zhnets_ward.name, zhnets_ward.team, "Присутність (пасивка спрацювала)")
 
 func _check_adoneia(target, source, hp_before: int, hp_after: int, damage: int, skill_key: String, source_name: String) -> void:
 	if target == null or target.ward_id != "adoneia": return
@@ -480,6 +484,7 @@ func _check_asteyah_memory(attacker, skill_key: String) -> void:
 			w.set_meta("asteyah_memory", _mem_dict)
 			if battle_log:
 				battle_log.add_info("🧠 Пам'ять: %s запам'ятала [%s → %s]!" % [w.name, attacker.name, skill_key])
+				battle_log.add_effect(w.name, w.team, "Пам'ять (пасивка)")
 			# Оновлюємо іконку кнопки E на картці варда на полі
 			var mem_icon_path: String = WardDatabase.get_data(attacker.ward_id).get("skills", {}).get(skill_key, {}).get("icon", "")
 			if mem_icon_path != "" and ResourceLoader.exists(mem_icon_path):

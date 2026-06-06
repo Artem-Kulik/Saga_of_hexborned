@@ -195,7 +195,8 @@ static func check_liah_passive(resolver, attacker, target_died: bool) -> void:
 	if attacker == null: return
 	if attacker.ward_id == "liah" and target_died:
 		var allies = resolver.get_alive_wards(resolver.battle_scene.ally_wards if attacker.team == "ally" else resolver.battle_scene.enemy_wards)
-		resolver.battle_log.add_info("Спокій (Пасивка): Лія лікує союзників!")
+		resolver.battle_log.add_info("💚 Спокій: Лія лікує союзників +50 HP!", Color("#40b050"))
+		resolver.battle_log.add_effect(attacker.name, attacker.team, "Спокій (пасивка)")
 		for ally in allies:
 			var hp_before = ally.current_hp
 			ally.health.heal(50)
@@ -209,7 +210,8 @@ static func check_rage_passive(resolver, target) -> void:
 		return
 	target._rage_gained_this_turn = true
 	target.add_status("rage", 1)
-	resolver.battle_log.add_info("Майстер Оічі отримує стак Ражу!")
+	resolver.battle_log.add_info("🔥 Раж: %s отримує стак Ражу (разом: %d)!" % [target.name, target.get_status("rage")])
+	resolver.battle_log.add_effect(target.name, target.team, "Раж +1 (пасивка)")
 
 static func _execute_mais_oichi(resolver, attacker, target, skill_key: String, _base_damage: int) -> void:
 	match skill_key:
@@ -332,7 +334,8 @@ static func _shopey_passive_check(resolver, attacker, attacked_target) -> void:
 	if hydra_target == null:
 		return
 	if resolver.battle_log:
-		resolver.battle_log.add_info("Пасивка Відсічена Гідра: атакує " + hydra_target.name + "!")
+		resolver.battle_log.add_info("🐍 Відсічена Гідра (пасивка): атакує %s — 45 повітря!" % hydra_target.name)
+		resolver.battle_log.add_effect(attacker.name, attacker.team, "Відсічена Гідра (пасивка)")
 	await resolver.deal_damage_with_modifiers(attacker, hydra_target, 45, "P", "air")
 
 
@@ -513,7 +516,10 @@ static func _iskoris_hit(resolver, attacker, target, base_dmg: int, skill_key: S
 	if target.is_dead:
 		return
 
-	# Пасивний удар (завжди без руху — пасивка анімується на місці)
+	# Пасивний удар — 20 повітря (Тисяча порізів)
+	if resolver.battle_log:
+		resolver.battle_log.add_info("✂ Тисяча порізів (пасивка): 20 повітря по %s!" % target.name)
+		resolver.battle_log.add_effect(attacker.name, attacker.team, "Тисяча порізів (пасивка)")
 	await resolver.deal_damage_with_modifiers(attacker, target, passive_dmg, "P_cuts", "air", true)
 
 	if target.is_dead:
@@ -586,7 +592,8 @@ static func _etesena_passive_check(resolver, attacker, target, damage: int, enem
 	var neighbor = _etesena_get_neighbor(enemy_side, target)
 	if neighbor == null or neighbor.is_dead: return
 	if resolver.battle_log:
-		resolver.battle_log.add_info("Пасивна: голка пробиває оглушеного і б'є %s!" % neighbor.name)
+		resolver.battle_log.add_info("💨 Пасивка: голка пробиває оглушеного %s — б'є %s!" % [target.name, neighbor.name])
+		resolver.battle_log.add_effect(attacker.name, attacker.team, "Пробивання (пасивка)")
 	await resolver.deal_damage_with_modifiers(attacker, neighbor, damage, "P_etesena", "phys")
 
 
@@ -849,10 +856,9 @@ static func _execute_parasyt(resolver, attacker, target, skill_key: String) -> v
 				resolver.battle_log.add_info("Плач чаші: %s жертвує 195 HP — набирається сил!" % attacker.name)
 			await resolver.deal_damage_with_modifiers(null, attacker, 195, "self_damage", "phys")
 			if attacker.is_dead: return
-			attacker.add_status("regen", 3)
-			attacker._update_status_visuals()
+			attacker.add_regen(2, 3)
 			if resolver.battle_log:
-				resolver.battle_log.add_effect(attacker.name, attacker.team, "Регенерація (3 ходи, 100 HP/хід)")
+				resolver.battle_log.add_effect(attacker.name, attacker.team, "Реген ×2 (3 ходи, +100 HP/хід)")
 
 
 # =============================================================================
@@ -1012,13 +1018,10 @@ static func _execute_shusima(resolver, attacker, target, skill_key: String) -> v
 			if target == null: return
 			await resolver.deal_damage_with_modifiers(attacker, target, 40, skill_key, "phys")
 			if attacker.is_dead: return
-			var prev_regen_q: int = attacker.get_meta("regen_amount", 0) if attacker.has_meta("regen_amount") else 0
-			attacker.add_status("regen", 2)
-			attacker.set_meta("regen_amount", max(prev_regen_q, 20))
-			attacker._update_status_visuals()
+			attacker.add_regen(1, 1)
 			if resolver.battle_log:
-				resolver.battle_log.add_info("Висушення: %s відновлює сили — реген 20 HP/хід на 2 ходи." % attacker.name)
-				resolver.battle_log.add_effect(attacker.name, attacker.team, "Регенерація 20 HP (2 ходи)")
+				resolver.battle_log.add_info("Висушення: %s відновлює сили — 1 стак регену на 1 хід (+50 HP)." % attacker.name)
+				resolver.battle_log.add_effect(attacker.name, attacker.team, "Реген ×1 (1 хід)")
 
 		"W":
 			if resolver.battle_log:
@@ -1030,14 +1033,11 @@ static func _execute_shusima(resolver, attacker, target, skill_key: String) -> v
 			var alive_allies: Array = resolver.get_alive_wards(ally_side)
 			var regen_count: int = 0
 			for ally in alive_allies:
-				var prev_regen_w: int = ally.get_meta("regen_amount", 0) if ally.has_meta("regen_amount") else 0
-				ally.add_status("regen", 2)
-				ally.set_meta("regen_amount", max(prev_regen_w, 70))
-				ally._update_status_visuals()
-				resolver.battle_log.add_effect(ally.name, ally.team, "Регенерація 70 HP (2 ходи)")
+				ally.add_regen(2, 2)
+				resolver.battle_log.add_effect(ally.name, ally.team, "Реген ×2 (2 ходи, +100 HP/хід)")
 				regen_count += 1
 			if resolver.battle_log and regen_count > 0:
-				resolver.battle_log.add_info("Зибучі піски: %d союзник(ів) отримали реген 70 HP/хід на 2 ходи." % regen_count)
+				resolver.battle_log.add_info("Зибучі піски: %d союзник(ів) — 2 стаки регену на 2 ходи." % regen_count)
 
 		"E":
 			var alive_enemies: Array = resolver.get_alive_wards(enemy_side)
@@ -1077,13 +1077,10 @@ static func _execute_asteyah(resolver, attacker, target, skill_key: String) -> v
 				resolver.battle_log.add_effect(target.name, target.team, "КД %s → %d (Кенсел)" % [chosen_cd, new_cd])
 
 		"W":
-			var prev_regen: int = attacker.get_meta("regen_amount", 0) if attacker.has_meta("regen_amount") else 0
-			attacker.add_status("regen", 2)
-			attacker.set_meta("regen_amount", max(prev_regen, 60))
-			attacker._update_status_visuals()
+			attacker.add_regen(1, 2)
 			if resolver.battle_log:
-				resolver.battle_log.add_info("Таємні знання: %s накладає на себе регенерацію 60 HP/хід на 2 ходи." % attacker.name)
-				resolver.battle_log.add_effect(attacker.name, attacker.team, "Реген 60 HP (2 ходи)")
+				resolver.battle_log.add_info("Таємні знання: %s — 1 стак регену на 2 ходи (+50 HP/хід)." % attacker.name)
+				resolver.battle_log.add_effect(attacker.name, attacker.team, "Реген ×1 (2 ходи)")
 				resolver.battle_log.add_info("Таємні знання: %s ходить ще раз!" % attacker.name)
 
 		"E":
@@ -1187,7 +1184,8 @@ static func _execute_ashayah(resolver, attacker, target, skill_key: String) -> v
 				if is_first_w and stolen_status != "":
 					_ashayah_steal_status(resolver, attacker, enemy, stolen_status, stolen_count)
 					if resolver.battle_log:
-						resolver.battle_log.add_info("Крилатий трофей: Ошая краде [%s] (%d)!" % [stolen_status, stolen_count])
+						resolver.battle_log.add_info("🦅 Крилатий трофей: Ошая краде [%s] у %s!" % [stolen_status, enemy.name])
+						resolver.battle_log.add_effect(attacker.name, attacker.team, "Крилатий трофей (пасивка)")
 			if is_first_w:
 				attacker.set_meta("ashayah_w_first_used", true)
 
@@ -1223,18 +1221,18 @@ static func _ashayah_first_positive_status(ward) -> String:
 	return ""
 
 
-static func _ashayah_steal_status(resolver, ashayah, source, status: String, count: int) -> void:
+static func _ashayah_steal_status(resolver, ashayah, source, status: String, _count: int) -> void:
 	if status == "velodiy_oath":
-		resolver.battle_scene._steal_oath_as_carrier(ashayah, count)
+		resolver.battle_scene._steal_oath_as_carrier(ashayah, _count)
 		return
 	if status == "regen":
-		var source_amount: int = source.get_meta("regen_amount", 100) if source != null and source.has_meta("regen_amount") else 100
-		var cur: int = ashayah.get_meta("regen_amount", 0) if ashayah.has_meta("regen_amount") else 0
-		ashayah.set_meta("regen_amount", max(cur, source_amount))
-		ashayah.add_status("regen", count)
+		# Копіюємо всі групи регену з джерела
+		if source != null and source.get("regen_applications") != null:
+			for app in source.regen_applications:
+				ashayah.add_regen(app.count, app.turns)
 		ashayah._update_status_visuals()
 		return
-	ashayah.add_status(status, count)
+	ashayah.add_status(status, _count)
 	ashayah._update_status_visuals()
 
 
