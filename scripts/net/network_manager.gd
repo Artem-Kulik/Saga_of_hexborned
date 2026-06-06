@@ -97,8 +97,11 @@ func _check_both_wards_ready() -> void:
 		opponent_wards_ready.emit()
 
 # ─── Battle: host → client state sync ─────────────────────────────────────
+func _peer2_connected() -> bool:
+	return 2 in multiplayer.get_peers()
+
 func broadcast_state(state: Dictionary) -> void:
-	if not is_host: return
+	if not is_host or not _peer2_connected(): return
 	_rpc_apply_state.rpc_id(2, state)
 
 @rpc("authority", "call_remote", "reliable")
@@ -107,7 +110,7 @@ func _rpc_apply_state(state: Dictionary) -> void:
 
 # ─── Battle: host signals turns ────────────────────────────────────────────
 func signal_client_turn(ward_name: String) -> void:
-	if not is_host: return
+	if not is_host or not _peer2_connected(): return
 	_rpc_client_turn.rpc_id(2, ward_name)
 
 @rpc("authority", "call_remote", "reliable")
@@ -115,7 +118,7 @@ func _rpc_client_turn(ward_name: String) -> void:
 	client_turn_started.emit(ward_name)
 
 func signal_host_turn_done(ward_name: String) -> void:
-	if not is_host: return
+	if not is_host or not _peer2_connected(): return
 	_rpc_host_turn_done.rpc_id(2, ward_name)
 
 @rpc("authority", "call_remote", "reliable")
@@ -134,7 +137,7 @@ func _rpc_client_action(skill_key: String, attacker_idx: int, target_idx: int) -
 
 # ─── Host: sync navigation ────────────────────────────────────────────────
 func broadcast_restart() -> void:
-	if not is_host: return
+	if not is_host or not _peer2_connected(): return
 	_rpc_do_restart.rpc_id(2)
 
 @rpc("authority", "call_remote", "reliable")
@@ -142,7 +145,7 @@ func _rpc_do_restart() -> void:
 	restart_requested.emit()
 
 func broadcast_go_ward_select() -> void:
-	if not is_host: return
+	if not is_host or not _peer2_connected(): return
 	_rpc_do_ward_select.rpc_id(2)
 
 @rpc("authority", "call_remote", "reliable")
@@ -151,7 +154,7 @@ func _rpc_do_ward_select() -> void:
 
 # ─── Battle: end game ──────────────────────────────────────────────────────
 func broadcast_battle_end(result: String) -> void:
-	if not is_host: return
+	if not is_host or not _peer2_connected(): return
 	_rpc_battle_end.rpc_id(2, result)
 
 @rpc("authority", "call_remote", "reliable")

@@ -7,6 +7,7 @@ extends Control
 @export var glow_1_speed := 0.35
 
 var t := 0.0
+var _waiting_for_opponent: bool = false
 
 # --- Selection state ---
 var selected_ids: Array[String] = []
@@ -105,6 +106,8 @@ func _process(delta: float) -> void:
 	t += delta
 	var wave_1 := (sin(t * glow_1_speed) + 1.0) * 0.5
 	glow_1.modulate.a = lerp(glow_1_min, glow_1_max, wave_1)
+	if _waiting_for_opponent and NetworkManager._my_wards_sent and NetworkManager._opp_wards_got:
+		_on_opponent_ready()
 
 
 func _setup_glow(glow: TextureRect) -> void:
@@ -319,10 +322,16 @@ func _on_confirm_pressed() -> void:
 	GameState.ally_ward_ids = selected_ids.duplicate()
 	_confirm_button.disabled = true
 	_confirm_button.text = "⏳ Очікуємо суперника..."
-	# Підключаємо ПЕРЕД send_my_wards — якщо обидва вже надіслали, emit відбудеться одразу
+	_waiting_for_opponent = true
 	if not NetworkManager.opponent_wards_ready.is_connected(_on_opponent_ready):
 		NetworkManager.opponent_wards_ready.connect(_on_opponent_ready, CONNECT_ONE_SHOT)
 	NetworkManager.send_my_wards(selected_ids)
 
 func _on_opponent_ready() -> void:
-	get_tree().change_scene_to_file("res://scripts/net/mp_battle_scene.tscn")
+	if not _waiting_for_opponent:
+		return
+	_waiting_for_opponent = false
+	if NetworkManager.opponent_wards_ready.is_connected(_on_opponent_ready):
+		NetworkManager.opponent_wards_ready.disconnect(_on_opponent_ready)
+	if is_inside_tree():
+		get_tree().change_scene_to_file("res://scripts/net/mp_battle_scene.tscn")
