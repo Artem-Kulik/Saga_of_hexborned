@@ -428,12 +428,12 @@ func _update_status_visuals() -> void:
 		if effect == "burning":
 			continue
 		var count: int = status_effects[effect]
-		var draw_count: int = 1 if effect in ["armor", "fire_circle", "barrier", "regen", "parasitism", "reaping", "phisita_wall", "phisita_e"] else count
+		var draw_count: int = 1 if effect in ["armor", "fire_circle", "barrier", "regen", "parasitism", "reaping", "phisita_wall", "phisita_e", "counterattack"] else count
 		var node_name: String = _STATUS_NODE.get(effect, "")
 		if node_name == "":
 			continue
 		for i in range(draw_count):
-			var badge: String = str(count) if effect == "phisita_wall" else ""
+			var badge: String = str(count) if effect in ["phisita_wall", "counterattack"] else ""
 			_add_status_icon(container, lib, node_name, _get_status_tooltip(effect, count), badge)
 
 	if has_meta("fire_shield") and get_meta("fire_shield"):

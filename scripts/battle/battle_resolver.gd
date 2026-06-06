@@ -330,11 +330,15 @@ func _check_adoneia(target, source, hp_before: int, hp_after: int, damage: int, 
 
 	# Пасивка P: 1 хід Контратаки при падінні нижче 50% HP
 	if damage > 0 and hp_before * 2 > target.max_hp and hp_after * 2 <= target.max_hp:
-		target.set_status_max("counterattack", 1)
+		var _ca_old_p: int = target.get_status("counterattack")
+		var _ca_new_p: int = max(_ca_old_p, 1)
+		if _ca_old_p > 0:
+			target.remove_status("counterattack", _ca_old_p)
+		target.add_status("counterattack", _ca_new_p)
 		target._update_status_visuals()
 		if battle_log:
-			battle_log.add_entry("Відповідь (пасивка): %s пробита нижче 50%% HP — Контратака на 1 хід!" % target.name)
-			battle_log.add_effect(target.name, target.team, "Контратака 1 хід (пасивка)")
+			battle_log.add_entry("Відповідь (пасивка): %s пробита нижче 50%% HP — Контратака на %d хід(и)!" % [target.name, _ca_new_p])
+			battle_log.add_effect(target.name, target.team, "Контратака %d хід(и) (пасивка)" % _ca_new_p)
 
 	# Контратака: спрацьовує раз за хід ворога — НЕ знімається при спрацюванні (тікає по ходах)
 	if skill_key == "Q_counter": return
