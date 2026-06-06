@@ -23,6 +23,7 @@
 [ext_resource type="Texture2D" uid="uid://dqwjm08q1h8pc" path="res://Основа/char/NPC/infected radiance/stage_1/w.png" id="21_5fmjl"]
 [ext_resource type="Texture2D" uid="uid://i2ljdbws4loc" path="res://Основа/char/water/Velodiy/w.png" id="22_xg5r5"]
 [ext_resource type="Texture2D" uid="uid://bkjuu4225ng66" path="res://Основа/char/water/Velodiy/e.png" id="23_g1dnq"]
+[ext_resource type="Texture2D" uid="uid://bvlxfxauvsqcm" path="res://Основа/char/water/Liah/liah_e.png" id="24_5fmjl"]
 
 [node name="status_types" type="Control" unique_id=1469794512]
 layout_mode = 3
@@ -659,6 +660,35 @@ expand_mode = 3
 stretch_mode = 5
 
 [node name="frame" type="TextureRect" parent="velodiy_e/e" unique_id=1254626236]
+custom_minimum_size = Vector2(46.965, 47.64)
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("2_a7r01")
+expand_mode = 3
+stretch_mode = 5
+
+[node name="liah_e" type="Control" parent="." unique_id=806175487]
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="liah_e" type="TextureRect" parent="liah_e" unique_id=1077726870]
+custom_minimum_size = Vector2(58, 38)
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("24_5fmjl")
+expand_mode = 3
+stretch_mode = 5
+
+[node name="frame" type="TextureRect" parent="liah_e/liah_e" unique_id=403477405]
 custom_minimum_size = Vector2(46.965, 47.64)
 layout_mode = 1
 anchors_preset = 15

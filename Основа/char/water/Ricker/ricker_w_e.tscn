@@ -1,0 +1,106 @@
+[gd_scene format=3 uid="uid://dpnp84np86y8a"]
+
+[ext_resource type="Texture2D" uid="uid://dtvol3eeb2ai0" path="res://Основа/char/water/Ricker/scares/ricker_q_10000.png" id="1_cn8gl"]
+[ext_resource type="Texture2D" uid="uid://dx57pp10d61x2" path="res://Основа/char/water/Ricker/scares/ricker_q_10001.png" id="2_0ttmp"]
+[ext_resource type="Texture2D" uid="uid://c46o2ji47m1g1" path="res://Основа/char/water/Ricker/scares/ricker_q_10002.png" id="3_nlic3"]
+[ext_resource type="Texture2D" uid="uid://v361gwc5q11m" path="res://Основа/char/water/Ricker/scares/ricker_q_10003.png" id="4_o70qi"]
+[ext_resource type="Texture2D" uid="uid://dgwhlv5tcle46" path="res://Основа/char/water/Ricker/scares/ricker_q_10004.png" id="5_4p8ei"]
+[ext_resource type="Texture2D" uid="uid://dykfnckqs35fk" path="res://Основа/char/water/Ricker/scares/ricker_q_10005.png" id="6_xpkjs"]
+[ext_resource type="Texture2D" uid="uid://d0hckrsbp6xsu" path="res://Основа/char/water/Ricker/scares/ricker_q_10006.png" id="7_osxqf"]
+[ext_resource type="Texture2D" uid="uid://bulxshp3apa6l" path="res://Основа/char/water/Ricker/scares/ricker_q_10007.png" id="8_0qmfy"]
+[ext_resource type="Texture2D" uid="uid://1s3frroue7pj" path="res://Основа/char/water/Ricker/scares/ricker_q_10008.png" id="9_ehsj2"]
+[ext_resource type="Texture2D" uid="uid://duh6oj2wasf7m" path="res://Основа/char/water/Ricker/scares/ricker_q_10009.png" id="10_0wuvl"]
+[ext_resource type="Texture2D" uid="uid://duvp0jkxfdmdw" path="res://Основа/char/water/Ricker/scares/ricker_q_10010.png" id="11_nmv72"]
+[ext_resource type="Texture2D" uid="uid://k8je1riw2kku" path="res://Основа/char/water/Ricker/scares/ricker_q_10011.png" id="12_adjg7"]
+[ext_resource type="Texture2D" uid="uid://bnm10revwuall" path="res://Основа/char/water/Ricker/scares/ricker_q_10012.png" id="13_m5jxv"]
+[ext_resource type="Texture2D" uid="uid://cy54qohdehhgm" path="res://Основа/char/water/Ricker/scares/ricker_q_10013.png" id="14_ji7hb"]
+[ext_resource type="Texture2D" uid="uid://cqt1xn3sr83fo" path="res://Основа/mainmenu/ui/water_but.png" id="15_puw3c"]
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_o50db"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("1_cn8gl")
+}, {
+"duration": 1.0,
+"texture": ExtResource("2_0ttmp")
+}, {
+"duration": 1.0,
+"texture": ExtResource("3_nlic3")
+}, {
+"duration": 1.0,
+"texture": ExtResource("4_o70qi")
+}, {
+"duration": 1.0,
+"texture": ExtResource("5_4p8ei")
+}, {
+"duration": 1.0,
+"texture": ExtResource("6_xpkjs")
+}, {
+"duration": 1.0,
+"texture": ExtResource("7_osxqf")
+}, {
+"duration": 1.0,
+"texture": ExtResource("8_0qmfy")
+}, {
+"duration": 1.0,
+"texture": ExtResource("9_ehsj2")
+}, {
+"duration": 1.0,
+"texture": ExtResource("10_0wuvl")
+}, {
+"duration": 1.0,
+"texture": ExtResource("11_nmv72")
+}, {
+"duration": 1.0,
+"texture": ExtResource("12_adjg7")
+}, {
+"duration": 1.0,
+"texture": ExtResource("13_m5jxv")
+}, {
+"duration": 1.0,
+"texture": ExtResource("14_ji7hb")
+}],
+"loop": true,
+"name": &"default",
+"speed": 5.0
+}]
+
+[sub_resource type="Gradient" id="Gradient_31jxn"]
+offsets = PackedFloat32Array(0, 0.51785713, 1)
+colors = PackedColorArray(0, 0.03137255, 1, 1, 0.39215687, 0.6156863, 1, 0.64705884, 0.72156864, 0.8156863, 1, 0.19607843)
+
+[sub_resource type="GradientTexture1D" id="GradientTexture1D_cn8gl"]
+gradient = SubResource("Gradient_31jxn")
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_86xsh"]
+particle_flag_disable_z = true
+emission_shape = 1
+emission_sphere_radius = 51.91
+angle_min = -720.0
+angle_max = 720.0
+direction = Vector3(-1, 1, 0)
+spread = 0.0
+initial_velocity_max = 590.41
+angular_velocity_min = -1.6093254e-05
+angular_velocity_max = -1.6093254e-05
+gravity = Vector3(-98, 98, 0)
+scale_min = 0.02
+scale_max = 0.03
+color_ramp = SubResource("GradientTexture1D_cn8gl")
+
+[node name="ricker_w_e" type="Node2D" unique_id=477495933]
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=366065684]
+sprite_frames = SubResource("SpriteFrames_o50db")
+frame_progress = 0.09671559
+speed_scale = 6.0
+
+[node name="GPUParticles2D" type="GPUParticles2D" parent="." unique_id=945415066]
+emitting = false
+amount = 300
+texture = ExtResource("15_puw3c")
+lifetime = 0.75
+one_shot = true
+explosiveness = 0.97
+process_material = SubResource("ParticleProcessMaterial_86xsh")

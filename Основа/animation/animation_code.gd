@@ -2,6 +2,7 @@ extends Node
 
 const LIAH_Q = preload("res://Основа/char/water/Liah/q_anim/liah_q.tscn")
 const LIAH_W = preload("res://Основа/char/water/Liah/liah_w/liah_w.tscn")
+const LIAH_E = preload("res://Основа/char/water/Liah/liah_e/liah_e.tscn")
 const RICKER_Q = preload("res://Основа/char/water/Ricker/ricker_q.tscn")
 
 func animation_take_damage(node: CanvasItem):
@@ -372,6 +373,44 @@ func anim_liah_w_effect(pos: Vector2) -> void:
 		await get_tree().create_timer(0.8).timeout
 		if is_instance_valid(effect):
 			effect.queue_free()
+
+func anim_liah_e(attacker, target, on_hit: Callable) -> void:
+	if attacker == null:
+		return
+
+	var attacker_visual: Control = attacker.get_node_or_null("WardVisual")
+	if attacker_visual == null:
+		print("LIAH_E: WardVisual не знайдено")
+		return
+
+	if attacker.has_status("liah_e"):
+		attacker.remove_status("liah_e")
+
+		attacker_visual.modulate.a = 1.0
+
+		var old_effect: Node = attacker.get_node_or_null("LiahEEffect")
+		if old_effect:
+			old_effect.queue_free()
+
+		return
+
+	attacker.add_status("liah_e")
+
+	attacker_visual.modulate.a = 0.85
+
+	var effect = LIAH_E.instantiate()
+	effect.name = "LiahEEffect"
+
+	get_tree().current_scene.add_child(effect)
+	effect.global_position = attacker_visual.global_position + attacker_visual.size * 0.5
+
+	if effect.has_method("play"):
+		effect.play()
+
+	if effect is GPUParticles2D:
+		effect.restart()
+		effect.emitting = true
+
 
 func anim_liah_w(attacker, target, on_hit: Callable) -> void:
 	if attacker == null:

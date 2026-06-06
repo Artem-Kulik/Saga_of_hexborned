@@ -18,7 +18,7 @@
 [ext_resource type="Texture2D" uid="uid://tw8tca8258la" path="res://Основа/char/water/Ricker/q_anim/ricker_q_10015.png" id="16_he4qo"]
 [ext_resource type="Texture2D" uid="uid://dvu4rdmsy1kh5" path="res://Основа/char/water/Ricker/q_anim/ricker_q_10016.png" id="17_b4w3k"]
 [ext_resource type="Texture2D" uid="uid://bw6ep8r45ftxd" path="res://Основа/char/water/Ricker/q_anim/ricker_q_10017.png" id="18_5qifi"]
-[ext_resource type="Texture2D" uid="uid://cw8jc2s2tovoi" path="res://Основа/animation/particles/water_particles.png" id="19_st0e7"]
+[ext_resource type="Texture2D" uid="uid://cqt1xn3sr83fo" path="res://Основа/mainmenu/ui/water_but.png" id="19_1xt51"]
 
 [sub_resource type="SpriteFrames" id="SpriteFrames_gu6in"]
 animations = [{
@@ -82,21 +82,38 @@ animations = [{
 "speed": 5.0
 }]
 
-[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_yt6ex"]
-lifetime_randomness = 0.34
+[sub_resource type="CanvasItemMaterial" id="CanvasItemMaterial_25qkj"]
+particles_animation = true
+particles_anim_h_frames = 1
+particles_anim_v_frames = 1
+particles_anim_loop = false
+
+[sub_resource type="Gradient" id="Gradient_iiwo1"]
+offsets = PackedFloat32Array(0, 0.51785713, 1)
+colors = PackedColorArray(0, 0.03137255, 1, 1, 0.39215687, 0.6156863, 1, 0.64705884, 0.72156864, 0.8156863, 1, 0.19607843)
+
+[sub_resource type="GradientTexture1D" id="GradientTexture1D_lte1d"]
+gradient = SubResource("Gradient_iiwo1")
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_n4y15"]
 particle_flag_disable_z = true
-emission_shape_scale = Vector3(100, 100, 1)
-emission_shape = 3
-emission_box_extents = Vector3(1, 1, 1)
-direction = Vector3(1, 1.32, 0)
+emission_shape = 1
+emission_sphere_radius = 51.91
+angle_min = -720.0
+angle_max = 720.0
+direction = Vector3(-1, 1, 0)
 spread = 0.0
-angular_velocity_min = -720.0
-angular_velocity_max = 719.99994
-radial_velocity_min = -2.2351742e-05
-radial_velocity_max = 276.58997
-gravity = Vector3(0, 98, 0)
-scale_min = 0.099999994
-scale_max = 0.19999999
+initial_velocity_max = 590.41
+angular_velocity_min = -1.6093254e-05
+angular_velocity_max = -1.6093254e-05
+gravity = Vector3(-98, 98, 0)
+linear_accel_min = -2.2351742e-06
+linear_accel_max = -2.2351742e-06
+scale_min = 0.02
+scale_max = 0.03
+color_ramp = SubResource("GradientTexture1D_lte1d")
+anim_speed_min = 7.3599997
+anim_speed_max = 13.4
 
 [node name="ricker_q" type="Node2D" unique_id=101590281]
 
@@ -106,12 +123,14 @@ frame = 15
 frame_progress = 0.7921933
 speed_scale = 4.0
 
-[node name="GPUParticles2D" type="GPUParticles2D" parent="." unique_id=648807952]
+[node name="partcl" type="Node2D" parent="." unique_id=1385252568]
+
+[node name="GPUParticles2D" type="GPUParticles2D" parent="partcl" unique_id=1797146067]
+material = SubResource("CanvasItemMaterial_25qkj")
 emitting = false
-amount = 1000
-texture = ExtResource("19_st0e7")
-lifetime = 1.73
+amount = 300
+texture = ExtResource("19_1xt51")
+lifetime = 0.75
 one_shot = true
-speed_scale = 3.24
-randomness = 1.0
-process_material = SubResource("ParticleProcessMaterial_yt6ex")
+explosiveness = 0.97
+process_material = SubResource("ParticleProcessMaterial_n4y15")

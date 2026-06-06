@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://g3g02s7o6lia"
-path="res://.godot/imported/liah_w_10015.png-123a270b4966c6739d5b8c45f6b241e5.ctex"
+uid="uid://lhfh5pee4sp2"
+path="res://.godot/imported/5.png-b641d6e3fa4810eced8ef554753e64b6.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://Основа/char/water/Liah/liah_w/liah_w_10015.png"
-dest_files=["res://.godot/imported/liah_w_10015.png-123a270b4966c6739d5b8c45f6b241e5.ctex"]
+source_file="res://Основа/char/water/Liah/liah_w/5.png"
+dest_files=["res://.godot/imported/5.png-b641d6e3fa4810eced8ef554753e64b6.ctex"]
 
 [params]
 
