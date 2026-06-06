@@ -7,6 +7,7 @@ var _host_btn: Button
 var _join_btn: Button
 var _back_btn: Button
 var _ip_display: Label
+var _navigating: bool = false
 
 func _ready() -> void:
 	_build_ui()
@@ -170,8 +171,13 @@ func _on_back_pressed() -> void:
 
 # ─── Мережеві колбеки ───────────────────────────────────────────────────────
 func _on_peer_connected() -> void:
+	if _navigating:
+		return
+	_navigating = true
 	_set_status("🤝 Суперник знайдений! Переходимо до вибору вардів...", Color("#ffe080"))
 	await get_tree().create_timer(1.0).timeout
+	if not is_inside_tree():
+		return
 	_disconnect_network_signals()
 	get_tree().change_scene_to_file("res://scripts/net/mp_choose_wards.tscn")
 
