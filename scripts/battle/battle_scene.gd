@@ -372,6 +372,12 @@ func _start_battle() -> void:
 			w._update_status_visuals()
 			battle_log.add_entry("Тяжіння: %s отримує 2 початкових стеки" % w.name)
 
+	# Шусіма E: стартує на перезарядці 3
+	for w in ally_wards + enemy_wards:
+		if w.ward_id == "shusima":
+			w._current_cd["E"] = 3
+			w._sync_cd_buttons()
+
 	_start_turn()
 
 
@@ -456,6 +462,14 @@ func _start_turn() -> void:
 			battle_log.add_effect(current_ward.name, current_ward.team, "Тяжіння +%d (всього: %d)" % [actual_add, current_ward.get_status("gravity")])
 		current_ward.set_meta("fizita_gravity_turns", fizita_turns + 1)
 
+	# === ПАСИВКА ШУСІМИ: Розсипання — 90 фіз шкоди собі ===
+	if current_ward.ward_id == "shusima" and not current_ward.is_dead:
+		battle_log.add_entry("Розсипання: %s розсипається — 90 фіз шкоди собі!" % current_ward.name)
+		await battle_resolver.deal_damage_with_modifiers(null, current_ward, 90, "P", "phys")
+		if current_ward.is_dead:
+			_next_turn()
+			return
+
 	# === ПАСИВКА СЬОМОГО: 2 стаки горіння рандомному варду ===
 	if current_ward.ward_id == "siomyi":
 		var all_active: Array = []
@@ -498,17 +512,29 @@ func _start_turn() -> void:
 			_next_turn()
 			return
 
+	# === ТІК КОНТРАТАКИ ===
+	if current_ward.get_status("counterattack") > 0:
+		current_ward.remove_status("counterattack", 1)
+		current_ward._update_status_visuals()
+		if current_ward.get_status("counterattack") == 0:
+			battle_log.add_entry("Контратака (%s): вичерпалась." % current_ward.name)
+		else:
+			battle_log.add_entry("Контратака (%s): залишилось %d ход(и)." % [current_ward.name, current_ward.get_status("counterattack")])
+
 	# Тікаємо КД на початку кожного ходу персонажа
 	if current_ward.has_method("tick_cooldowns"):
 		current_ward.tick_cooldowns()
 
 	# === РЕГЕНЕРАЦІЯ ===
 	if current_ward.get_status("regen") > 0:
+		var regen_per_tick: int = current_ward.get_meta("regen_amount", 100)
 		var regen_hp_before: int = current_ward.current_hp
-		current_ward.health.heal(100)
+		current_ward.health.heal(regen_per_tick)
 		current_ward.remove_status("regen", 1)
 		battle_log.add_heal(current_ward.name, current_ward.team, regen_hp_before, current_ward.current_hp, current_ward.max_hp)
 		if current_ward.get_status("regen") == 0:
+			if current_ward.has_meta("regen_amount"):
+				current_ward.remove_meta("regen_amount")
 			battle_log.add_entry(current_ward.name + ": регенерація завершилась.")
 
 	# Тік кола пекельного вогню та бар'єру

@@ -38,7 +38,7 @@ func attack(attacker, target, skill_key: String = "Q") -> void:
 	# === СМЕТІННЯ: перевіряємо phisita_e перед виконанням скіла ===
 	var effective_target = target
 	var target_type: String = SkillExecutor.get_skill_target_type(attacker.ward_id, skill_key, attacker)
-	if target_type != "all_enemies" and attacker.get_status("phisita_e") > 0:
+	if target_type == "single_enemy" and attacker.get_status("phisita_e") > 0:
 		var chance: int = attacker.get_meta("phisita_e_chance", 0)
 		attacker.remove_status("phisita_e", attacker.get_status("phisita_e"))
 		if attacker.has_meta("phisita_e_chance"):
@@ -328,15 +328,15 @@ func _check_adoneia(target, source, hp_before: int, hp_after: int, damage: int, 
 	if target == null or target.ward_id != "adoneia": return
 	if target.is_dead: return
 
-	# Пасивка P: стак Контратаки при падінні нижче 50% HP
+	# Пасивка P: 1 хід Контратаки при падінні нижче 50% HP
 	if damage > 0 and hp_before * 2 > target.max_hp and hp_after * 2 <= target.max_hp:
-		target.add_status("counterattack", 1)
+		target.set_status_max("counterattack", 1)
 		target._update_status_visuals()
 		if battle_log:
-			battle_log.add_entry("Відповідь (пасивка): %s пробита нижче 50%% HP — +1 Контратака!" % target.name)
-			battle_log.add_effect(target.name, target.team, "Контратака +1 (пасивка)")
+			battle_log.add_entry("Відповідь (пасивка): %s пробита нижче 50%% HP — Контратака на 1 хід!" % target.name)
+			battle_log.add_effect(target.name, target.team, "Контратака 1 хід (пасивка)")
 
-	# Контратака: спрацьовує раз за хід ворога при будь-якому ударі
+	# Контратака: спрацьовує раз за хід ворога — НЕ знімається при спрацюванні (тікає по ходах)
 	if skill_key == "Q_counter": return
 	if damage <= 0: return
 	if target.get_status("counterattack") <= 0: return
@@ -344,11 +344,11 @@ func _check_adoneia(target, source, hp_before: int, hp_after: int, damage: int, 
 	if source == null or not is_instance_valid(source) or source.is_dead: return
 
 	target.set_meta("countered_this_turn", true)
-	target.remove_status("counterattack", 1)
-	target._update_status_visuals()
+	# Не знімаємо стаки — контратака діє до кінця своєї тривалості
+	var ca_turns_left: int = target.get_status("counterattack")
 	if battle_log:
-		battle_log.add_entry("Контратака! %s відповідає — двічі б'є %s по 30!" % [target.name, source_name])
-		battle_log.add_effect(target.name, target.team, "Контратака спрацювала!")
+		battle_log.add_entry("Контратака! %s відповідає — двічі б'є %s по 30! (залишилось %d ход(и))" % [target.name, source_name, ca_turns_left])
+		battle_log.add_effect(target.name, target.team, "Контратака спрацювала (%d ход(и) лишилось)" % ca_turns_left)
 	await deal_damage_with_modifiers(target, source, 30, "Q_counter", "phys")
 	if source != null and is_instance_valid(source) and not source.is_dead:
 		await deal_damage_with_modifiers(target, source, 30, "Q_counter", "phys")
