@@ -12,6 +12,17 @@ var _navigating: bool = false
 func _ready() -> void:
 	_build_ui()
 	_connect_network_signals()
+	if BotTest.enabled:
+		get_tree().create_timer(0.3).timeout.connect(_bot_auto_connect)
+
+func _bot_auto_connect() -> void:
+	if BotTest.is_host:
+		BotTest.msg("[BOT_LOBBY] starting as HOST")
+		_on_host_pressed()
+	else:
+		BotTest.msg("[BOT_LOBBY] connecting to %s as CLIENT" % BotTest.host_ip)
+		_ip_field.text = BotTest.host_ip
+		_on_join_pressed()
 
 # ─── Побудова UI ────────────────────────────────────────────────────────────
 func _build_ui() -> void:

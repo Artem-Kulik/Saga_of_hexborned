@@ -1,0 +1,506 @@
+========================================================================
+MP BATTLE STRESS-TEST REPORT
+Date     : 2026-06-07 19:53:29
+Battles  : 50
+Godot    : /Users/progamax/Downloads/Godot_mono.app/Contents/MacOS/Godot
+========================================================================
+
+SUMMARY
+HOST: 50 battles  WIN=30 LOSE=20 STUCK=0  errors=0
+CLIENT: 50 battles  WIN=20 LOSE=30 STUCK=0  errors=0
+
+------------------------------------------------------------------------
+ERRORS (0 total)
+------------------------------------------------------------------------
+  (no errors detected)
+
+------------------------------------------------------------------------
+PER-BATTLE RESULTS
+------------------------------------------------------------------------
+  battle 001  HOST=LOSE   CLIENT=WIN    turns≈30
+  battle 002  HOST=WIN    CLIENT=LOSE   turns≈13
+  battle 003  HOST=WIN    CLIENT=LOSE   turns≈53
+  battle 004  HOST=LOSE   CLIENT=WIN    turns≈23
+  battle 005  HOST=WIN    CLIENT=LOSE   turns≈33
+  battle 006  HOST=WIN    CLIENT=LOSE   turns≈21
+  battle 007  HOST=WIN    CLIENT=LOSE   turns≈51
+  battle 008  HOST=LOSE   CLIENT=WIN    turns≈67
+  battle 009  HOST=LOSE   CLIENT=WIN    turns≈13
+  battle 010  HOST=WIN    CLIENT=LOSE   turns≈36
+  battle 011  HOST=WIN    CLIENT=LOSE   turns≈25
+  battle 012  HOST=LOSE   CLIENT=WIN    turns≈34
+  battle 013  HOST=LOSE   CLIENT=WIN    turns≈25
+  battle 014  HOST=LOSE   CLIENT=WIN    turns≈10
+  battle 015  HOST=WIN    CLIENT=LOSE   turns≈37
+  battle 016  HOST=WIN    CLIENT=LOSE   turns≈48
+  battle 017  HOST=WIN    CLIENT=LOSE   turns≈18
+  battle 018  HOST=LOSE   CLIENT=WIN    turns≈72
+  battle 019  HOST=LOSE   CLIENT=WIN    turns≈29
+  battle 020  HOST=WIN    CLIENT=LOSE   turns≈22
+  battle 021  HOST=LOSE   CLIENT=WIN    turns≈20
+  battle 022  HOST=WIN    CLIENT=LOSE   turns≈42
+  battle 023  HOST=LOSE   CLIENT=WIN    turns≈37
+  battle 024  HOST=LOSE   CLIENT=WIN    turns≈41
+  battle 025  HOST=WIN    CLIENT=LOSE   turns≈30
+  battle 026  HOST=WIN    CLIENT=LOSE   turns≈51
+  battle 027  HOST=WIN    CLIENT=LOSE   turns≈28
+  battle 028  HOST=LOSE   CLIENT=WIN    turns≈48
+  battle 029  HOST=WIN    CLIENT=LOSE   turns≈20
+  battle 030  HOST=WIN    CLIENT=LOSE   turns≈52
+  battle 031  HOST=WIN    CLIENT=LOSE   turns≈29
+  battle 032  HOST=WIN    CLIENT=LOSE   turns≈23
+  battle 033  HOST=WIN    CLIENT=LOSE   turns≈30
+  battle 034  HOST=WIN    CLIENT=LOSE   turns≈67
+  battle 035  HOST=LOSE   CLIENT=WIN    turns≈10
+  battle 036  HOST=LOSE   CLIENT=WIN    turns≈76
+  battle 037  HOST=LOSE   CLIENT=WIN    turns≈18
+  battle 038  HOST=WIN    CLIENT=LOSE   turns≈25
+  battle 039  HOST=WIN    CLIENT=LOSE   turns≈38
+  battle 040  HOST=WIN    CLIENT=LOSE   turns≈15
+  battle 041  HOST=WIN    CLIENT=LOSE   turns≈50
+  battle 042  HOST=LOSE   CLIENT=WIN    turns≈25
+  battle 043  HOST=WIN    CLIENT=LOSE   turns≈48
+  battle 044  HOST=LOSE   CLIENT=WIN    turns≈45
+  battle 045  HOST=WIN    CLIENT=LOSE   turns≈38
+  battle 046  HOST=WIN    CLIENT=LOSE   turns≈53
+  battle 047  HOST=LOSE   CLIENT=WIN    turns≈50
+  battle 048  HOST=WIN    CLIENT=LOSE   turns≈28
+  battle 049  HOST=LOSE   CLIENT=WIN    turns≈25
+  battle 050  HOST=WIN    CLIENT=LOSE   turns≈28
+
+------------------------------------------------------------------------
+SKILL FAILURES (0)
+------------------------------------------------------------------------
+  (none)
+
+------------------------------------------------------------------------
+HOST FINAL REPORT (from Godot)
+------------------------------------------------------------------------
+[FINAL_REPORT] role=HOST
+Battles played : 50 / 50
+Results        : WIN=30  LOSE=20  STUCK=0
+--- ERRORS (0) ---
+  (none)
+--- SKILL FAILURES ---
+  (none)
+========================================================================
+
+------------------------------------------------------------------------
+CLIENT FINAL REPORT (from Godot)
+------------------------------------------------------------------------
+[FINAL_REPORT] role=CLIENT
+Battles played : 50 / 50
+Results        : WIN=20  LOSE=30  STUCK=0
+--- ERRORS (0) ---
+  (none)
+--- SKILL FAILURES ---
+  (none)
+========================================================================
+
+------------------------------------------------------------------------
+HOST RAW LOG (last 200 lines)
+------------------------------------------------------------------------
+Астея отримав ефект: Пам'ять (пасивка)
+[0248630][HOST] [BOT_ACT] HOST ward=Ошая sk=E ttype=single_enemy b=49 t=3
+[SKILL] id: ashayah_e  |  ward: ashayah  |  key: E
+Ошая -> Фізіта | 150 damage
+Фізіта загинув
+Фізіта отримав 150 шкоди. HP: 0
+Заражений І отримав 100 шкоди. HP: 100
+Ошая -> Заражений І | 100 damage
+Астея отримав 100 шкоди. HP: 0
+Ошая -> Астея | 100 damage
+Астея загинув
+Громовий спис: гнів неба обрушено! Ошая оглушена на 2 ходи.
+Ошая отримав ефект: Оглушення 2 ходи
+[SKILL] ashayah_e — завершено
+Заражений І відновив HP
+💫 Зараза: Заражений І +50 HP (×1 сяйво-вардів).
+[SKILL] id: infected_1_b_q  |  ward: infected_1_b  |  key: Q
+Заражений І -> Заражений І | 70 damage
+[SKILL] infected_1_b_q — завершено
+🧠 Пам'ять: Астея запам'ятала [Заражений І → Q]!
+Астея отримав ефект: Пам'ять (пасивка)
+🧠 Пам'ять: E = [Q] від infected_1_b
+Астея відновив HP
+💚 Реген: Астея +50 HP.
+Заражений І отримав 70 шкоди. HP: 55
+Фізіта помер
+[0248973][HOST] [BOT_ACT] HOST ward=Астея sk=Q ttype=single_enemy b=49 t=4
+[SKILL] id: asteyah_q  |  ward: asteyah  |  key: Q
+Астея помер
+Астея -> Заражений І | 70 damage
+Кенсел: Астея відправляє скіл E [Заражений І] на перезарядку — КД: 1 хід(и)!
+Заражений І отримав ефект: КД E → 1 (Кенсел)
+[SKILL] asteyah_q — завершено
+Заражений І відновив HP
+💫 Зараза: Заражений І +50 HP (×1 сяйво-вардів).
+Заражений І отримав 70 шкоди. HP: 130
+[SKILL] id: infected_1_b_e  |  ward: infected_1_b  |  key: E
+✨ Спалах: Заражений І витрачає 65 HP!
+Астея отримав 200 шкоди. HP: 0
+Заражений І -> Астея | 200 damage
+Астея загинув
+Заражений І отримав 100 шкоди. HP: 0
+Заражений І -> Заражений І | 100 damage
+Заражений І загинув
+Ошая отримав 200 шкоди. HP: 50
+Заражений І -> Ошая | 200 damage
+[SKILL] infected_1_b_e — завершено
+⚡ Ошая оглушений — пропускає хід!
+Заражений І відновив HP
+💫 Зараза: Заражений І +50 HP (×1 сяйво-вардів).
+Астея помер
+[SKILL] id: infected_1_b_q  |  ward: infected_1_b  |  key: Q
+Заражений І помер
+Заражений І -> Ошая | 140 damage
+Ошая загинув
+[SKILL] infected_1_b_q — завершено
+Результат бою: ПОРАЗКА
+[0249487][HOST] [BATTLE_END] battle=49 result=LOSE
+Ошая отримав 140 шкоди. HP: 0
+ERROR: Parameter "data.tree" is null.
+   at: get_tree (scene/main/node.h:549)
+   GDScript backtrace (most recent call first):
+       [0] play_anim_death (res://ward_slot.gd:720)
+SCRIPT ERROR: Cannot call method 'create_timer' on a null value.
+          at: play_anim_death (res://ward_slot.gd:720)
+          GDScript backtrace (most recent call first):
+              [0] play_anim_death (res://ward_slot.gd:720)
+[0252753][HOST] [BOT_WARDS] selected=["infected_1_a", "infected_1_c", "etesena"]
+Першим ходить: ally
+⚔ Бій почався!
+Заражений І відновив HP
+💫 Зараза: Заражений І +100 HP (×2 сяйво-вардів).
+[0253528][HOST] [BOT_ACT] HOST ward=Заражений І sk=E ttype=self b=50 t=1
+[SKILL] id: infected_1_a_e  |  ward: infected_1_a  |  key: E
+✨ Спалах: Заражений І витрачає 125 HP!
+Заражений І отримав 100 шкоди. HP: 150
+Заражений І -> Заражений І | 100 damage
+Шусіма отримав 200 шкоди. HP: 150
+Заражений І -> Шусіма | 200 damage
+Оцій отримав 200 шкоди. HP: 50
+Заражений І -> Оцій | 200 damage
+[SKILL] infected_1_a_e — завершено
+Заражений І відновив HP
+💫 Зараза: Заражений І +50 HP (×1 сяйво-вардів).
+[SKILL] id: infected_1_a_q  |  ward: infected_1_a  |  key: Q
+Заражений І -> Заражений І2 | 70 damage
+[SKILL] infected_1_a_q — завершено
+Заражений І2 відновив HP
+💫 Зараза: Заражений І2 +100 HP (×2 сяйво-вардів).
+Заражений І2 отримав 70 шкоди. HP: 250
+[0253967][HOST] [BOT_ACT] HOST ward=Заражений І2 sk=W ttype=single_enemy b=50 t=2
+[SKILL] id: infected_1_c_w  |  ward: infected_1_c  |  key: W
+Оцій отримав ефект: Чума (3 ходи)
+☠️ Чума: Оцій заражений — 15 сяйво щохід, 3 ходи.
+[SKILL] infected_1_c_w — завершено
+💀 Розсипання: Шусіма — 90 фіз шкоди собі!
+Шусіма отримав ефект: Розсипання (пасивка)
+Шусіма -> Шусіма | 90 damage
+Шусіма отримав 90 шкоди. HP: 60
+[SKILL] id: shusima_q  |  ward: shusima  |  key: Q
+Шусіма -> Заражений І | 40 damage
+Висушення: Шусіма відновлює сили — 1 стак регену на 1 хід (+50 HP).
+Шусіма отримав ефект: Реген ×1 (1 хід)
+[SKILL] shusima_q — завершено
+Заражений І отримав 40 шкоди. HP: 85
+[0254226][HOST] [BOT_ACT] HOST ward=Етесена sk=Q ttype=all_enemies b=50 t=3
+[SKILL] id: etesena_q  |  ward: etesena  |  key: Q
+Оцій отримав 25 шкоди. HP: 25
+Етесена -> Оцій | 25 damage
+Заражений І отримав 25 шкоди. HP: 175
+Етесена -> Заражений І | 25 damage
+Заражений І отримав 25 шкоди. HP: 150
+Етесена -> Заражений І | 25 damage
+[SKILL] etesena_q — завершено
+☠️ Чума: Оцій отримує 15 сяйво шкоди!
+Оцій отримав 30 шкоди. HP: 0
+Оцій загинув
+Оцій: передає Коло пекельного вогню Шусіма!
+Шусіма отримав ефект: Коло пекельного вогню (2 ходи)
+Заражений І відновив HP
+💫 Зараза: Заражений І +50 HP (×1 сяйво-вардів).
+[SKILL] id: infected_1_a_q  |  ward: infected_1_a  |  key: Q
+Оцій помер
+Заражений І -> Заражений І | 70 damage
+[SKILL] infected_1_a_q — завершено
+Заражений І відновив HP
+💫 Зараза: Заражений І +100 HP (×2 сяйво-вардів).
+Заражений І отримав 70 шкоди. HP: 115
+[0254732][HOST] [BOT_ACT] HOST ward=Заражений І sk=W ttype=single_enemy b=50 t=4
+[SKILL] id: infected_1_a_w  |  ward: infected_1_a  |  key: W
+Шусіма отримав ефект: Чума (3 ходи)
+☠️ Чума: Шусіма заражений — 15 сяйво щохід, 3 ходи.
+[SKILL] infected_1_a_w — завершено
+💀 Розсипання: Шусіма — 90 фіз шкоди собі!
+Шусіма отримав ефект: Розсипання (пасивка)
+Шусіма отримав 90 шкоди. HP: 0
+Шусіма -> Шусіма | 90 damage
+Шусіма загинув
+Заражений І відновив HP
+💫 Зараза: Заражений І +50 HP (×1 сяйво-вардів).
+[SKILL] id: infected_1_a_e  |  ward: infected_1_a  |  key: E
+✨ Спалах: Заражений І витрачає 125 HP!
+Заражений І отримав 100 шкоди. HP: 15
+Заражений І -> Заражений І | 100 damage
+Заражений І2 отримав 100 шкоди. HP: 150
+Заражений І -> Заражений І2 | 100 damage
+Етесена отримав 200 шкоди. HP: 50
+Заражений І -> Етесена | 200 damage
+[SKILL] infected_1_a_e — завершено
+Заражений І2 відновив HP
+💫 Зараза: Заражений І2 +100 HP (×2 сяйво-вардів).
+Шусіма помер
+[0255098][HOST] [BOT_ACT] HOST ward=Заражений І2 sk=Q ttype=single_enemy b=50 t=5
+[SKILL] id: infected_1_c_q  |  ward: infected_1_c  |  key: Q
+Заражений І отримав 70 шкоди. HP: 55
+Заражений І2 -> Заражений І | 70 damage
+[SKILL] infected_1_c_q — завершено
+Заражений І відновив HP
+💫 Зараза: Заражений І +50 HP (×1 сяйво-вардів).
+[SKILL] id: infected_1_a_w  |  ward: infected_1_a  |  key: W
+Етесена отримав ефект: Чума (3 ходи)
+☠️ Чума: Етесена заражений — 15 сяйво щохід, 3 ходи.
+[SKILL] infected_1_a_w — завершено
+☠️ Чума: Етесена отримує 15 сяйво шкоди!
+Етесена отримав 30 шкоди. HP: 20
+[0255532][HOST] [BOT_ACT] HOST ward=Етесена sk=E ttype=single_enemy b=50 t=6
+[SKILL] id: etesena_e  |  ward: etesena  |  key: E
+Заражений І отримав 25 шкоди. HP: 80
+Етесена -> Заражений І | 25 damage
+Заражений І отримав 25 шкоди. HP: 55
+Етесена -> Заражений І | 25 damage
+Заражений І отримав 25 шкоди. HP: 30
+Етесена -> Заражений І | 25 damage
+Заражений І отримав 25 шкоди. HP: 5
+Етесена -> Заражений І | 25 damage
+Заражений І отримав 25 шкоди. HP: 0
+Етесена -> Заражений І | 25 damage
+Заражений І загинув
+[SKILL] etesena_e — завершено
+Результат бою: ПЕРЕМОГА
+[0255884][HOST] [BATTLE_END] battle=50 result=WIN
+========================================================================
+[FINAL_REPORT] role=HOST
+Battles played : 50 / 50
+Results        : WIN=30  LOSE=20  STUCK=0
+--- ERRORS (0) ---
+  (none)
+--- SKILL FAILURES ---
+  (none)
+========================================================================
+[BOT_DONE]
+ERROR: 8 RID allocations of type 'N10RendererRD14TextureStorage7TextureE' were leaked at exit.
+WARNING: 16 RIDs of type "Texture" were leaked.
+     at: finalize (servers/rendering/rendering_device.cpp:7505)
+ERROR: Parameter "RenderingServer::get_singleton()" is null.
+   at: ~CompressedTexture2D (scene/resources/compressed_texture.cpp:461)
+WARNING: ObjectDB instances leaked at exit (run with --verbose for details).
+     at: cleanup (core/object/object.cpp:2641)
+ERROR: 7 resources still in use at exit (run with --verbose for details).
+   at: clear (core/io/resource.cpp:810)
+
+------------------------------------------------------------------------
+CLIENT RAW LOG (last 200 lines)
+------------------------------------------------------------------------
+⚔️ Ваш хід: Оцій. Оберіть скіл.
+Етесена помер
+[0244137][CLIENT] [BOT_ACT] CLIENT ward=Оцій sk=E ttype=single_enemy b=48
+⏳ Очікуємо відповідь від хоста...
+Рик: Заражений І +1 горіння (союзників немає).
+Майстер Оічі -> Оцій | 105 damage
+Оцій загинув
+[0244329][CLIENT] [BATTLE_END] battle=48 result=LOSE
+ERROR: Parameter "data.tree" is null.
+   at: get_tree (scene/main/node.h:549)
+   GDScript backtrace (most recent call first):
+       [0] play_anim_death (res://ward_slot.gd:720)
+SCRIPT ERROR: Cannot call method 'create_timer' on a null value.
+          at: play_anim_death (res://ward_slot.gd:720)
+          GDScript backtrace (most recent call first):
+              [0] play_anim_death (res://ward_slot.gd:720)
+[0245732][CLIENT] [BOT_WARDS] selected=["fizita", "infected_1_b", "asteyah"]
+Першим ходить: ally
+⚔ Бій почався!
+Тяжіння: Фізіта отримує 2 початкових стеки
+⚔ Бій почався!
+Тяжіння: Фізіта отримує 2 початкових стеки
+🧠 Пам'ять: E порожня
+Таємні знання: Астея — 1 стак регену на 2 ходи (+50 HP/хід).
+Астея отримав ефект: Реген ×1 (2 ходи)
+Таємні знання: Астея ходить ще раз!
+🧠 Пам'ять: Астея запам'ятала [Астея → W]!
+Астея отримав ефект: Пам'ять (пасивка)
+Пам'ять: Астея ще нічого не запам'ятала!
+🧠 Пам'ять: Астея запам'ятала [Астея → E]!
+Астея отримав ефект: Пам'ять (пасивка)
+Тяжіння: Фізіта +2 стак(и) (разом: 4, макс: 4)
+Фізіта отримав ефект: Тяжіння +2 (всього: 4)
+⚔️ Ваш хід: Фізіта. Оберіть скіл.
+[0246500][CLIENT] [BOT_ACT] CLIENT ward=Фізіта sk=Q ttype=single_enemy b=49
+⏳ Очікуємо відповідь від хоста...
+Шквал: Фізіта випускає 4 стак(и) — 160 фіз шкоди!
+Фізіта -> Астея | 160 damage
+🧠 Пам'ять: Астея запам'ятала [Фізіта → Q]!
+Астея отримав ефект: Пам'ять (пасивка)
+Заражений І відновив HP
+💫 Зараза: Заражений І +50 HP (×1 сяйво-вардів).
+✨ Спалах: Заражений І витрачає 125 HP!
+Заражений І -> Фізіта | 200 damage
+Заражений І -> Заражений І | 100 damage
+Заражений І -> Астея | 200 damage
+🧠 Пам'ять: Астея запам'ятала [Заражений І → E]!
+Астея отримав ефект: Пам'ять (пасивка)
+Заражений І відновив HP
+💫 Зараза: Заражений І +50 HP (×1 сяйво-вардів).
+⚔️ Ваш хід: Заражений І. Оберіть скіл.
+[0246848][CLIENT] [BOT_ACT] CLIENT ward=Заражений І sk=W ttype=single_enemy b=49
+⏳ Очікуємо відповідь від хоста...
+Заражений І отримав ефект: Чума (3 ходи)
+☠️ Чума: Заражений І заражений — 15 сяйво щохід, 3 ходи.
+🧠 Пам'ять: Астея запам'ятала [Заражений І → W]!
+Астея отримав ефект: Пам'ять (пасивка)
+Ошая -> Фізіта | 150 damage
+Фізіта загинув
+Ошая -> Заражений І | 100 damage
+Ошая -> Астея | 100 damage
+Астея загинув
+Громовий спис: гнів неба обрушено! Ошая оглушена на 2 ходи.
+Ошая отримав ефект: Оглушення 2 ходи
+Заражений І відновив HP
+💫 Зараза: Заражений І +50 HP (×1 сяйво-вардів).
+⚔️ Ваш хід: Заражений І. Оберіть скіл.
+[0247144][CLIENT] [BOT_ACT] CLIENT ward=Заражений І sk=Q ttype=single_enemy b=49
+⏳ Очікуємо відповідь від хоста...
+Заражений І -> Заражений І | 70 damage
+🧠 Пам'ять: Астея запам'ятала [Заражений І → Q]!
+Астея отримав ефект: Пам'ять (пасивка)
+🧠 Пам'ять: E = [Q] від infected_1_b
+Астея відновив HP
+💚 Реген: Астея +50 HP.
+Фізіта помер
+Астея помер
+Астея -> Заражений І | 70 damage
+Кенсел: Астея відправляє скіл E [Заражений І] на перезарядку — КД: 1 хід(и)!
+Заражений І отримав ефект: КД E → 1 (Кенсел)
+Заражений І відновив HP
+💫 Зараза: Заражений І +50 HP (×1 сяйво-вардів).
+⚔️ Ваш хід: Заражений І. Оберіть скіл.
+[0247393][CLIENT] [BOT_ACT] CLIENT ward=Заражений І sk=E ttype=self b=49
+⏳ Очікуємо відповідь від хоста...
+✨ Спалах: Заражений І витрачає 65 HP!
+Заражений І -> Астея | 200 damage
+Астея загинув
+Заражений І -> Заражений І | 100 damage
+Заражений І загинув
+Заражений І -> Ошая | 200 damage
+⚡ Ошая оглушений — пропускає хід!
+Заражений І відновив HP
+💫 Зараза: Заражений І +50 HP (×1 сяйво-вардів).
+⚔️ Ваш хід: Заражений І. Оберіть скіл.
+[0247710][CLIENT] [BOT_ACT] CLIENT ward=Заражений І sk=Q ttype=single_enemy b=49
+⏳ Очікуємо відповідь від хоста...
+Астея помер
+Заражений І помер
+Заражений І -> Ошая | 140 damage
+Ошая загинув
+[0247800][CLIENT] [BATTLE_END] battle=49 result=WIN
+[0249309][CLIENT] [BOT_WARDS] selected=["infected_1_a", "shusima", "otsii"]
+Першим ходить: ally
+⚔ Бій почався!
+⚔ Бій почався!
+Заражений І відновив HP
+💫 Зараза: Заражений І +100 HP (×2 сяйво-вардів).
+✨ Спалах: Заражений І витрачає 125 HP!
+Заражений І -> Заражений І | 100 damage
+Заражений І -> Шусіма | 200 damage
+Заражений І -> Оцій | 200 damage
+Заражений І відновив HP
+💫 Зараза: Заражений І +50 HP (×1 сяйво-вардів).
+⚔️ Ваш хід: Заражений І. Оберіть скіл.
+[0252136][CLIENT] [BOT_ACT] CLIENT ward=Заражений І sk=Q ttype=single_enemy b=50
+⏳ Очікуємо відповідь від хоста...
+Заражений І -> Заражений І2 | 70 damage
+Заражений І2 відновив HP
+💫 Зараза: Заражений І2 +100 HP (×2 сяйво-вардів).
+Оцій отримав ефект: Чума (3 ходи)
+☠️ Чума: Оцій заражений — 15 сяйво щохід, 3 ходи.
+💀 Розсипання: Шусіма — 90 фіз шкоди собі!
+Шусіма отримав ефект: Розсипання (пасивка)
+Шусіма -> Шусіма | 90 damage
+⚔️ Ваш хід: Шусіма. Оберіть скіл.
+[0252398][CLIENT] [BOT_ACT] CLIENT ward=Шусіма sk=Q ttype=single_enemy b=50
+⏳ Очікуємо відповідь від хоста...
+Шусіма -> Заражений І | 40 damage
+Висушення: Шусіма відновлює сили — 1 стак регену на 1 хід (+50 HP).
+Шусіма отримав ефект: Реген ×1 (1 хід)
+Етесена -> Оцій | 25 damage
+Етесена -> Заражений І | 25 damage
+Етесена -> Заражений І | 25 damage
+☠️ Чума: Оцій отримує 15 сяйво шкоди!
+Оцій загинув
+Оцій: передає Коло пекельного вогню Шусіма!
+Шусіма отримав ефект: Коло пекельного вогню (2 ходи)
+Заражений І відновив HP
+💫 Зараза: Заражений І +50 HP (×1 сяйво-вардів).
+⚔️ Ваш хід: Заражений І. Оберіть скіл.
+[0252768][CLIENT] [BOT_ACT] CLIENT ward=Заражений І sk=Q ttype=single_enemy b=50
+⏳ Очікуємо відповідь від хоста...
+Заражений І -> Заражений І | 70 damage
+Заражений І відновив HP
+💫 Зараза: Заражений І +100 HP (×2 сяйво-вардів).
+Оцій помер
+Шусіма отримав ефект: Чума (3 ходи)
+☠️ Чума: Шусіма заражений — 15 сяйво щохід, 3 ходи.
+💀 Розсипання: Шусіма — 90 фіз шкоди собі!
+Шусіма отримав ефект: Розсипання (пасивка)
+Шусіма -> Шусіма | 90 damage
+Шусіма загинув
+Заражений І відновив HP
+💫 Зараза: Заражений І +50 HP (×1 сяйво-вардів).
+⚔️ Ваш хід: Заражений І. Оберіть скіл.
+[0253218][CLIENT] [BOT_ACT] CLIENT ward=Заражений І sk=E ttype=self b=50
+⏳ Очікуємо відповідь від хоста...
+✨ Спалах: Заражений І витрачає 125 HP!
+Заражений І -> Заражений І | 100 damage
+Заражений І -> Заражений І2 | 100 damage
+Заражений І -> Етесена | 200 damage
+Заражений І2 відновив HP
+💫 Зараза: Заражений І2 +100 HP (×2 сяйво-вардів).
+Шусіма помер
+Заражений І2 -> Заражений І | 70 damage
+Заражений І відновив HP
+💫 Зараза: Заражений І +50 HP (×1 сяйво-вардів).
+⚔️ Ваш хід: Заражений І. Оберіть скіл.
+[0253594][CLIENT] [BOT_ACT] CLIENT ward=Заражений І sk=W ttype=single_enemy b=50
+⏳ Очікуємо відповідь від хоста...
+Етесена отримав ефект: Чума (3 ходи)
+☠️ Чума: Етесена заражений — 15 сяйво щохід, 3 ходи.
+☠️ Чума: Етесена отримує 15 сяйво шкоди!
+Етесена -> Заражений І | 25 damage
+Етесена -> Заражений І | 25 damage
+Етесена -> Заражений І | 25 damage
+Етесена -> Заражений І | 25 damage
+Етесена -> Заражений І | 25 damage
+Заражений І загинув
+[0254196][CLIENT] [BATTLE_END] battle=50 result=LOSE
+========================================================================
+[FINAL_REPORT] role=CLIENT
+Battles played : 50 / 50
+Results        : WIN=20  LOSE=30  STUCK=0
+--- ERRORS (0) ---
+  (none)
+--- SKILL FAILURES ---
+  (none)
+========================================================================
+[BOT_DONE]
+ERROR: 8 RID allocations of type 'N10RendererRD14TextureStorage7TextureE' were leaked at exit.
+WARNING: 16 RIDs of type "Texture" were leaked.
+     at: finalize (servers/rendering/rendering_device.cpp:7505)
+ERROR: Parameter "RenderingServer::get_singleton()" is null.
+   at: ~CompressedTexture2D (scene/resources/compressed_texture.cpp:461)
+WARNING: ObjectDB instances leaked at exit (run with --verbose for details).
+     at: cleanup (core/object/object.cpp:2641)
+ERROR: 7 resources still in use at exit (run with --verbose for details).
+   at: clear (core/io/resource.cpp:810)

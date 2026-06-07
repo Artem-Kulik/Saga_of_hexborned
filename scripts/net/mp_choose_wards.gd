@@ -102,6 +102,22 @@ func _ready() -> void:
 		node.mouse_filter = Control.MOUSE_FILTER_STOP
 		node.get_parent().mouse_filter = Control.MOUSE_FILTER_PASS
 
+	if BotTest.enabled:
+		get_tree().create_timer(0.4).timeout.connect(_bot_auto_select)
+
+
+func _bot_auto_select() -> void:
+	var all_ids: Array = WardDatabase.get_all_ids()
+	all_ids.shuffle()
+	selected_ids.assign(all_ids.slice(0, 3))
+	BotTest.msg("[BOT_WARDS] selected=%s" % str(selected_ids))
+	# Directly invoke confirm logic without touching UI buttons
+	GameState.ally_ward_ids = selected_ids.duplicate()
+	_waiting_for_opponent = true
+	if not NetworkManager.opponent_wards_ready.is_connected(_on_opponent_ready):
+		NetworkManager.opponent_wards_ready.connect(_on_opponent_ready, CONNECT_ONE_SHOT)
+	NetworkManager.send_my_wards(selected_ids)
+
 
 func _process(delta: float) -> void:
 	t += delta

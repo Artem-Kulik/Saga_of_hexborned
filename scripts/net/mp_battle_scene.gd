@@ -88,6 +88,7 @@ var _oath_skip_next_carrier_trigger: bool = false
 
 
 func _ready() -> void:
+	_bot_watchdog_last_ms = Time.get_ticks_msec()
 	_apply_ward_data()
 	_create_battle_systems()
 	if NetworkManager.is_multiplayer:
@@ -170,6 +171,9 @@ func _setup_end_game_overlay() -> void:
 
 
 func show_victory_screen() -> void:
+	if BotTest.enabled:
+		_bot_handle_battle_end("WIN")
+		return
 	print("SHOW VICTORY SCREEN")
 
 	_fade_in_end_screen()
@@ -190,6 +194,9 @@ func show_victory_screen() -> void:
 	defeat_ash.emitting = false
 
 func show_defeat_screen() -> void:
+	if BotTest.enabled:
+		_bot_handle_battle_end("LOSE")
+		return
 	print("SHOW DEFEAT SCREEN")
 	result_player.stream = defeat_music
 	result_player.play()
@@ -224,8 +231,31 @@ func _on_music_finished() -> void:
 	play_random_track()
 
 
-func _process(_delta: float) -> void:
+var _bot_watchdog_last_ms: int = 0
+const _BOT_WATCHDOG_SEC: int   = 20
+
+func _process(delta: float) -> void:
 	reorder_manager.process_drag()
+	# Bot watchdog — detects frozen battles
+	if BotTest.enabled:
+		if not battle_started or battle_finished:
+			_bot_watchdog_last_ms = Time.get_ticks_msec()
+		else:
+			var now_ms: int = Time.get_ticks_msec()
+			if now_ms - _bot_watchdog_last_ms > _BOT_WATCHDOG_SEC * 1000:
+				_bot_watchdog_last_ms = now_ms
+				BotTest.log_error("WATCHDOG", "battle_stuck b=%d turn=%d team=%s ward=%s locked=%s waiting=%s" % [
+					BotTest.battle_count + 1, turn_number,
+					turn_manager.current_team if turn_manager else "?",
+					current_ward.name if current_ward else "null",
+					str(_turn_locked), str(waiting_for_target)
+				])
+				if NetworkManager.is_host and not battle_finished:
+					_turn_locked = false
+					waiting_for_target = false
+					_etesena_w_active = false
+					_etesena_w_targets.clear()
+					_finish_battle("ПОРАЗКА")
 
 
 func show_target_arrow(from_position: Vector2) -> void:
@@ -535,7 +565,7 @@ func _start_turn() -> void:
 		battle_log.add_effect(current_ward.name, current_ward.team, "Розсипання (пасивка)")
 		await battle_resolver.deal_damage_with_modifiers(current_ward, current_ward, 90, "P", "phys")
 		if current_ward.is_dead:
-			_next_turn()
+			_continue_same_team()
 			return
 
 	# === ПАСИВКА СЬОМОГО: 2 стаки горіння рандомному варду ===
@@ -590,7 +620,7 @@ func _start_turn() -> void:
 			_finish_battle("ПЕРЕМОГА")
 			return
 		if current_ward.is_dead:
-			_next_turn()
+			_continue_same_team()
 			return
 
 	# === ОБРОБКА ГОРІННЯ ===
@@ -599,7 +629,7 @@ func _start_turn() -> void:
 		battle_log.add_info("🔥 Горіння: %s отримує %d вогню." % [current_ward.name, burn_dmg], Color("#c86030"))
 		await battle_resolver.deal_damage_with_modifiers(null, current_ward, burn_dmg, "burning", "fire")
 		if current_ward.is_dead:
-			_next_turn()
+			_continue_same_team()
 			return
 
 	# === ТІК ЧУМИ (infected_1 W) ===
@@ -609,7 +639,7 @@ func _start_turn() -> void:
 		current_ward.remove_status("plague", 1)
 		current_ward._update_status_visuals()
 		if current_ward.is_dead:
-			_next_turn()
+			_continue_same_team()
 			return
 
 	# === ТІК КОНТРАТАКИ ===
@@ -738,6 +768,17 @@ func _start_turn() -> void:
 		# Якщо йде хід союзника HOST — показуємо клієнту який ворожий вард пульсує
 		if turn_manager.current_team == "ally" and current_ward != null:
 			NetworkManager.signal_host_ally_turn(current_ward.name)
+
+	# BOT: HOST ally turn — bot takes action automatically
+	if BotTest.enabled and NetworkManager.is_multiplayer and NetworkManager.is_host:
+		if turn_manager.current_team == "ally" and current_ward != null and not current_ward.is_dead:
+			BotTest.turn_count += 1
+			if not is_inside_tree(): return
+			await get_tree().create_timer(0.25).timeout
+			if not is_inside_tree(): return
+			if not battle_finished:
+				await _bot_do_ally_turn()
+			return
 
 	if turn_manager.current_team == "enemy":
 		# HOST у мультиплеєрі: "enemy" = клієнтські варди — чекаємо RPC замість AI
@@ -926,6 +967,11 @@ func _on_ward_clicked(ward) -> void:
 	if not waiting_for_target:
 		return
 
+	# Etesena W: накопичуємо цілі локально (і HOST, і CLIENT) — ПЕРЕД interceptом
+	if _etesena_w_active:
+		_etesena_w_add_target(ward)
+		return
+
 	# CLIENT у мультиплеєрі: надсилаємо ціль хосту замість локального виконання
 	if NetworkManager.is_multiplayer and not NetworkManager.is_host:
 		var _mp_h = get_tree().get_first_node_in_group("mp_battle_hook")
@@ -1003,11 +1049,6 @@ func _on_ward_clicked(ward) -> void:
 
 	if ward.has_meta("untargetable") and ward.get_meta("untargetable"):
 		battle_log.add_entry("Ця ціль наразі не вразлива!")
-		return
-
-	# Танець Етесени — multi-target вибір
-	if _etesena_w_active:
-		_etesena_w_add_target(ward)
 		return
 
 	if selected_attacker.taunted_by != "":
@@ -1400,6 +1441,22 @@ func _etesena_w_execute() -> void:
 	hide_target_arrow()
 	_etesena_w_clear_labels()
 
+	if NetworkManager.is_multiplayer and not NetworkManager.is_host:
+		var _atk_i: int = ally_wards.find(selected_attacker)
+		if _atk_i < 0:
+			_etesena_w_targets.clear()
+			return
+		var _target_indices: Array = []
+		for t in _etesena_w_targets:
+			var ti: int = enemy_wards.find(t)
+			if ti >= 0:
+				_target_indices.append(ti)
+		_etesena_w_targets.clear()
+		_turn_locked = true
+		battle_log.add_info("⏳ Очікуємо відповідь від хоста...", Color("#888888"))
+		NetworkManager.client_send_etesena_w(_atk_i, _target_indices)
+		return
+
 	selected_attacker.set_meta("etesena_w_targets", _etesena_w_targets.duplicate())
 	_etesena_w_targets.clear()
 
@@ -1481,6 +1538,22 @@ func _transfer_oath_of_rain() -> void:
 	battle_log.add_info("💧 Клятва передана → %s (%d раунд(и))." % [new_carrier.name, _oath_rounds_left], Color("#4090c0"))
 
 
+func _continue_same_team() -> void:
+	if battle_finished:
+		return
+	_turn_timeout_timer.stop()
+	_turn_tick_timer.stop()
+	battle_log.update_timer(-1)
+	hide_target_arrow()
+	if battle_resolver.is_team_dead(ally_wards):
+		_finish_battle("ПОРАЗКА")
+		return
+	if battle_resolver.is_team_dead(enemy_wards):
+		_finish_battle("ПЕРЕМОГА")
+		return
+	_start_turn()
+
+
 func _next_turn() -> void:
 	if battle_finished:
 		return
@@ -1511,20 +1584,34 @@ func _on_turn_tick() -> void:
 func _on_turn_timeout() -> void:
 	if battle_finished or current_ward == null or current_ward.is_dead:
 		return
-	if NetworkManager.is_multiplayer and not NetworkManager.is_host:
-		# Клієнт: перевіряємо через хук — turn_manager може бути не синхронізований
-		var _hk_t = get_tree().get_first_node_in_group("mp_battle_hook")
-		if not _hk_t or not _hk_t._client_turn_active:
-			return
-	else:
-		if turn_manager.current_team != "ally":
-			return
 	_turn_tick_timer.stop()
 	battle_log.update_timer(0)
 	waiting_for_target = false
 	selected_skill = ""
 	selected_attacker = null
 	battle_log.add_info("⏱ Час вийшов! Автоматичне Q: %s" % current_ward.name, Color("#c88020"))
+
+	# CLIENT у мультиплеєрі: надсилаємо Q через RPC замість локальної атаки
+	if NetworkManager.is_multiplayer and not NetworkManager.is_host:
+		var _hk_t = get_tree().get_first_node_in_group("mp_battle_hook")
+		if not _hk_t or not _hk_t._client_turn_active:
+			return
+		var _auto_v := _get_auto_q_targets()
+		var _atk_i: int = ally_wards.find(current_ward)
+		if _atk_i < 0: return
+		if _auto_v.is_empty():
+			_hk_t._client_turn_active = false
+			NetworkManager.client_send_action("Q", _atk_i, -1)
+			return
+		var _auto_tgt = _auto_v[randi() % _auto_v.size()]
+		_hk_t.intercept_skill_click(current_ward, "Q", _auto_tgt)
+		return
+
+	# HOST або офлайн: виконуємо атаку локально
+	if NetworkManager.is_multiplayer and turn_manager.current_team != "ally":
+		return
+	if not NetworkManager.is_multiplayer and turn_manager.current_team != "ally":
+		return
 	var valid := _get_auto_q_targets()
 	if valid.is_empty():
 		_next_turn()
@@ -1586,6 +1673,14 @@ func _finish_battle(result_text: String) -> void:
 
 	hide_target_arrow()
 	_clear_active_ward_visual()
+
+	if NetworkManager.is_multiplayer and NetworkManager.is_host:
+		var _hook = get_tree().get_first_node_in_group("mp_battle_hook")
+		if _hook:
+			_hook._push_state_to_client()
+		var end_for_client: String = "ПОРАЗКА" if result_text == "ПЕРЕМОГА" else "ПЕРЕМОГА"
+		NetworkManager.broadcast_battle_end(end_for_client)
+
 	_show_battle_result(result_text)
 
 	if result_text == "ПЕРЕМОГА":
@@ -1597,6 +1692,128 @@ func _finish_battle(result_text: String) -> void:
 func _show_battle_result(result_text: String) -> void:
 	battle_log.add_entry("Результат бою: " + result_text)
 
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# BOT MODE
+# ═══════════════════════════════════════════════════════════════════════════════
+
+func _bot_handle_battle_end(result: String) -> void:
+	BotTest.record_battle_end(result)
+	if BotTest.should_stop():
+		BotTest.print_final_report()
+		await get_tree().create_timer(0.5).timeout
+		get_tree().quit()
+		return
+	NetworkManager.reset_ward_selection()
+	await get_tree().create_timer(0.8).timeout
+	if is_inside_tree():
+		get_tree().change_scene_to_file("res://scripts/net/mp_choose_wards.tscn")
+
+# ─── Bot ally turn (HOST) ────────────────────────────────────────────────────
+
+func _bot_do_ally_turn(depth: int = 0) -> void:
+	if depth > 4 or battle_finished or current_ward == null or current_ward.is_dead:
+		if depth > 4:
+			BotTest.log_error("bot_ally_turn", "depth_exceeded ward=%s" % (current_ward.name if current_ward else "null"))
+		return
+	if not is_inside_tree(): return
+
+	var _ward_snapshot = current_ward
+	var sk: String = _bot_pick_skill(current_ward)
+	var SkillExec = preload("res://scripts/battle/skill_executor.gd")
+	var ttype: String = SkillExec.get_skill_target_type(current_ward.ward_id, sk, current_ward)
+	BotTest.msg("[BOT_ACT] HOST ward=%s sk=%s ttype=%s b=%d t=%d" % [
+		current_ward.name, sk, ttype, BotTest.battle_count + 1, BotTest.turn_count])
+
+	await _on_skill_clicked(current_ward, sk)
+	if not is_inside_tree(): return
+
+	if _etesena_w_active:
+		if not is_inside_tree(): return
+		await get_tree().create_timer(0.1).timeout
+		if not is_inside_tree(): return
+		await _bot_fill_etesena_targets()
+		return
+
+	if waiting_for_target:
+		if not is_inside_tree(): return
+		await get_tree().create_timer(0.1).timeout
+		if not is_inside_tree(): return
+		if battle_finished: return
+		var target = _bot_pick_target(ttype, _ward_snapshot)
+		if target:
+			await _on_ward_clicked(target)
+		else:
+			BotTest.log_error("bot_ally_turn", "no_target ward=%s sk=%s" % [_ward_snapshot.name, sk])
+			waiting_for_target = false
+			_turn_locked = false
+			_next_turn()
+			return
+
+	# Extra turn — лише якщо ТОЙ САМИЙ вард (Астея W / Адонея E)
+	if not is_inside_tree(): return
+	await get_tree().create_timer(0.2).timeout
+	if not is_inside_tree(): return
+	if not battle_finished and not _turn_locked and battle_started:
+		if turn_manager.current_team == "ally" and current_ward != null and not current_ward.is_dead:
+			if current_ward == _ward_snapshot:
+				await _bot_do_ally_turn(depth + 1)
+
+func _bot_fill_etesena_targets() -> void:
+	var alive_e: Array = enemy_wards.filter(func(w): return not w.is_dead)
+	alive_e.shuffle()
+	var to_pick: int = mini(_etesena_w_required, alive_e.size())
+	for i in range(to_pick):
+		if battle_finished or not _etesena_w_active: break
+		if not is_inside_tree(): break
+		await _on_ward_clicked(alive_e[i])
+		if not is_inside_tree(): break
+		await get_tree().create_timer(0.08).timeout
+
+# ─── Bot pick helpers ────────────────────────────────────────────────────────
+
+func _bot_pick_skill(ward) -> String:
+	var available: Array[String] = []
+	for sk in ["Q", "W", "E"]:
+		if not ward.is_skill_ready(sk): continue
+		# Riker W: only after Q or E
+		if ward.ward_id == "riker" and sk == "W":
+			var last: String = ward.get_meta("riker_last_skill", "") if ward.has_meta("riker_last_skill") else ""
+			if last != "Q" and last != "E": continue
+		# Siomyi E: needs 5+ burning stacks on an enemy
+		if ward.ward_id == "siomyi" and sk == "E":
+			var eside: Array = enemy_wards if ward.team == "ally" else ally_wards
+			var has_target := false
+			for w in eside:
+				if not w.is_dead and w.get_status("burning") >= 5:
+					has_target = true; break
+			if not has_target: continue
+		available.append(sk)
+	if available.is_empty():
+		return "Q"
+	return available[randi() % available.size()]
+
+func _bot_pick_target(ttype: String, ward) -> Variant:
+	var eside: Array = enemy_wards if ward.team == "ally" else ally_wards
+	var aside: Array = ally_wards  if ward.team == "ally" else enemy_wards
+	match ttype:
+		"single_enemy":
+			if ward.taunted_by != "":
+				for w in eside:
+					if w.ward_id == ward.taunted_by and not w.is_dead: return w
+			var ae: Array = eside.filter(func(w): return not w.is_dead)
+			return ae[randi() % ae.size()] if not ae.is_empty() else null
+		"single_ally":
+			var aa: Array = aside.filter(func(w): return not w.is_dead)
+			if ward.ward_id == "fizita":
+				aa = aa.filter(func(w): return w != ward)
+			return aa[randi() % aa.size()] if not aa.is_empty() else null
+		"single_any":
+			var all: Array = (eside + aside).filter(func(w): return not w.is_dead)
+			if ward.ward_id == "fizita":
+				all = all.filter(func(w): return w != ward)
+			return all[randi() % all.size()] if not all.is_empty() else null
+	return null
 
 # ── Taunt helpers ────────────────────────────────────────────────────────────
 

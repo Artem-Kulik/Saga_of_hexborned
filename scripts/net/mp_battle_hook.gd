@@ -89,11 +89,9 @@ func on_client_action_received(skill_key: String, attacker_idx: int, target_idx:
 
 	if battle.battle_resolver.is_team_dead(enemy_wards):
 		battle._finish_battle("ПЕРЕМОГА")
-		NetworkManager.broadcast_battle_end("ПОРАЗКА")  # клієнт програв
 		return
 	if battle.battle_resolver.is_team_dead(ally_wards):
 		battle._finish_battle("ПОРАЗКА")
-		NetworkManager.broadcast_battle_end("ПЕРЕМОГА")  # клієнт виграв
 		return
 
 	battle._next_turn()
@@ -115,6 +113,12 @@ func _on_client_turn_started(ward_name: String) -> void:
 			break
 	if battle.battle_log:
 		battle.battle_log.add_info("⚔️ Ваш хід: " + ward_name + ". Оберіть скіл.", Color("#40b8e0"))
+	if BotTest.enabled:
+		if not is_inside_tree(): return
+		await get_tree().create_timer(0.25).timeout
+		if not is_inside_tree(): return
+		if not battle.battle_finished and _client_turn_active:
+			await _bot_do_client_turn()
 
 # ─── CLIENT: хост почав ХІД СВОГО варда ────────────────────────────────────
 func _on_host_ally_turn_active(ward_name: String) -> void:
@@ -215,6 +219,14 @@ func _apply_ward_states(wards: Array, states: Array) -> void:
 		if w.is_dead:
 			continue  # вже мертвий — нічого не змінюємо
 
+		# max_hp (форма Голема та інші ефекти що змінюють максимум)
+		var new_max_hp: int = st.get("max_hp", w.max_hp)
+		if new_max_hp != w.max_hp:
+			w.max_hp = new_max_hp
+			w.health.max_hp = new_max_hp
+			if w.health.hp_bar and w.health.hp_bar.has_method("setup_hp"):
+				w.health.hp_bar.setup_hp(new_max_hp, w.health.current_hp)
+
 		# HP (тільки для живих вардів; прямий set щоб обійти броню)
 		var new_hp: int = st.get("hp", w.current_hp)
 		if new_hp != w.current_hp:
@@ -245,13 +257,50 @@ func _apply_ward_states(wards: Array, states: Array) -> void:
 			if w.has_method("_sync_cd_buttons"):
 				w._sync_cd_buttons()
 
-		# Астея: оновлюємо іконку E якщо пасивка запам'ятала скіл
+		# Астея: іконка E + повна мета пам'яті
 		if w.ward_id == "asteyah":
 			var _eip: String = st.get("asteyah_e_icon", "")
 			if not _eip.is_empty() and ResourceLoader.exists(_eip):
 				var _ei := w.skill_e.get_node_or_null("Icon") as TextureRect
 				if _ei:
 					_ei.texture = load(_eip)
+			var _mw: String = st.get("asteyah_memory_ward", "")
+			var _ms: String = st.get("asteyah_memory_skill", "")
+			if not _mw.is_empty() and not _ms.is_empty():
+				var _mem_d := {"ward_id": _mw, "skill_key": _ms}
+				if st.has("asteyah_memory_rls"):
+					_mem_d["riker_last_skill"] = st["asteyah_memory_rls"]
+				w.set_meta("asteyah_memory", _mem_d)
+			elif w.has_meta("asteyah_memory"):
+				w.remove_meta("asteyah_memory")
+
+		# Рікер: відновлюємо мету останнього скіла
+		if w.ward_id == "riker":
+			var _rls: String = st.get("riker_last_skill", "")
+			if not _rls.is_empty():
+				w.set_meta("riker_last_skill", _rls)
+			elif w.has_meta("riker_last_skill"):
+				w.remove_meta("riker_last_skill")
+
+		# Загальні bool-мети (відновлення або видалення)
+		for _mk in ["untargetable", "fire_shield", "ashayah_w_first_used",
+					"ashayah_e_used", "shopey_hydra_ready"]:
+			if st.get(_mk, false):
+				w.set_meta(_mk, true)
+			elif w.has_meta(_mk):
+				w.remove_meta(_mk)
+
+		# Адонея: форма Голема
+		var _gf: int = st.get("golem_form", 0)
+		if _gf > 0:
+			w.set_meta("golem_form", _gf)
+		elif w.has_meta("golem_form"):
+			w.remove_meta("golem_form")
+		var _gbh: int = st.get("golem_base_max_hp", 0)
+		if _gbh > 0:
+			w.set_meta("golem_base_max_hp", _gbh)
+		elif w.has_meta("golem_base_max_hp"):
+			w.remove_meta("golem_base_max_hp")
 
 		# Провокація (taunt)
 		w.taunted_by = st.get("taunted_by", "")
@@ -278,14 +327,76 @@ func _serialize_wards(wards: Array) -> Array:
 			"max_cd":               w._max_cd.duplicate(),
 			"taunted_by":           w.taunted_by,
 		}
+		# Астея: повна мета пам'яті
 		if w.ward_id == "asteyah" and w.has_meta("asteyah_memory"):
 			var _mem: Dictionary = w.get_meta("asteyah_memory")
 			var _mid: String = _mem.get("ward_id", "")
 			var _sk: String  = _mem.get("skill_key", "")
 			if not _mid.is_empty() and not _sk.is_empty():
-				_entry["asteyah_e_icon"] = WardDatabase.get_data(_mid).get("skills", {}).get(_sk, {}).get("icon", "")
+				_entry["asteyah_e_icon"]       = WardDatabase.get_data(_mid).get("skills", {}).get(_sk, {}).get("icon", "")
+				_entry["asteyah_memory_ward"]  = _mid
+				_entry["asteyah_memory_skill"] = _sk
+				if _mem.has("riker_last_skill"):
+					_entry["asteyah_memory_rls"] = _mem["riker_last_skill"]
+		# Рікер: останній скіл
+		if w.ward_id == "riker" and w.has_meta("riker_last_skill"):
+			_entry["riker_last_skill"] = w.get_meta("riker_last_skill")
+		# Загальні мета
+		for _mk in ["untargetable", "fire_shield", "ashayah_w_first_used",
+					"ashayah_e_used", "shopey_hydra_ready"]:
+			if w.has_meta(_mk):
+				_entry[_mk] = w.get_meta(_mk)
+		# Адонея: форма Голема
+		if w.has_meta("golem_form"):
+			_entry["golem_form"] = w.get_meta("golem_form")
+		if w.has_meta("golem_base_max_hp"):
+			_entry["golem_base_max_hp"] = w.get_meta("golem_base_max_hp")
 		result.append(_entry)
 	return result
+
+# ─── HOST: клієнт надіслав цілі Etesena W ─────────────────────────────────
+func on_client_etesena_w_received(attacker_idx: int, target_indices: Array) -> void:
+	if not NetworkManager.is_host: return
+	_host_waiting_client = false
+
+	var enemy_wards: Array = battle.enemy_wards
+	var ally_wards:  Array = battle.ally_wards
+
+	if attacker_idx < 0 or attacker_idx >= enemy_wards.size(): return
+	var attacker = enemy_wards[attacker_idx]
+	if attacker == null or attacker.is_dead:
+		battle._next_turn()
+		return
+
+	var targets: Array = []
+	for ti in target_indices:
+		if ti >= 0 and ti < ally_wards.size():
+			var t = ally_wards[ti]
+			if t != null and not t.is_dead:
+				targets.append(t)
+	if targets.is_empty():
+		battle._next_turn()
+		return
+
+	attacker.set_meta("etesena_w_targets", targets)
+	battle._turn_locked = true
+	await battle.battle_resolver.attack(attacker, null, "W")
+	battle._apply_and_log_cd(attacker, "W")
+	battle._clear_taunt_after_attack(attacker)
+	battle._turn_locked = false
+
+	await battle._try_zhnets_harvest()
+	await battle._try_adoneia_golem_tick()
+
+	_push_state_to_client()
+
+	if battle.battle_resolver.is_team_dead(enemy_wards):
+		battle._finish_battle("ПЕРЕМОГА")
+		return
+	if battle.battle_resolver.is_team_dead(ally_wards):
+		battle._finish_battle("ПОРАЗКА")
+		return
+	battle._next_turn()
 
 # ─── Утиліти ────────────────────────────────────────────────────────────────
 func _find_ward_index(wards: Array, ward) -> int:
@@ -337,3 +448,53 @@ func _on_battle_ended_from_host(result: String) -> void:
 		battle.show_victory_screen()
 	else:
 		battle.show_defeat_screen()
+
+# ─── CLIENT bot turn ─────────────────────────────────────────────────────────
+
+func _bot_do_client_turn(depth: int = 0) -> void:
+	if depth > 4 or battle.battle_finished: return
+	if not is_inside_tree(): return
+	var ward = battle.current_ward
+	if ward == null or ward.is_dead:
+		BotTest.log_error("bot_client_turn", "ward_null_or_dead name=%s" % (ward.name if ward else "?"))
+		return
+
+	var _ward_snapshot = ward
+	var sk: String = battle._bot_pick_skill(ward)
+	var SkillExec = preload("res://scripts/battle/skill_executor.gd")
+	var ttype: String = SkillExec.get_skill_target_type(ward.ward_id, sk, ward)
+	BotTest.msg("[BOT_ACT] CLIENT ward=%s sk=%s ttype=%s b=%d" % [
+		ward.name, sk, ttype, BotTest.battle_count + 1])
+
+	await battle._on_skill_clicked(ward, sk)
+	if not is_inside_tree(): return
+
+	if battle._etesena_w_active:
+		if not is_inside_tree(): return
+		await get_tree().create_timer(0.1).timeout
+		if not is_inside_tree(): return
+		await battle._bot_fill_etesena_targets()
+		return
+
+	if battle.waiting_for_target:
+		if not is_inside_tree(): return
+		await get_tree().create_timer(0.1).timeout
+		if not is_inside_tree(): return
+		if battle.battle_finished: return
+		var target = battle._bot_pick_target(ttype, ward)
+		if target:
+			await battle._on_ward_clicked(target)
+		else:
+			BotTest.log_error("bot_client_turn", "no_target ward=%s sk=%s" % [ward.name, sk])
+			battle.waiting_for_target = false
+			battle._turn_locked = false
+			_client_turn_active = false
+			return
+
+	# Extra turn — лише якщо ТОЙ САМИЙ вард (Астея W / Адонея E)
+	if not is_inside_tree(): return
+	await get_tree().create_timer(0.2).timeout
+	if not is_inside_tree(): return
+	if not battle.battle_finished and _client_turn_active and not battle._turn_locked:
+		if battle.current_ward != null and battle.current_ward == _ward_snapshot and not battle.current_ward.is_dead:
+			await _bot_do_client_turn(depth + 1)

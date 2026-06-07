@@ -22,6 +22,7 @@ UiSignalBus="*uid://d3vfge0q8lo5e"
 GameState="*res://scripts/game_state.gd"
 WardDatabase="*res://scripts/ward_database.gd"
 NetworkManager="*res://scripts/net/network_manager.gd"
+BotTest="*res://scripts/net/bot_test.gd"
 
 [display]
 

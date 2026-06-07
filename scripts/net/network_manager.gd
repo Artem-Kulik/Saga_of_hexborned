@@ -59,6 +59,12 @@ func join_game(ip: String) -> Error:
 		multiplayer.server_disconnected.connect(_on_server_disconnected)
 	return OK
 
+func reset_ward_selection() -> void:
+	_my_wards_sent = false
+	_opp_wards_got = false
+	my_ward_ids.clear()
+	opponent_ward_ids.clear()
+
 func disconnect_game() -> void:
 	if multiplayer.multiplayer_peer:
 		multiplayer.multiplayer_peer.close()
@@ -152,6 +158,15 @@ func _rpc_client_action(skill_key: String, attacker_idx: int, target_idx: int) -
 	var hook = get_tree().get_first_node_in_group("mp_battle_hook")
 	if hook:
 		hook.on_client_action_received(skill_key, attacker_idx, target_idx)
+
+func client_send_etesena_w(attacker_idx: int, target_indices: Array) -> void:
+	_rpc_client_etesena_w.rpc_id(1, attacker_idx, target_indices)
+
+@rpc("any_peer", "call_remote", "reliable")
+func _rpc_client_etesena_w(attacker_idx: int, target_indices: Array) -> void:
+	var hook = get_tree().get_first_node_in_group("mp_battle_hook")
+	if hook:
+		hook.on_client_etesena_w_received(attacker_idx, target_indices)
 
 # ─── Host: sync navigation ────────────────────────────────────────────────
 func broadcast_restart() -> void:
