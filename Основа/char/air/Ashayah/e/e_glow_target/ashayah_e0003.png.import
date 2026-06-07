@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://dg3c2u8aorwyx"
-path="res://.godot/imported/ocii.png-422f1657311a1dc9c431850718278408.ctex"
+uid="uid://cm7h1tbapbjcs"
+path="res://.godot/imported/ashayah_e0003.png-a7fce2b82a36ebabab25f3ae305633c5.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://Основа/char/fire/Ocii/ocii.png"
-dest_files=["res://.godot/imported/ocii.png-422f1657311a1dc9c431850718278408.ctex"]
+source_file="res://Основа/char/air/Ashayah/e/e_glow_target/ashayah_e0003.png"
+dest_files=["res://.godot/imported/ashayah_e0003.png-a7fce2b82a36ebabab25f3ae305633c5.ctex"]
 
 [params]
 
