@@ -9,24 +9,27 @@ signal ward_card_hovered(ward_id: String)
 	$Buttons/but_earth,
 	$Buttons/but_water,
 	$Buttons/but_fire,
-	$Buttons/but_air
+	$Buttons/but_air,
+	$Buttons/but_radiance
 ]
 
 @onready var pages: Array[Control] = [
 	$Pages/page_earth,
 	$Pages/page_water,
 	$Pages/page_fire,
-	$Pages/page_air
+	$Pages/page_air,
+	$Pages/page_radiance
 ]
 
 @onready var grids: Array[GridContainer] = [
 	$Pages/page_earth/ScrollContainer/GridContainer,
 	$Pages/page_water/ScrollContainer/GridContainer,
 	$Pages/page_fire/ScrollContainer/GridContainer,
-	$Pages/page_air/ScrollContainer/GridContainer
+	$Pages/page_air/ScrollContainer/GridContainer,
+	$Pages/page_radiance/ScrollContainer/GridContainer
 ]
 
-const ELEMENT_BY_INDEX: Array = ["earth", "water", "fire", "air"]
+const ELEMENT_BY_INDEX: Array = ["earth", "water", "fire", "air", "light"]
 
 var current_tab: int = 0
 var _cards: Dictionary = {}

@@ -559,6 +559,20 @@ func _start_turn() -> void:
 		else:
 			battle_log.add_info("🧠 Пам'ять: E порожня")
 
+	# === ПАСИВКА INFECTED_1: Реген від кількості сяйво-вардів ===
+	if current_ward.ward_id in ["infected_1_a", "infected_1_b", "infected_1_c"] and not current_ward.is_dead:
+		var own_team: Array = ally_wards if current_ward.team == "ally" else enemy_wards
+		var radiance_count: int = 0
+		for w in own_team:
+			if not w.is_dead and WardDatabase.get_data(w.ward_id).get("element", "") == "light":
+				radiance_count += 1
+		if radiance_count > 0:
+			var heal_amount: int = 50 * radiance_count
+			var hp_before: int = current_ward.current_hp
+			current_ward.health.heal(heal_amount)
+			battle_log.add_heal(current_ward.name, current_ward.team, hp_before, current_ward.current_hp, current_ward.max_hp)
+			battle_log.add_info("💫 Зараза: %s +%d HP (×%d сяйво-вардів)." % [current_ward.name, heal_amount, radiance_count], Color("#e0e040"))
+
 	# === ВОГОНЬ СЬОМОГО: шкода всій команді ===
 	var fs_stacks: int = current_ward.get_status("fire_seventh")
 	if fs_stacks > 0:
@@ -584,6 +598,16 @@ func _start_turn() -> void:
 		var burn_dmg: int = current_ward.tick_burning()
 		battle_log.add_info("🔥 Горіння: %s отримує %d вогню." % [current_ward.name, burn_dmg], Color("#c86030"))
 		await battle_resolver.deal_damage_with_modifiers(null, current_ward, burn_dmg, "burning", "fire")
+		if current_ward.is_dead:
+			_next_turn()
+			return
+
+	# === ТІК ЧУМИ (infected_1 W) ===
+	if current_ward.get_status("plague") > 0:
+		battle_log.add_info("☠️ Чума: %s отримує 15 сяйво шкоди!" % current_ward.name, Color("#90d060"))
+		await battle_resolver.deal_damage_with_modifiers(null, current_ward, 15, "plague", "light")
+		current_ward.remove_status("plague", 1)
+		current_ward._update_status_visuals()
 		if current_ward.is_dead:
 			_next_turn()
 			return
