@@ -8,6 +8,7 @@ extends Control
 
 var t := 0.0
 var _waiting_for_opponent: bool = false
+var _resend_timer: float = 0.0
 
 # --- Selection state ---
 var selected_ids: Array[String] = []
@@ -65,6 +66,9 @@ const SLOT_RECTS: Array = [
 
 
 func _ready() -> void:
+	print("[DBG] mp_choose_wards ready | is_mp=%s is_host=%s peers=%s" % [
+		NetworkManager.is_multiplayer, NetworkManager.is_host,
+		str(multiplayer.get_peers())])
 	_setup_glow(glow_1)
 
 	for h in _highlight_nodes:
@@ -106,8 +110,19 @@ func _process(delta: float) -> void:
 	t += delta
 	var wave_1 := (sin(t * glow_1_speed) + 1.0) * 0.5
 	glow_1.modulate.a = lerp(glow_1_min, glow_1_max, wave_1)
-	if _waiting_for_opponent and NetworkManager._my_wards_sent and NetworkManager._opp_wards_got:
-		_on_opponent_ready()
+
+	if _waiting_for_opponent:
+		if NetworkManager._my_wards_sent and NetworkManager._opp_wards_got:
+			_on_opponent_ready()
+			return
+		_resend_timer += delta
+		if _resend_timer >= 2.0:
+			_resend_timer = 0.0
+			print("[DBG] wards wait: sent=%s got=%s peers=%s" % [
+				NetworkManager._my_wards_sent, NetworkManager._opp_wards_got,
+				str(multiplayer.get_peers())])
+			if NetworkManager._my_wards_sent and not NetworkManager._opp_wards_got:
+				NetworkManager.resend_wards_rpc()
 
 
 func _setup_glow(glow: TextureRect) -> void:

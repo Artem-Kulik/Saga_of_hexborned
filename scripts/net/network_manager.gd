@@ -93,6 +93,12 @@ func _rpc_receive_wards(ward_ids: Array) -> void:
 	print("[NET] _rpc_receive_wards отримано: ", opponent_ward_ids)
 	_check_both_wards_ready()
 
+func resend_wards_rpc() -> void:
+	if my_ward_ids.is_empty(): return
+	var target_id := 2 if is_host else 1
+	print("[NET] resend_wards_rpc → target=%d peers=%s" % [target_id, str(multiplayer.get_peers())])
+	_rpc_receive_wards.rpc_id(target_id, my_ward_ids)
+
 func _check_both_wards_ready() -> void:
 	print("[NET] _check_both_wards_ready: sent=%s got=%s" % [_my_wards_sent, _opp_wards_got])
 	if _my_wards_sent and _opp_wards_got:
