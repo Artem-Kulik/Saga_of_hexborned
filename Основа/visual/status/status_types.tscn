@@ -33,12 +33,12 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="regeneration" type="Control" parent="." unique_id=862086108]
+[node name="armor" type="Control" parent="." unique_id=630032922]
 anchors_preset = 0
 offset_right = 40.0
 offset_bottom = 40.0
 
-[node name="regeneration" type="TextureRect" parent="regeneration" unique_id=1102857501]
+[node name="armor" type="TextureRect" parent="armor" unique_id=2057216949]
 custom_minimum_size = Vector2(58, 38)
 layout_mode = 1
 anchors_preset = 15
@@ -46,11 +46,11 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-texture = ExtResource("1_wgs6y")
+texture = ExtResource("8_bji38")
 expand_mode = 3
 stretch_mode = 5
 
-[node name="frame" type="TextureRect" parent="regeneration/regeneration" unique_id=1476759711]
+[node name="frame" type="TextureRect" parent="armor/armor" unique_id=1742278337]
 custom_minimum_size = Vector2(46.965, 47.64)
 layout_mode = 1
 anchors_preset = 15
@@ -80,6 +80,64 @@ expand_mode = 3
 stretch_mode = 5
 
 [node name="frame" type="TextureRect" parent="burning/burning" unique_id=53514172]
+custom_minimum_size = Vector2(46.965, 47.64)
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("2_a7r01")
+expand_mode = 3
+stretch_mode = 5
+
+[node name="razh" type="Control" parent="." unique_id=991842184]
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="razh" type="TextureRect" parent="razh" unique_id=1063075457]
+custom_minimum_size = Vector2(58, 38)
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("6_o3h5o")
+expand_mode = 3
+stretch_mode = 5
+
+[node name="frame" type="TextureRect" parent="razh/razh" unique_id=111491737]
+custom_minimum_size = Vector2(46.965, 47.64)
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("2_a7r01")
+expand_mode = 3
+stretch_mode = 5
+
+[node name="regeneration" type="Control" parent="." unique_id=862086108]
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="regeneration" type="TextureRect" parent="regeneration" unique_id=1102857501]
+custom_minimum_size = Vector2(58, 38)
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("1_wgs6y")
+expand_mode = 3
+stretch_mode = 5
+
+[node name="frame" type="TextureRect" parent="regeneration/regeneration" unique_id=1476759711]
 custom_minimum_size = Vector2(46.965, 47.64)
 layout_mode = 1
 anchors_preset = 15
@@ -149,35 +207,6 @@ texture = ExtResource("2_a7r01")
 expand_mode = 3
 stretch_mode = 5
 
-[node name="razh" type="Control" parent="." unique_id=991842184]
-anchors_preset = 0
-offset_right = 40.0
-offset_bottom = 40.0
-
-[node name="razh" type="TextureRect" parent="razh" unique_id=1063075457]
-custom_minimum_size = Vector2(58, 38)
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-texture = ExtResource("6_o3h5o")
-expand_mode = 3
-stretch_mode = 5
-
-[node name="frame" type="TextureRect" parent="razh/razh" unique_id=111491737]
-custom_minimum_size = Vector2(46.965, 47.64)
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-texture = ExtResource("2_a7r01")
-expand_mode = 3
-stretch_mode = 5
-
 [node name="oichi_flame_shield" type="Control" parent="." unique_id=863691216]
 anchors_preset = 0
 offset_right = 40.0
@@ -196,35 +225,6 @@ expand_mode = 3
 stretch_mode = 5
 
 [node name="frame" type="TextureRect" parent="oichi_flame_shield/flame_shield" unique_id=703672423]
-custom_minimum_size = Vector2(46.965, 47.64)
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-texture = ExtResource("2_a7r01")
-expand_mode = 3
-stretch_mode = 5
-
-[node name="armor" type="Control" parent="." unique_id=630032922]
-anchors_preset = 0
-offset_right = 40.0
-offset_bottom = 40.0
-
-[node name="armor" type="TextureRect" parent="armor" unique_id=2057216949]
-custom_minimum_size = Vector2(58, 38)
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-texture = ExtResource("8_bji38")
-expand_mode = 3
-stretch_mode = 5
-
-[node name="frame" type="TextureRect" parent="armor/armor" unique_id=1742278337]
 custom_minimum_size = Vector2(46.965, 47.64)
 layout_mode = 1
 anchors_preset = 15
