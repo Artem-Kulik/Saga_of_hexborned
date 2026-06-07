@@ -27,7 +27,7 @@ static func get_skill_target_type(ward_id: String, skill_key: String, attacker =
 			if skill_key == "W": return "etesena_w"
 		"otsii":
 			if skill_key == "Q": return "all_enemies"
-			if skill_key == "W": return "single_ally"
+			if skill_key == "W": return "single_any"
 			if skill_key == "E": return "single_enemy"
 		"siomyi":
 			if skill_key == "Q": return "single_any"
@@ -47,7 +47,7 @@ static func get_skill_target_type(ward_id: String, skill_key: String, attacker =
 			if in_golem: return "all_enemies"
 			return "single_enemy"
 		"fizita":
-			if skill_key == "W": return "single_ally"
+			if skill_key == "W": return "single_any"
 		"shusima":
 			if skill_key == "W": return "self"
 			if skill_key == "E": return "self"
@@ -560,6 +560,14 @@ static func _execute_etesena(resolver, attacker, target, skill_key: String) -> v
 			var targets: Array = attacker.get_meta("etesena_w_targets", [])
 			if attacker.has_meta("etesena_w_targets"):
 				attacker.remove_meta("etesena_w_targets")
+			# Стан для 2-ї цілі застосовуємо ДО атак — щоб пасивка з 1-ї не вбила ціль раніше
+			if targets.size() >= 2:
+				var _stun_t = targets[1]
+				if _stun_t != null and is_instance_valid(_stun_t) and not _stun_t.is_dead:
+					_stun_t.add_status("stun", 1)
+					if resolver.battle_log:
+						resolver.battle_log.add_info(_stun_t.name + " оглушений!")
+						resolver.battle_log.add_effect(_stun_t.name, _stun_t.team, "Оглушення (1 хід)")
 			for i in targets.size():
 				var t = targets[i]
 				if t == null or not is_instance_valid(t) or t.is_dead:
@@ -569,10 +577,7 @@ static func _execute_etesena(resolver, attacker, target, skill_key: String) -> v
 						await resolver.deal_damage_with_modifiers(attacker, t, 35, skill_key, "phys")
 						await _etesena_passive_check(resolver, attacker, t, 35, enemy_side)
 					1:
-						t.add_status("stun", 1)
-						if resolver.battle_log:
-							resolver.battle_log.add_info(t.name + " оглушений!")
-							resolver.battle_log.add_effect(t.name, t.team, "Оглушення (1 хід)")
+						pass  # стан вже застосовано вище
 					2:
 						await resolver.deal_damage_with_modifiers(attacker, t, 45, skill_key, "phys")
 						await _etesena_passive_check(resolver, attacker, t, 45, enemy_side)

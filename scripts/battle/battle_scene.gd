@@ -516,7 +516,7 @@ func _start_turn() -> void:
 		battle_log.add_effect(current_ward.name, current_ward.team, "Розсипання (пасивка)")
 		await battle_resolver.deal_damage_with_modifiers(current_ward, current_ward, 90, "P", "phys")
 		if current_ward.is_dead:
-			_next_turn()
+			_continue_same_team()
 			return
 
 	# === ПАСИВКА СЬОМОГО: 2 стаки горіння рандомному варду ===
@@ -571,7 +571,7 @@ func _start_turn() -> void:
 			_finish_battle("ПЕРЕМОГА")
 			return
 		if current_ward.is_dead:
-			_next_turn()
+			_continue_same_team()
 			return
 
 	# === ОБРОБКА ГОРІННЯ ===
@@ -580,7 +580,7 @@ func _start_turn() -> void:
 		battle_log.add_info("🔥 Горіння: %s отримує %d вогню." % [current_ward.name, burn_dmg], Color("#c86030"))
 		await battle_resolver.deal_damage_with_modifiers(null, current_ward, burn_dmg, "burning", "fire")
 		if current_ward.is_dead:
-			_next_turn()
+			_continue_same_team()
 			return
 
 	# === ТІК ЧУМИ (infected_1 W) ===
@@ -590,7 +590,7 @@ func _start_turn() -> void:
 		current_ward.remove_status("plague", 1)
 		current_ward._update_status_visuals()
 		if current_ward.is_dead:
-			_next_turn()
+			_continue_same_team()
 			return
 
 	# === ТІК КОНТРАТАКИ ===
@@ -1390,6 +1390,22 @@ func _transfer_oath_of_rain() -> void:
 	new_carrier.add_status("velodiy_oath", _oath_rounds_left)
 	new_carrier._update_status_visuals()
 	battle_log.add_info("💧 Клятва передана → %s (%d раунд(и))." % [new_carrier.name, _oath_rounds_left], Color("#4090c0"))
+
+
+func _continue_same_team() -> void:
+	if battle_finished:
+		return
+	_turn_timeout_timer.stop()
+	_turn_tick_timer.stop()
+	battle_log.update_timer(-1)
+	hide_target_arrow()
+	if battle_resolver.is_team_dead(ally_wards):
+		_finish_battle("ПОРАЗКА")
+		return
+	if battle_resolver.is_team_dead(enemy_wards):
+		_finish_battle("ПЕРЕМОГА")
+		return
+	_start_turn()
 
 
 func _next_turn() -> void:
