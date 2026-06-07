@@ -245,6 +245,14 @@ func _apply_ward_states(wards: Array, states: Array) -> void:
 			if w.has_method("_sync_cd_buttons"):
 				w._sync_cd_buttons()
 
+		# Астея: оновлюємо іконку E якщо пасивка запам'ятала скіл
+		if w.ward_id == "asteyah":
+			var _eip: String = st.get("asteyah_e_icon", "")
+			if not _eip.is_empty() and ResourceLoader.exists(_eip):
+				var _ei := w.skill_e.get_node_or_null("Icon") as TextureRect
+				if _ei:
+					_ei.texture = load(_eip)
+
 		# Провокація (taunt)
 		w.taunted_by = st.get("taunted_by", "")
 
@@ -259,7 +267,7 @@ func _push_state_to_client() -> void:
 func _serialize_wards(wards: Array) -> Array:
 	var result := []
 	for w in wards:
-		result.append({
+		var _entry := {
 			"hp":                   w.current_hp,
 			"max_hp":               w.max_hp,
 			"is_dead":              w.is_dead,
@@ -269,7 +277,14 @@ func _serialize_wards(wards: Array) -> Array:
 			"cd":                   w._current_cd.duplicate(),
 			"max_cd":               w._max_cd.duplicate(),
 			"taunted_by":           w.taunted_by,
-		})
+		}
+		if w.ward_id == "asteyah" and w.has_meta("asteyah_memory"):
+			var _mem: Dictionary = w.get_meta("asteyah_memory")
+			var _mid: String = _mem.get("ward_id", "")
+			var _sk: String  = _mem.get("skill_key", "")
+			if not _mid.is_empty() and not _sk.is_empty():
+				_entry["asteyah_e_icon"] = WardDatabase.get_data(_mid).get("skills", {}).get(_sk, {}).get("icon", "")
+		result.append(_entry)
 	return result
 
 # ─── Утиліти ────────────────────────────────────────────────────────────────
