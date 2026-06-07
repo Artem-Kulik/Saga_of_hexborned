@@ -1,0 +1,71 @@
+[gd_scene format=3 uid="uid://dovv4m1tn8jet"]
+
+[ext_resource type="Texture2D" uid="uid://bfe075x540nb3" path="res://Основа/char/air/Ashayah/w/0.png" id="1_h0isu"]
+[ext_resource type="Texture2D" uid="uid://bc18f0dvem6pi" path="res://Основа/char/air/Ashayah/w/1.png" id="2_p735t"]
+[ext_resource type="Texture2D" uid="uid://dhc1ef65ofu4x" path="res://Основа/char/air/Ashayah/w/2.png" id="3_vo6hp"]
+[ext_resource type="Texture2D" uid="uid://bumrvkauyyyb1" path="res://Основа/char/air/Ashayah/w/3.png" id="4_ffhro"]
+[ext_resource type="Texture2D" uid="uid://rjqk7y3ch0pa" path="res://Основа/char/air/Ashayah/w/4.png" id="5_6pisv"]
+[ext_resource type="Texture2D" uid="uid://b6ep08u5o0i1t" path="res://Основа/char/air/Ashayah/w/5.png" id="6_lhu4t"]
+[ext_resource type="Texture2D" uid="uid://cislq1fwq5e4b" path="res://Основа/char/air/Ashayah/w/6.png" id="7_tfpb7"]
+[ext_resource type="Texture2D" uid="uid://bjr0c7b7tqk5" path="res://Основа/char/air/Ashayah/w/7.png" id="8_emxlt"]
+[ext_resource type="Texture2D" uid="uid://6n1ohsjdhxb4" path="res://Основа/char/air/Ashayah/w/8.png" id="9_35xoa"]
+[ext_resource type="Texture2D" uid="uid://btiel0i7u0820" path="res://Основа/char/air/Ashayah/w/9.png" id="10_nrert"]
+[ext_resource type="Texture2D" uid="uid://c1ww3rwr047e3" path="res://Основа/char/air/Ashayah/w/10.png" id="11_5clm5"]
+[ext_resource type="Texture2D" uid="uid://4ykyyj2hovk0" path="res://Основа/char/air/Ashayah/w/11.png" id="12_rqbui"]
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_w72h0"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("1_h0isu")
+}, {
+"duration": 1.5,
+"texture": ExtResource("2_p735t")
+}, {
+"duration": 1.7,
+"texture": ExtResource("3_vo6hp")
+}, {
+"duration": 1.7,
+"texture": ExtResource("4_ffhro")
+}, {
+"duration": 2.0,
+"texture": ExtResource("5_6pisv")
+}, {
+"duration": 1.7,
+"texture": ExtResource("6_lhu4t")
+}, {
+"duration": 1.5,
+"texture": ExtResource("7_tfpb7")
+}, {
+"duration": 1.7,
+"texture": ExtResource("8_emxlt")
+}, {
+"duration": 2.0,
+"texture": ExtResource("9_35xoa")
+}, {
+"duration": 1.7,
+"texture": ExtResource("10_nrert")
+}, {
+"duration": 1.7,
+"texture": ExtResource("11_5clm5")
+}, {
+"duration": 1.7,
+"texture": ExtResource("12_rqbui")
+}],
+"loop": true,
+"name": &"default",
+"speed": 5.0
+}]
+
+[node name="asteyah_w" type="Control" unique_id=376581024]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=1655190461]
+sprite_frames = SubResource("SpriteFrames_w72h0")
+frame_progress = 0.42579955
+speed_scale = 3.5
