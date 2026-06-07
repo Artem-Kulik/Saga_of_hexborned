@@ -275,6 +275,41 @@ var WARDS: Dictionary = {
 	#   — Вогонь/вода/повітря по Сяйву → ×2.0
 	#   — Фіз по Сяйву → ×1.0 (немає модифікатора, бо phys виключений)
 	#   — Сяйво по Сяйву → ×4.0
+
+	# ─── Стадія 1 ───────────────────────────────────────────────────────────────
+	"infected_1_a": {
+		"name": "Заражений І",
+		"element": "light",
+		"portrait": "res://Основа/char/NPC/infected radiance/stage_1/infected_1_stage.png",
+		"skills": {
+			"P": { "id": "infected_1_p", "damage_type": "passive", "name": "Зараза",     "cd": 0, "icon": "res://Основа/char/NPC/infected radiance/stage_1/p.png", "desc": "Початок ходу: +50 HP × кількість сяйво-вардів на своїй стороні.", "desc_full": "" },
+			"Q": { "id": "infected_1_q", "damage_type": "light",   "name": "Удар сяйва", "cd": 0, "icon": "res://Основа/char/NPC/infected radiance/stage_1/q.png", "desc": "70 сяйво шкоди. Вбиває → +2 КД рандомного скіла (не Q) рандомного ворога.", "desc_full": "" },
+			"W": { "id": "infected_1_w", "damage_type": "light",   "name": "Чума",       "cd": 6, "icon": "res://Основа/char/NPC/infected radiance/stage_1/w.png", "desc": "Заражає ворога: 15 сяйво шкоди щохід, 3 ходи. КД 6.", "desc_full": "" },
+			"E": { "id": "infected_1_e", "damage_type": "light",   "name": "Спалах",     "cd": 6, "icon": "res://Основа/char/NPC/infected radiance/stage_1/e.png", "desc": "100 сяйво всім ворогам. Витрачає 50% поточного HP. КД 6.", "desc_full": "" },
+		}
+	},
+	"infected_1_b": {
+		"name": "Заражений І",
+		"element": "light",
+		"portrait": "res://Основа/char/NPC/infected radiance/stage_1/infected_2.png",
+		"skills": {
+			"P": { "id": "infected_1_p", "damage_type": "passive", "name": "Зараза",     "cd": 0, "icon": "res://Основа/char/NPC/infected radiance/stage_1/p.png", "desc": "Початок ходу: +50 HP × кількість сяйво-вардів на своїй стороні.", "desc_full": "" },
+			"Q": { "id": "infected_1_q", "damage_type": "light",   "name": "Удар сяйва", "cd": 0, "icon": "res://Основа/char/NPC/infected radiance/stage_1/q.png", "desc": "70 сяйво шкоди. Вбиває → +2 КД рандомного скіла (не Q) рандомного ворога.", "desc_full": "" },
+			"W": { "id": "infected_1_w", "damage_type": "light",   "name": "Чума",       "cd": 6, "icon": "res://Основа/char/NPC/infected radiance/stage_1/w.png", "desc": "Заражає ворога: 15 сяйво шкоди щохід, 3 ходи. КД 6.", "desc_full": "" },
+			"E": { "id": "infected_1_e", "damage_type": "light",   "name": "Спалах",     "cd": 6, "icon": "res://Основа/char/NPC/infected radiance/stage_1/e.png", "desc": "100 сяйво всім ворогам. Витрачає 50% поточного HP. КД 6.", "desc_full": "" },
+		}
+	},
+	"infected_1_c": {
+		"name": "Заражений І",
+		"element": "light",
+		"portrait": "res://Основа/char/NPC/infected radiance/stage_1/infected_3.png",
+		"skills": {
+			"P": { "id": "infected_1_p", "damage_type": "passive", "name": "Зараза",     "cd": 0, "icon": "res://Основа/char/NPC/infected radiance/stage_1/p.png", "desc": "Початок ходу: +50 HP × кількість сяйво-вардів на своїй стороні.", "desc_full": "" },
+			"Q": { "id": "infected_1_q", "damage_type": "light",   "name": "Удар сяйва", "cd": 0, "icon": "res://Основа/char/NPC/infected radiance/stage_1/q.png", "desc": "70 сяйво шкоди. Вбиває → +2 КД рандомного скіла (не Q) рандомного ворога.", "desc_full": "" },
+			"W": { "id": "infected_1_w", "damage_type": "light",   "name": "Чума",       "cd": 6, "icon": "res://Основа/char/NPC/infected radiance/stage_1/w.png", "desc": "Заражає ворога: 15 сяйво шкоди щохід, 3 ходи. КД 6.", "desc_full": "" },
+			"E": { "id": "infected_1_e", "damage_type": "light",   "name": "Спалах",     "cd": 6, "icon": "res://Основа/char/NPC/infected radiance/stage_1/e.png", "desc": "100 сяйво всім ворогам. Витрачає 50% поточного HP. КД 6.", "desc_full": "" },
+		}
+	},
 }
 
 

@@ -67,6 +67,9 @@ static func get_skill_target_type(ward_id: String, skill_key: String, attacker =
 				if attacker != null and attacker.has_meta("ashayah_e_used"):
 					return "all_enemies"
 				return "single_enemy"
+		"infected_1_a", "infected_1_b", "infected_1_c":
+			if skill_key == "W": return "single_enemy"
+			if skill_key == "E": return "self"
 
 	return "single_enemy"
 
@@ -111,6 +114,8 @@ static func execute_skill(resolver, attacker, target, skill_key: String) -> void
 			await _execute_velodiy(resolver, attacker, target, skill_key)
 		"ashayah":
 			await _execute_ashayah(resolver, attacker, target, skill_key)
+		"infected_1_a", "infected_1_b", "infected_1_c":
+			await _execute_infected_1(resolver, attacker, target, skill_key)
 		_:
 			# Стандартна атака для всіх інших поки що
 			await _execute_basic_attack(resolver, attacker, target, skill_key, base_damage)
@@ -769,7 +774,7 @@ static func _execute_siomyi(resolver, attacker, target, skill_key: String) -> vo
 				await resolver.deal_damage_with_modifiers(attacker, target, burn_dmg, "E_burning", "fire")
 			if target.is_dead: return
 			# Накладаємо Вогонь сьомого (1 стек на кожні 5 горінь)
-			var vos: int = burn_total / 5
+			var vos: int = int(burn_total / 5.0)
 			target.add_status("fire_seventh", vos)
 			target._update_status_visuals()
 			if resolver.battle_log:
@@ -1236,6 +1241,50 @@ static func _ashayah_steal_status(resolver, ashayah, source, status: String, _co
 	ashayah._update_status_visuals()
 
 
+# ─── INFECTED_1 (Заражений — Стадія 1) ─────────────────────────────────────
+static func _execute_infected_1(resolver, attacker, target, skill_key: String) -> void:
+	match skill_key:
+		"Q":
+			if target == null: return
+			await resolver.deal_damage_with_modifiers(attacker, target, 70, "Q", "light")
+			if target.is_dead:
+				# Вбиває → +2 КД рандомного скіла (не Q) рандомного живого ворога
+				var enemy_team: Array = resolver.battle_scene.ally_wards if attacker.team == "enemy" else resolver.battle_scene.enemy_wards
+				var alive: Array = []
+				for w in enemy_team:
+					if not w.is_dead:
+						alive.append(w)
+				if not alive.is_empty():
+					var lucky = alive[randi() % alive.size()]
+					var sk_pool: Array = []
+					for sk in ["W", "E"]:
+						if lucky._max_cd.get(sk, 0) > 0:
+							sk_pool.append(sk)
+					if not sk_pool.is_empty():
+						var sk: String = sk_pool[randi() % sk_pool.size()]
+						lucky._current_cd[sk] = lucky._current_cd.get(sk, 0) + 2
+						lucky._sync_cd_buttons()
+						resolver.battle_log.add_info("💫 Удар сяйва: КД [%s] %s +2!" % [sk, lucky.name], Color("#e0c040"))
+		"W":
+			if target == null: return
+			target.add_status("plague", 3)
+			target._update_status_visuals()
+			resolver.battle_log.add_effect(target.name, target.team, "Чума (3 ходи)")
+			resolver.battle_log.add_info("☠️ Чума: %s заражений — 15 сяйво щохід, 3 ходи." % target.name, Color("#90d060"))
+		"E":
+			# Витрачає 50% поточного HP (мін. 1 лишається)
+			var hp_cost: int = int(attacker.current_hp / 2.0)
+			if hp_cost > 0:
+				var new_hp: int = max(1, attacker.current_hp - hp_cost)
+				attacker.health.set_hp(new_hp)
+				resolver.battle_log.add_info("✨ Спалах: %s витрачає %d HP!" % [attacker.name, hp_cost], Color("#e8e060"))
+			# 100 сяйво шкоди всім ворогам
+			var enemy_team: Array = resolver.battle_scene.ally_wards if attacker.team == "enemy" else resolver.battle_scene.enemy_wards
+			for enemy in enemy_team:
+				if not enemy.is_dead:
+					await resolver.deal_damage_with_modifiers(attacker, enemy, 100, "E", "light", true)
+
+
 static func _asteyah_execute_memory(resolver, attacker, target, ward_id: String, skill_key: String) -> void:
 	match ward_id:
 		"liah":     await _execute_liah(resolver, attacker, target, skill_key, 50)
@@ -1255,6 +1304,7 @@ static func _asteyah_execute_memory(resolver, attacker, target, ward_id: String,
 		"asteyah":  await _execute_asteyah(resolver, attacker, target, skill_key)
 		"velodiy":  await _execute_velodiy(resolver, attacker, target, skill_key)
 		"ashayah": await _execute_ashayah(resolver, attacker, target, skill_key)
+		"infected_1_a", "infected_1_b", "infected_1_c": await _execute_infected_1(resolver, attacker, target, skill_key)
 		_:
 			if target != null:
 				await resolver.deal_damage_with_modifiers(attacker, target, 50, skill_key)

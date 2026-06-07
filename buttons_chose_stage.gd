@@ -4,14 +4,16 @@ extends Control
 	$but_earth,
 	$but_water,
 	$but_fire,
-	$but_air
+	$but_air,
+	$but_radiance
 ]
 
 @onready var highlights: Array[Control] = [
 	$"../../buttons/HBoxContainer/Earth/earth_hl",
 	$"../../buttons/HBoxContainer/Water/water_hl",
 	$"../../buttons/HBoxContainer/Fire/fire_hl",
-	$"../../buttons/HBoxContainer/Air/air_hl"
+	$"../../buttons/HBoxContainer/Air/air_hl",
+	$"../../buttons/HBoxContainer/Radiance/radiance_hl"
 ]
 
 

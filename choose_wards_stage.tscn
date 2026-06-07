@@ -29,6 +29,7 @@
 [ext_resource type="FontFile" uid="uid://bymkrthni0vye" path="res://Основа/Шрифти/silvus__.ttf" id="26_m8a06"]
 [ext_resource type="Texture2D" uid="uid://oym6a1atnd2l" path="res://Основа/visual/choose_stage/page_lor_bg.png" id="27_m8a06"]
 [ext_resource type="FontFile" uid="uid://sin06uqgfb8o" path="res://Основа/Шрифти/Brock_Script_D.ttf" id="28_o6ifj"]
+[ext_resource type="Texture2D" uid="uid://d3gudnoi8oi17" path="res://Основа/char/NPC/infected radiance/stage_1/infected_1_stage.png" id="30_rad01"]
 
 [sub_resource type="CanvasItemMaterial" id="CanvasItemMaterial_wo8qs"]
 blend_mode = 1
@@ -447,6 +448,60 @@ grow_vertical = 2
 texture = ExtResource("12_0iq2c")
 expand_mode = 1
 
+[node name="Radiance" type="Control" parent="Wards_collection/chose_zone/buttons/HBoxContainer" unique_id=3000000001]
+custom_minimum_size = Vector2(90, 75)
+layout_mode = 2
+
+[node name="radiance_hl" type="TextureRect" parent="Wards_collection/chose_zone/buttons/HBoxContainer/Radiance" unique_id=3000000002]
+visible = false
+material = SubResource("CanvasItemMaterial_jprfe")
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -75.0
+offset_top = -75.0
+offset_right = 75.0
+offset_bottom = 53.5
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("4_w318r")
+expand_mode = 1
+
+[node name="TextureRect" type="TextureRect" parent="Wards_collection/chose_zone/buttons/HBoxContainer/Radiance" unique_id=3000000003]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("9_eo2re")
+
+[node name="bg_radiance" type="TextureRect" parent="Wards_collection/chose_zone/buttons/HBoxContainer/Radiance" unique_id=3000000004]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("5_k242r")
+
+[node name="radiance_sigil" type="TextureRect" parent="Wards_collection/chose_zone/buttons/HBoxContainer/Radiance" unique_id=3000000005]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 10.0
+offset_top = 5.0
+offset_right = -10.0
+offset_bottom = -10.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("30_rad01")
+expand_mode = 1
+
 [node name="TabsMenu" type="Control" parent="Wards_collection/chose_zone" unique_id=2001868371]
 layout_mode = 1
 anchors_preset = 15
@@ -495,6 +550,14 @@ layout_mode = 0
 offset_left = 306.0
 offset_top = -72.41501
 offset_right = 394.0
+offset_bottom = -4.4150085
+flat = true
+
+[node name="but_radiance" type="Button" parent="Wards_collection/chose_zone/TabsMenu/Buttons" unique_id=3000000006]
+layout_mode = 0
+offset_left = 400.0
+offset_top = -72.41501
+offset_right = 488.0
 offset_bottom = -4.4150085
 flat = true
 
@@ -657,6 +720,45 @@ grow_vertical = 2
 horizontal_scroll_mode = 0
 
 [node name="GridContainer" type="GridContainer" parent="Wards_collection/chose_zone/TabsMenu/Pages/page_water/ScrollContainer" unique_id=197029066]
+layout_mode = 2
+size_flags_vertical = 0
+theme_override_constants/h_separation = 112
+theme_override_constants/v_separation = 50
+columns = 4
+
+[node name="page_radiance" type="Control" parent="Wards_collection/chose_zone/TabsMenu/Pages" unique_id=3000000007]
+visible = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="TextureRect" type="TextureRect" parent="Wards_collection/chose_zone/TabsMenu/Pages/page_radiance" unique_id=3000000008]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("9_eo2re")
+expand_mode = 1
+
+[node name="ScrollContainer" type="ScrollContainer" parent="Wards_collection/chose_zone/TabsMenu/Pages/page_radiance" unique_id=3000000009]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 54.0
+offset_top = 32.58499
+offset_right = -42.0
+offset_bottom = -30.414917
+grow_horizontal = 2
+grow_vertical = 2
+horizontal_scroll_mode = 0
+
+[node name="GridContainer" type="GridContainer" parent="Wards_collection/chose_zone/TabsMenu/Pages/page_radiance/ScrollContainer" unique_id=3000000010]
 layout_mode = 2
 size_flags_vertical = 0
 theme_override_constants/h_separation = 112
