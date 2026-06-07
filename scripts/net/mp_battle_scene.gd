@@ -90,15 +90,15 @@ var _oath_skip_next_carrier_trigger: bool = false
 func _ready() -> void:
 	_apply_ward_data()
 	_create_battle_systems()
+	if NetworkManager.is_multiplayer:
+		var hook = preload("res://scripts/net/mp_battle_hook.gd").new()
+		hook.name = "MPBattleHook"
+		add_child(hook)
 	_connect_wards()
 	_setup_end_game_overlay()
 	_roll_first_turn()
 	play_random_track()
 	music_player.finished.connect(_on_music_finished)
-	if NetworkManager.is_multiplayer:
-		var hook = preload("res://scripts/net/mp_battle_hook.gd").new()
-		hook.name = "MPBattleHook"
-		add_child(hook)
 
 
 func _apply_ward_data() -> void:
@@ -425,6 +425,10 @@ func _start_turn() -> void:
 	if battle_finished:
 		return
 
+	# CLIENT ніколи не запускає логіку ходу сам — лише через сигнали від хоста
+	if NetworkManager.is_multiplayer and not NetworkManager.is_host:
+		return
+
 	_turn_locked = false
 	for _w in ally_wards + enemy_wards:
 		if _w.has_meta("countered_this_turn"):
@@ -702,6 +706,15 @@ func _start_turn() -> void:
 		_next_turn()
 		return
 
+	# Всі пасивні ефекти застосовано — синкуємо стан до клієнта
+	if NetworkManager.is_multiplayer and NetworkManager.is_host:
+		var _st_hook = get_tree().get_first_node_in_group("mp_battle_hook")
+		if _st_hook:
+			_st_hook._push_state_to_client()
+		# Якщо йде хід союзника HOST — показуємо клієнту який ворожий вард пульсує
+		if turn_manager.current_team == "ally" and current_ward != null:
+			NetworkManager.signal_host_ally_turn(current_ward.name)
+
 	if turn_manager.current_team == "enemy":
 		# HOST у мультиплеєрі: "enemy" = клієнтські варди — чекаємо RPC замість AI
 		if NetworkManager.is_multiplayer and NetworkManager.is_host:
@@ -893,7 +906,20 @@ func _on_ward_clicked(ward) -> void:
 	if NetworkManager.is_multiplayer and not NetworkManager.is_host:
 		var _mp_h = get_tree().get_first_node_in_group("mp_battle_hook")
 		if _mp_h and selected_attacker != null:
-			var _atk_i := ally_wards.find(selected_attacker)
+			# Валідуємо тип цілі так само як офлайн (перед відправкою)
+			var _SkillExecMP2 = preload("res://scripts/battle/skill_executor.gd")
+			var _tt2 = _SkillExecMP2.get_skill_target_type(selected_attacker.ward_id, selected_skill, selected_attacker)
+			if _tt2 == "single_ally" and ward.team == "enemy":
+				battle_log.add_entry("Цей скіл застосовується лише на союзника!")
+				AnimationCode.skill_blocked_animation(_get_skill_button(selected_attacker, selected_skill))
+				return
+			if _tt2 in ["single_enemy", "etesena_w"] and ward.team == "ally":
+				battle_log.add_entry("Це не ворог")
+				return
+			if ward.is_dead:
+				battle_log.add_entry("Ціль вже мертва")
+				return
+			var _atk_i: int = ally_wards.find(selected_attacker)
 			var _tgt_i: int
 			if ward.team == "enemy":
 				_tgt_i = enemy_wards.find(ward)       # >= 0: ворожий вард хоста
@@ -1443,8 +1469,11 @@ func _next_turn() -> void:
 
 	turn_manager.switch_team()
 
-	# Хост сигналізує клієнту теж переключити хід
+	# Хост: пушимо стан ПЕРЕД сигналом щоб клієнт бачив HP/ефекти одразу
 	if NetworkManager.is_multiplayer and NetworkManager.is_host:
+		var _nt_hook = get_tree().get_first_node_in_group("mp_battle_hook")
+		if _nt_hook:
+			_nt_hook._push_state_to_client()
 		NetworkManager.signal_host_turn_done(current_ward.name if current_ward else "")
 
 	_start_turn()
