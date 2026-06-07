@@ -1,5 +1,9 @@
 extends Node
 
+signal log_action(data: Dictionary)
+
+var _in_attack: bool = false
+
 var entries: Array[String] = []
 
 var battle_log_panel: Control = null
@@ -33,6 +37,7 @@ func setup_ui(panel_ref: Control) -> void:
 func update_round(n: int) -> void:
 	if _round_label:
 		_round_label.text = "РАУНД  %d" % n
+	log_action.emit({"t": "round", "n": n})
 
 
 func update_timer(secs: int) -> void:
@@ -67,6 +72,7 @@ func start_turn(turn_number: int, ward_name: String = "", ward_team: String = ""
 	_current_turn_ward_team = ward_team
 	current_turn_panel = null
 	current_turn_events = null
+	log_action.emit({"t": "turn", "n": turn_number, "wn": ward_name, "wt": ward_team})
 
 
 func add_entry(text: String) -> void:
@@ -77,6 +83,7 @@ func add_entry(text: String) -> void:
 func add_info(text: String, color: Color = Color("#a09070")) -> void:
 	entries.append(text)
 	print(text)
+	log_action.emit({"t": "info", "tx": text, "c": color.to_html(false)})
 	if log_container == null:
 		return
 	_ensure_turn_panel()
@@ -115,6 +122,7 @@ func add_attack(
 	entries.append(full_text)
 	print(full_text)
 
+	_in_attack = true
 	_add_attack_event(
 		attacker_name,
 		attacker_team,
@@ -133,6 +141,11 @@ func add_attack(
 
 	if status_text != "-" and status_text != "":
 		add_effect(target_name, target_team, status_text)
+	_in_attack = false
+	log_action.emit({"t": "atk", "an": attacker_name, "at": attacker_team, "sn": skill_name,
+		"d": damage, "st": status_text, "tn": target_name, "tt": target_team,
+		"hb": hp_before, "ha": hp_after, "mh": max_hp, "ds": damage_source,
+		"bd": base_damage, "m": mult})
 
 
 func add_effect(target_name: String, target_team: String, effect_text: String) -> void:
@@ -148,6 +161,8 @@ func add_effect(target_name: String, target_team: String, effect_text: String) -
 		"[color=" + _team_name_color(target_team) + "]" + target_name + "[/color] [color=#d8caa0]отримав ефект[/color]\n" +
 		"[color=#bfa7ff]" + effect_text + "[/color]"
 	)
+	if not _in_attack:
+		log_action.emit({"t": "eff", "tn": target_name, "tt": target_team, "et": effect_text})
 
 
 func add_death(ward_name: String, ward_team: String) -> void:
@@ -160,6 +175,7 @@ func add_death(ward_name: String, ward_team: String) -> void:
 		Color("#e53935"),
 		"[color=" + _team_name_color(ward_team) + "]" + ward_name + "[/color] [color=#ff453d]загинув[/color]"
 	)
+	log_action.emit({"t": "die", "wn": ward_name, "wt": ward_team})
 
 
 func add_heal(ward_name: String, ward_team: String, hp_before: int, hp_after: int, max_hp: int) -> void:
@@ -173,6 +189,7 @@ func add_heal(ward_name: String, ward_team: String, hp_before: int, hp_after: in
 		"[color=" + _team_name_color(ward_team) + "]" + ward_name + "[/color] [color=#d8caa0]відновив здоров'я[/color]\n" +
 		_make_hp_text(hp_before, hp_after, max_hp)
 	)
+	log_action.emit({"t": "heal", "wn": ward_name, "wt": ward_team, "hb": hp_before, "ha": hp_after, "mh": max_hp})
 
 func add_cooldown(ward_name: String, _ward_team: String, skill_key: String, cd_turns: int) -> void:
 	entries.append(ward_name + " скіл " + skill_key + " на КД " + str(cd_turns))

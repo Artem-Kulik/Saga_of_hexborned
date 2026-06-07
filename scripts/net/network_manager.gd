@@ -6,11 +6,14 @@ signal peer_disconnected
 signal connection_failed
 signal opponent_wards_ready          # обидва підтвердили варди
 signal host_turn_started(ward_name: String)
+signal host_ally_turn_active(ward_name: String)
 signal client_turn_started(ward_name: String)
 signal state_updated(state: Dictionary)
+signal log_action_received(data: Dictionary)
 signal battle_ended(result: String)
 signal restart_requested             # хост попросив рестарт
 signal ward_select_requested         # хост повернувся на вибір вардів
+signal adoneia_golem_signal(ward_idx: int, is_golem: bool)
 
 # ─── State ─────────────────────────────────────────────────────────────────
 const PORT := 7777
@@ -132,6 +135,14 @@ func signal_host_turn_done(ward_name: String) -> void:
 func _rpc_host_turn_done(ward_name: String) -> void:
 	host_turn_started.emit(ward_name)
 
+func signal_host_ally_turn(ward_name: String) -> void:
+	if not _client_connected(): return
+	_rpc_host_ally_turn.rpc_id(_client_peer_id, ward_name)
+
+@rpc("authority", "call_remote", "reliable")
+func _rpc_host_ally_turn(ward_name: String) -> void:
+	host_ally_turn_active.emit(ward_name)
+
 # ─── Battle: client → host action ─────────────────────────────────────────
 func client_send_action(skill_key: String, attacker_idx: int, target_idx: int) -> void:
 	_rpc_client_action.rpc_id(1, skill_key, attacker_idx, target_idx)
@@ -158,6 +169,24 @@ func broadcast_go_ward_select() -> void:
 @rpc("authority", "call_remote", "reliable")
 func _rpc_do_ward_select() -> void:
 	ward_select_requested.emit()
+
+# ─── Battle: Adoneia golem form sync ──────────────────────────────────────
+func signal_adoneia_golem(ward_idx: int, is_golem: bool) -> void:
+	if not _client_connected(): return
+	_rpc_adoneia_golem.rpc_id(_client_peer_id, ward_idx, is_golem)
+
+@rpc("authority", "call_remote", "reliable")
+func _rpc_adoneia_golem(ward_idx: int, is_golem: bool) -> void:
+	adoneia_golem_signal.emit(ward_idx, is_golem)
+
+# ─── Battle: log sync ─────────────────────────────────────────────────────
+func broadcast_log_action(data: Dictionary) -> void:
+	if not _client_connected(): return
+	_rpc_apply_log.rpc_id(_client_peer_id, data)
+
+@rpc("authority", "call_remote", "reliable")
+func _rpc_apply_log(data: Dictionary) -> void:
+	log_action_received.emit(data)
 
 # ─── Battle: end game ──────────────────────────────────────────────────────
 func broadcast_battle_end(result: String) -> void:
