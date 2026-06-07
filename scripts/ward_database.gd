@@ -127,7 +127,7 @@ var WARDS: Dictionary = {
 		"skills": {
 			"P": { "id": "adoneia_p", "damage_type": "passive", "name": "Пасивна",               "cd": 0, "icon": "res://Основа/char/earth/Adoneya/p.png", "desc": "При падінні нижче 50% HP — Контратака.", "desc_full": "" },
 			"Q": { "id": "adoneia_q", "damage_type": "phys",    "name": "Пролом",                "cd": 0, "icon": "res://Основа/char/earth/Adoneya/q.png", "desc": "Б'є ціль двічі. Голем — атакує всіх.", "desc_full": "" },
-			"W": { "id": "adoneia_w", "damage_type": "phys",    "name": "Майстер кулачного бою", "cd": 4, "icon": "res://Основа/char/earth/Adoneya/w.png", "desc": "Атакує і провокує ворога. Голем — потрійний удар.", "desc_full": "" },
+			"W": { "id": "adoneia_w", "damage_type": "phys",    "name": "Майстер кулачного бою", "cd": 4, "icon": "res://Основа/char/earth/Adoneya/w.png", "desc": "Атакує ворога та провокує. Накладає Контратаку на себе на 1 хід. 40(фіз).", "desc_full": "Атакує ворога та накладає на нього Провокацію на 1 хід. Накладає на себе Контратаку на 1 хід. Шкода 40(фіз)." },
 			"E": { "id": "adoneia_e", "damage_type": "earth",   "name": "Голем",                 "cd": 8, "icon": "res://Основа/char/earth/Adoneya/e.png", "desc": "Форма Голема: більше HP, посилені Q та W.", "desc_full": "" },
 		}
 	},
@@ -139,7 +139,7 @@ var WARDS: Dictionary = {
 		"skills": {
 			"P": { "id": "adoneia_p",      "damage_type": "passive", "name": "Пасивна",                "cd": 0, "icon": "res://Основа/char/earth/Adoneya/p.png",      "desc": "Контратакує при слабкості.", "desc_full": "Контратакує при слабкості." },
 			"Q": { "id": "adoneia_golem_q","damage_type": "phys",    "name": "Пролом (Голем)",         "cd": 0, "icon": "res://Основа/char/earth/Adoneya/golem_q.png", "desc": "60(фіз) по всіх ворогах одразу.", "desc_full": "60(фіз) по всіх ворогах одразу." },
-			"W": { "id": "adoneia_golem_w","damage_type": "phys",    "name": "Гром кулаків (Голем)",   "cd": 2, "icon": "res://Основа/char/earth/Adoneya/golem_w.png", "desc": "3 удари по 35(фіз) по рандомних цілях. Кожен ударений ворог отримує Провокацію.", "desc_full": "3 удари по 35(фіз) по рандомних цілях. Кожен ударений ворог отримує Провокацію." },
+			"W": { "id": "adoneia_golem_w","damage_type": "phys",    "name": "Майстер громадних кулаків", "cd": 2, "icon": "res://Основа/char/earth/Adoneya/golem_w.png", "desc": "2 удари по 35(фіз) по рандомних цілях. Поранені вороги отримують Провокацію на 1 хід.", "desc_full": "Атакує двічі по рандомних цілях (може дублюватися). Кожна поражена ціль отримує Провокацію на 1 хід. Шкода 35(фіз)." },
 			"E": { "id": "adoneia_e",      "damage_type": "earth",   "name": "Голем",                 "cd": 8, "icon": "res://Основа/char/earth/Adoneya/e.png",      "desc": "Форма Голема активна.", "desc_full": "Форма Голема активна." },
 		}
 	},

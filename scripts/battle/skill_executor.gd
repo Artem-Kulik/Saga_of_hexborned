@@ -898,9 +898,9 @@ static func _execute_adoneia(resolver, attacker, target, skill_key: String) -> v
 		"W":
 			if in_golem:
 				if resolver.battle_log:
-					resolver.battle_log.add_info("Гром кулаків (Голем): %s завдає 3 удари по рандомних цілях!" % attacker.name)
+					resolver.battle_log.add_info("Майстер громадних кулаків (Голем): %s завдає 2 удари по рандомних цілях!" % attacker.name)
 				var taunted_set: Dictionary = {}
-				for i in 3:
+				for _i in 2:
 					var alive: Array = resolver.get_alive_wards(enemy_side)
 					if alive.is_empty(): break
 					var t = alive[randi() % alive.size()]
@@ -913,9 +913,9 @@ static func _execute_adoneia(resolver, attacker, target, skill_key: String) -> v
 						t.taunted_by = attacker.ward_id
 						t._update_status_visuals()
 						if resolver.battle_log:
-							resolver.battle_log.add_effect(t.name, t.team, "Провокація (Голем Адонеї)")
+							resolver.battle_log.add_effect(t.name, t.team, "Провокація (1 хід)")
 				if resolver.battle_log and not taunted_set.is_empty():
-					resolver.battle_log.add_info("Гром кулаків: поранені вороги спровоковані!")
+					resolver.battle_log.add_info("Майстер громадних кулаків: поранені вороги спровоковані!")
 			else:
 				if target == null: return
 				await resolver.deal_damage_with_modifiers(attacker, target, 40, skill_key, "phys")
