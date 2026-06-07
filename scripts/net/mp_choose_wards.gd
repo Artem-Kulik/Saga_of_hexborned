@@ -66,9 +66,6 @@ const SLOT_RECTS: Array = [
 
 
 func _ready() -> void:
-	print("[DBG] mp_choose_wards ready | is_mp=%s is_host=%s peers=%s" % [
-		NetworkManager.is_multiplayer, NetworkManager.is_host,
-		str(multiplayer.get_peers())])
 	_setup_glow(glow_1)
 
 	for h in _highlight_nodes:
@@ -118,9 +115,6 @@ func _process(delta: float) -> void:
 		_resend_timer += delta
 		if _resend_timer >= 2.0:
 			_resend_timer = 0.0
-			print("[DBG] wards wait: sent=%s got=%s peers=%s" % [
-				NetworkManager._my_wards_sent, NetworkManager._opp_wards_got,
-				str(multiplayer.get_peers())])
 			if NetworkManager._my_wards_sent and not NetworkManager._opp_wards_got:
 				NetworkManager.resend_wards_rpc()
 

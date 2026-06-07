@@ -38,7 +38,6 @@ func host_game() -> Error:
 		multiplayer.peer_connected.connect(_on_peer_connected)
 	if not multiplayer.peer_disconnected.is_connected(_on_peer_disconnected):
 		multiplayer.peer_disconnected.connect(_on_peer_disconnected)
-	print("[NET] Сервер запущено на порту ", PORT)
 	return OK
 
 func join_game(ip: String) -> Error:
@@ -55,7 +54,6 @@ func join_game(ip: String) -> Error:
 		multiplayer.connection_failed.connect(_on_connection_failed_cb)
 	if not multiplayer.server_disconnected.is_connected(_on_server_disconnected):
 		multiplayer.server_disconnected.connect(_on_server_disconnected)
-	print("[NET] Підключаємося до ", ip, ":", PORT)
 	return OK
 
 func disconnect_game() -> void:
@@ -84,7 +82,6 @@ func send_my_wards(ward_ids: Array) -> void:
 	my_ward_ids = ward_ids.duplicate()
 	_my_wards_sent = true
 	var target_id := _client_peer_id if is_host else 1
-	print("[NET] send_my_wards → target=%d peers=%s" % [target_id, str(multiplayer.get_peers())])
 	if target_id > 0:
 		_rpc_receive_wards.rpc_id(target_id, ward_ids)
 	_check_both_wards_ready()
@@ -93,13 +90,11 @@ func send_my_wards(ward_ids: Array) -> void:
 func _rpc_receive_wards(ward_ids: Array) -> void:
 	opponent_ward_ids = ward_ids.duplicate()
 	_opp_wards_got = true
-	print("[NET] _rpc_receive_wards отримано: ", opponent_ward_ids)
 	_check_both_wards_ready()
 
 func resend_wards_rpc() -> void:
 	if my_ward_ids.is_empty(): return
 	var target_id := _client_peer_id if is_host else 1
-	print("[NET] resend_wards_rpc → target=%d peers=%s" % [target_id, str(multiplayer.get_peers())])
 	if target_id > 0:
 		_rpc_receive_wards.rpc_id(target_id, my_ward_ids)
 
@@ -175,26 +170,21 @@ func _rpc_battle_end(result: String) -> void:
 
 # ─── Connection callbacks ──────────────────────────────────────────────────
 func _on_peer_connected(id: int) -> void:
-	print("[NET] Peer підключився id=", id)
 	_client_peer_id = id
 	peer_connected.emit()
 
 func _on_peer_disconnected(id: int) -> void:
-	print("[NET] Peer відключився id=", id)
 	if _client_peer_id == id:
 		_client_peer_id = 0
 	peer_disconnected.emit()
 
 func _on_connected_to_server() -> void:
-	print("[NET] Підключено до сервера")
 	peer_connected.emit()
 
 func _on_connection_failed_cb() -> void:
-	print("[NET] Підключення не вдалося")
 	is_multiplayer = false
 	connection_failed.emit()
 
 func _on_server_disconnected() -> void:
-	print("[NET] Сервер відключився")
 	disconnect_game()
 	peer_disconnected.emit()
