@@ -40,7 +40,7 @@ func _ready() -> void:
 
 func _navigate_to_lobby() -> void:
 	await get_tree().process_frame
-	get_tree().change_scene_to_file("res://scripts/net/mp_lobby.tscn")
+	SceneLoader.change_scene("res://scripts/net/mp_lobby.tscn")
 
 # ─── Logging ─────────────────────────────────────────────────────────────────
 func _role() -> String:

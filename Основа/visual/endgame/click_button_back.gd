@@ -26,7 +26,7 @@ func _ready() -> void:
 func _on_ward_select_from_host() -> void:
 	NetworkManager._my_wards_sent = false
 	NetworkManager._opp_wards_got = false
-	get_tree().change_scene_to_file("res://scripts/net/mp_choose_wards.tscn")
+	SceneLoader.change_scene("res://scripts/net/mp_choose_wards.tscn")
 
 
 func _pressed() -> void:
@@ -37,9 +37,9 @@ func _pressed() -> void:
 		NetworkManager._my_wards_sent = false
 		NetworkManager._opp_wards_got = false
 		NetworkManager.broadcast_go_ward_select()
-		get_tree().change_scene_to_file("res://scripts/net/mp_choose_wards.tscn")
+		SceneLoader.change_scene("res://scripts/net/mp_choose_wards.tscn")
 	else:
-		get_tree().change_scene_to_file("res://Основа/animation/sigils_fade/water/main_menu.tscn")
+		SceneLoader.change_scene("res://Основа/animation/sigils_fade/water/main_menu.tscn")
 
 
 func _on_hover_enter() -> void:

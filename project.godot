@@ -23,6 +23,7 @@ GameState="*res://scripts/game_state.gd"
 WardDatabase="*res://scripts/ward_database.gd"
 NetworkManager="*res://scripts/net/network_manager.gd"
 BotTest="*res://scripts/net/bot_test.gd"
+SceneLoader="*uid://bd767a21j4efa"
 
 [display]
 

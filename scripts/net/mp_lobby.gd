@@ -178,7 +178,7 @@ func _on_join_pressed() -> void:
 func _on_back_pressed() -> void:
 	NetworkManager.disconnect_game()
 	_disconnect_network_signals()
-	get_tree().change_scene_to_file("res://Основа/animation/sigils_fade/water/main_menu.tscn")
+	SceneLoader.change_scene("res://Основа/animation/sigils_fade/water/main_menu.tscn")
 
 # ─── Мережеві колбеки ───────────────────────────────────────────────────────
 func _on_peer_connected() -> void:
@@ -190,7 +190,7 @@ func _on_peer_connected() -> void:
 	if not is_inside_tree():
 		return
 	_disconnect_network_signals()
-	get_tree().change_scene_to_file("res://scripts/net/mp_choose_wards.tscn")
+	SceneLoader.change_scene("res://scripts/net/mp_choose_wards.tscn")
 
 func _on_connection_failed() -> void:
 	_host_btn.disabled = false

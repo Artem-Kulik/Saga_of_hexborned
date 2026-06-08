@@ -129,12 +129,12 @@ func _on_button_pressed(button_name: String) -> void:
 
 	# COLLECTION (air) → екран вибору вардів (офлайн, боти)
 	if button_name == "air":
-		get_tree().change_scene_to_file("res://choose_wards_stage.tscn")
+		SceneLoader.change_scene("res://choose_wards_stage.tscn")
 		return
 
 	# DUEL (fire) → лобі мультиплеєра
 	if button_name == "fire":
-		get_tree().change_scene_to_file("res://scripts/net/mp_lobby.tscn")
+		SceneLoader.change_scene("res://scripts/net/mp_lobby.tscn")
 		return
 
 	var scene_path := ""
@@ -152,4 +152,4 @@ func _on_button_pressed(button_name: String) -> void:
 		push_warning("Для кнопки " + button_name + " не вказано сцену")
 		return
 
-	get_tree().change_scene_to_file(scene_path)
+	SceneLoader.change_scene(scene_path)

@@ -77,4 +77,4 @@ func _on_button_pressed() -> void:
 		push_warning("Не вказана сцена")
 		return
 
-	get_tree().change_scene_to_file(scene_to_load)
+	SceneLoader.change_scene(scene_to_load)
