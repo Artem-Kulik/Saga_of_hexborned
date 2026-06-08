@@ -1707,7 +1707,7 @@ func _bot_handle_battle_end(result: String) -> void:
 	NetworkManager.reset_ward_selection()
 	await get_tree().create_timer(0.8).timeout
 	if is_inside_tree():
-		get_tree().change_scene_to_file("res://scripts/net/mp_choose_wards.tscn")
+		get_tree().SceneLoader.change_scene("res://scripts/net/mp_choose_wards.tscn")
 
 # ─── Bot ally turn (HOST) ────────────────────────────────────────────────────
 

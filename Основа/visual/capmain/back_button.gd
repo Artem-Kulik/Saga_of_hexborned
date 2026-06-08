@@ -81,4 +81,4 @@ func _on_pressed() -> void:
 		push_warning("Не вказано сцену для завантаження в back_button.")
 		return
 
-	get_tree().change_scene_to_file(scene_to_load)
+	SceneLoader.change_scene(scene_to_load)

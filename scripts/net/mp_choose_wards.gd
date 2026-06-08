@@ -359,4 +359,4 @@ func _on_opponent_ready() -> void:
 	if NetworkManager.opponent_wards_ready.is_connected(_on_opponent_ready):
 		NetworkManager.opponent_wards_ready.disconnect(_on_opponent_ready)
 	if is_inside_tree():
-		get_tree().change_scene_to_file("res://scripts/net/mp_battle_scene.tscn")
+		SceneLoader.change_scene("res://scripts/net/mp_battle_scene.tscn")

@@ -317,4 +317,4 @@ func _refresh_confirm_button() -> void:
 
 func _on_confirm_pressed() -> void:
 	GameState.ally_ward_ids = selected_ids.duplicate()
-	get_tree().change_scene_to_file("res://battle_scene.tscn")
+	SceneLoader.change_scene("res://battle_scene.tscn")
